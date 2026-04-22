@@ -1,0 +1,7 @@
+{
+  "rng_seed": 42,
+  "freq": "D",
+  "n_periods": 1460,
+  "seasonal_period": 7,
+  "file": "data/synthetic_series.csv"
+}
