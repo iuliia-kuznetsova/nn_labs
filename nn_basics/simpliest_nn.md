@@ -15,25 +15,23 @@ This note uses **vectorized** notation: one training step updates all parameters
 
 ---
 
-
-
-## 1. Logistic regression as the simplest neural network
+## 1. Logistic Regression as the Simplest Neural Network
 
 ### 1.1 Binary classification
 
 **Goal.** Predict one of two classes, encoded as $y^{(i)} \in \{0, 1\}$.
 
-**Probabilistic model.** Estimate probability that output $y^{(i)}$ is of a class 1 given input matrix $x^{(i)}$:
+**Probabilistic model.** Estimate the probability that output $y^{(i)}$ is of class $1$ given the input example $\mathbf{x}^{(i)}$:
 
 $$
-\hat{y}^{(i)} = P(y^{(i)} = 1 \mid \mathbf{x}^{(i)})$ with $\hat{y}^{(i)} \in (0,1)
+\hat{y}^{(i)} = P\bigl(y^{(i)} = 1 \mid \mathbf{x}^{(i)}\bigr), \qquad \hat{y}^{(i)} \in (0,1).
 $$
 
-Decision rule: predict class $1$ if $\hat{y}^{(i)} \ge \tfrac{1}{2}$, else class $0$.
+**Decision rule.** Predict class $1$ if $\hat{y}^{(i)} \ge \tfrac{1}{2}$, else class $0$.
 
 ---
 
-### 2.2 Logistic regression (vectorized)
+### 1.2 Logistic regression (vectorized)
 
 For one example,
 
@@ -45,68 +43,74 @@ $$
 **All $m$ examples at once.** Stack columns in $\mathbf{X}$ and define
 
 $$
-\mathbf{Z} = \mathbf{w}^\top \mathbf{X} + b \,\mathbf{1}_m^\top \quad \in \mathbb{R}^{1 \times m},
+\mathbf{Z} = \mathbf{w}^\top \mathbf{X} + b \,\mathbf{1}_m^\top \ \in \mathbb{R}^{1 \times m},
 $$
 
 $$
-\mathbf{A} = \sigma(\mathbf{Z}) \quad \text{(element-wise)}.
+\mathbf{A} = \sigma(\mathbf{Z}) \quad \text{(element-wise)},
 $$
 
-Here 
-- $Y$ is output (target) vector of ... size 
+where
+
+- $\mathbf{Y}$ is the output (target) row vector of size $1 \times m$:
+
 $$
-add vector here
+\mathbf{Y} = \bigl[\, y^{(1)},\ y^{(2)},\ \dots,\ y^{(m)} \,\bigr] \in \mathbb{R}^{1 \times m}.
 $$
-- $W$ 
+
+- $\mathbf{w}^\top$ is the **transposed** weight vector of size $1 \times n_x$:
+
 $$
-add hereis a transponed weight vector of ... size 
+\mathbf{w}^\top = \bigl[\, w_1,\ w_2,\ \dots,\ w_{n_x} \,\bigr] \in \mathbb{R}^{1 \times n_x}.
 $$
-- $X$ is input (features) matrix of ... size 
+
+- $\mathbf{X}$ is the input (features) matrix of size $n_x \times m$ (each column is one example):
+
 $$
-add matrix here
+\mathbf{X} =
+\begin{bmatrix}
+\mid & \mid & & \mid \\
+\mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(m)} \\
+\mid & \mid & & \mid
+\end{bmatrix}
+\in \mathbb{R}^{n_x \times m}.
 $$
-- $b$ is bias vector of ... size  (**broadcasted** across columns). 
+
+- $b$ is a scalar bias **broadcast** across all columns of $\mathbf{w}^\top \mathbf{X}$ (equivalently, add the row vector $b\,\mathbf{1}_m^\top \in \mathbb{R}^{1 \times m}$).
+
+- $\mathbf{Z} \in \mathbb{R}^{1 \times m}$ is the row vector of pre-activations (logits), one entry per example.
+
+- $\mathbf{A} \in \mathbb{R}^{1 \times m}$ is the row vector of predicted probabilities, $\mathbf{A} = \sigma(\mathbf{Z})$.
+
+- $\sigma$ is the sigmoid activation function:
+
 $$
-add here
-$$
-- $A$
-- $Z$
-- $sigma$ is activation function
-$$
-add formula here
+\sigma(z) = \frac{1}{1 + e^{-z}}, \qquad \sigma(z) \in (0, 1),
 $$
 
 so that 
-if Z is large 
-if Z is large negative number 
-
-$$
-add sigmoid graph
-$$
-
-
-If you prefer column vectors $\mathbf{z}^{(i)}$ stacked into $\mathbf{Z}_{\mathrm{col}} \in \mathbb{R}^{m \times 1}$, equivalently $\mathbf{Z}_{\mathrm{col}} = \mathbf{X}^\top \mathbf{w} + b\,\mathbf{1}_m$.
+- If $z$ is a large positive number, $\sigma(z) \approx 1$.
+- If $z$ is a large negative number, $\sigma(z) \approx 0$.
+- If $z = 0$, $\sigma(z) = 0.5$.
 
 ---
 
-### 2.3 Logistic regression cost function (vectorized)
+### 1.3 Logistic regression cost function (vectorized)
 
-**Loss function (binary cross-entropy, negative log-likelihood for Bernoulli labels):**
+**Loss function (binary cross-entropy, negative log-likelihood for Bernoulli labels).**
 
-The loss function measures the discrepancy between the prediction (𝑦̂(𝑖)) and the desired output (𝑦(𝑖)) per-example. 
-In other words, the loss function computes the error for a single training example x(𝑖) .  
+The loss function measures the discrepancy between the prediction $\hat{y}^{(i)}$ and the desired output $y^{(i)}$ **per example**. In other words, the loss function computes the error for a single training example $\mathbf{x}^{(i)}$.
 
 $$
 \mathcal{L}^{(i)} = - \Bigl( y^{(i)} \log a^{(i)} + \bigl(1 - y^{(i)}\bigr) \log\bigl(1 - a^{(i)}\bigr) \Bigr).
 $$
 
-- If a^(𝑖) = 1: 𝐿(𝑦̂^(𝑖),a^(𝑖)) = −log(𝑦̂(𝑖)) where log(𝑦̂(𝑖)) and 𝑦̂(𝑖)  should be close to 1 
-- If a^(𝑖) = 0: 𝐿(𝑦̂(𝑖),a^(𝑖)) = - log(1 − 𝑦̂(𝑖)) where log(1 − 𝑦̂(𝑖)) and 𝑦̂(𝑖) should be close to 0 
+- If $y^{(i)} = 1$: $\mathcal{L}^{(i)} = -\log a^{(i)}$, which is small when $a^{(i)}$ is close to $1$.
+- If $y^{(i)} = 0$: $\mathcal{L}^{(i)} = -\log\bigl(1 - a^{(i)}\bigr)$, which is small when $a^{(i)}$ is close to $0$.
 
-**Cost function:**
+**Cost function.**
 
-The cost function is the average of the loss function of the entire training set (over the batch). The goal of NN training is to find the 
-parameters 𝑤 𝑎𝑛𝑑 𝑏 that minimize the overall cost function.
+The cost function is the **average** of the loss over the entire training set (the whole batch). The goal of NN training is to find the parameters $\mathbf{w}$ and $b$ that minimize the overall cost function.
 
 $$
 J(\mathbf{w}, b) = \frac{1}{m} \sum_{i=1}^{m} \mathcal{L}^{(i)}
@@ -132,138 +136,31 @@ $$
 
 ---
 
-### 2.12 Binary cross-entropy as a cost function
+### 1.4 Binary cross-entropy as a cost function
 
-Cross-entropy is a way to measure how different two probability distributions are. In machine learning, it usually measures how well a model’s predicted probabilities match the true labels, so it is commonly used as a loss function for classification.
+**Cross-entropy** is a way to measure how different two probability distributions are. In machine learning, it usually measures how well a model's predicted probabilities match the true labels, so it is commonly used as a loss function for classification.
 
-For discrete distributions 
-p
-p and 
-q
-q, cross-entropy is:
+For discrete distributions $p$ and $q$, cross-entropy is
 
-H
-(
-p
-,
-q
-)
-=
-−
-∑
-x
-p
-(
-x
-)
-log
-⁡
-q
-(
-x
-)
-H(p,q)=− 
-x
-∑
-​
- p(x)logq(x)
+$$
+H(p, q) = - \sum_{x} p(x) \log q(x),
+$$
 
-where 
-p
-p is the true distribution,
+where $p$ is the **true** distribution and $q$ is the **predicted** distribution.
 
-q
-q is the predicted distribution
-
-Logistic regression predicts a probability 
-a
-(
-i
-)
-=
-P
-(
-y
-(
-i
-)
-=
-1
-∣
-x
-(
-i
-)
-)
-a 
-(i)
- =P(y 
-(i)
- =1∣x 
-(i)
- ).
-Since the true label 
-y
-(
-i
-)
-y 
-(i)
-  is either 0 or 1, it makes sense to measure how likely the model thinks the true answer is. The cost function does exactly that by taking the negative log-likelihood.
+Logistic regression predicts a probability $a^{(i)} = P\bigl(y^{(i)} = 1 \mid \mathbf{x}^{(i)}\bigr)$. Since the true label $y^{(i)}$ is either $0$ or $1$, it makes sense to measure how likely the model thinks the true answer is. The cost function does exactly that by taking the **negative log-likelihood**.
 
 For one example:
 
-if 
-y
-=
-1
-y=1, the loss becomes 
-−
-log
-⁡
-(
-a
-)
-−log(a)
+- if $y = 1$, the loss becomes $-\log(a)$;
+- if $y = 0$, the loss becomes $-\log(1 - a)$.
 
-if 
-y
-=
-0
-y=0, the loss becomes 
-−
-log
-⁡
-(
-1
-−
-a
-)
-−log(1−a)
+The combined form is
 
-The combined form is:
+$$
+-\bigl( y \log a + (1 - y) \log(1 - a) \bigr).
+$$
 
-−
-(
-y
-log
-⁡
-a
-+
-(
-1
-−
-y
-)
-log
-⁡
-(
-1
-−
-a
-)
-)
-−(yloga+(1−y)log(1−a))
 This is just a compact way to write both cases at once. If the correct class gets low probability, the loss becomes large.
 
 **Probabilistic view.** Assume $y^{(i)} \sim \mathrm{Bernoulli}(a^{(i)})$ with $a^{(i)} = P(y^{(i)}=1\mid \mathbf{x}^{(i)})$. The **negative log-likelihood** for independent examples is
@@ -277,124 +174,67 @@ which is exactly $J$.
 
 **Properties.**
 
-- **Convex** in $(\mathbf{w}, b)$ for logistic regression (sigmoid + cross-entropy), so gradient descent with suitable $\alpha$ finds the global minimum under typical conditions.
-For logistic regression, sigmoid plus cross-entropy gives a convex objective in 
-(
-w
-,
-b
-)
-(w,b).
-That means optimization is much easier than with many other neural-network losses, because gradient descent is not fighting lots of bad local minima in this case.
+- **Convex** in $(\mathbf{w}, b)$ for logistic regression (sigmoid + cross-entropy), so gradient descent with a suitable learning rate $\alpha$ finds the global minimum under typical conditions.
+  For logistic regression, sigmoid plus cross-entropy gives a convex objective in $(\mathbf{w}, b)$. That means optimization is much easier than with many other neural-network losses, because gradient descent is not fighting lots of bad local minima in this case.
 
-- **Penalizes confident mistakes heavily**: if $y^{(i)}=1$ but $a^{(i)}\approx 0$, then $-\log a^{(i)}$ is large.
-For example:
-
-if the true label is 1 and the model predicts 
-a
-=
-0.99
-a=0.99, the loss is small
-
-if the true label is 1 and the model predicts 
-a
-=
-0.01
-a=0.01, the loss is huge
-
-That is good behavior, because being confidently wrong should be punished more than being uncertain.
+- **Penalizes confident mistakes heavily**: if $y^{(i)} = 1$ but $a^{(i)} \approx 0$, then $-\log a^{(i)}$ is large. For example:
+  - if the true label is $1$ and the model predicts $a = 0.99$, the loss is small;
+  - if the true label is $1$ and the model predicts $a = 0.01$, the loss is huge.
+  
+  That is good behavior, because being confidently wrong should be punished more than being uncertain.
 
 - **Matches outputs to probabilities** when trained with this loss, so $a^{(i)}$ is calibrated as an estimate of class probability under the model assumptions.
-Because the output is interpreted as a probability, the model is trained to make the predicted probability match the observed label.
-So after training, 
-a
-a can be read as the model’s estimate of class probability, not just a raw score.
+  Because the output is interpreted as a probability, the model is trained to make the predicted probability match the observed label. So after training, $a$ can be read as the model's estimate of class probability, not just a raw score.
 
 ---
 
-### 2.6 Gradient descent
+### 1.5 Gradient descent
 
-Gradient descent is used for NN training during backpropogation.
+Gradient descent is used for NN training during backpropagation.
 
-**Idea.** Update NN parameters $W$ and $b$ in the direction opposite to the gradient of $J$.
-
-
+**Idea.** Update NN parameters $\mathbf{w}$ and $b$ in the direction **opposite** to the gradient of $J$:
 
 $$
-\mathbf{w} \ := \mathbf{w} - \alpha \,\frac{\partial J}{\partial \mathbf{w}}, \qquad
-b \ := b - \alpha \,\frac{\partial J}{\partial b},
+\mathbf{w} := \mathbf{w} - \alpha \,\frac{\partial J}{\partial \mathbf{w}}, \qquad
+b := b - \alpha \,\frac{\partial J}{\partial b},
 $$
 
 where $\alpha > 0$ is the **learning rate**.
 
-For logistic regression, $\frac{\partial J}{\partial \mathbf{w}}$ and $\frac{\partial J}{\partial b}$ are computed from the same backward expressions as in Sections 2.10–2.11.
-
 ---
 
+### 1.6 Computation graph
 
-
-### 2.7 Computation graph
-
-A **computation graph** is a directed acyclic graph of operations: inputs $\to$ intermediate nodes (sums, products, nonlinearities) $\to$ output loss. A computation graph is a step-by-step map of the forward calculation, and backpropagation uses that map in reverse to apply the chain rule and compute gradients efficiently. Each step is a small operation like add, multiply, or apply a function like sigmoid.
+A **computation graph** is a directed acyclic graph of operations: inputs $\to$ intermediate nodes (sums, products, nonlinearities) $\to$ output loss. A computation graph is a step-by-step map of the forward calculation, and backpropagation uses that map **in reverse** to apply the chain rule and compute gradients efficiently. Each step is a small operation like add, multiply, or apply a function like sigmoid.
 
 For logistic regression (one example), a minimal graph is:
 
-input 
-x
-x, weights 
-w
-w, bias 
-b
-b
-
-compute 
-z
-=
-w
-⊤
-x
-+
-b
-z=w 
-⊤
- x+b
-
-compute 
-a
-=
-σ
-(
-z
-)
-a=σ(z)
-
-compute the loss 
-L
-(
-y
-,
-a
-)
-L(y,a)
+1. inputs $\mathbf{x}$, weights $\mathbf{w}$, bias $b$;
+2. compute $z = \mathbf{w}^\top \mathbf{x} + b$;
+3. compute $a = \sigma(z)$;
+4. compute the loss $\mathcal{L}(y, a)$.
 
 $$
-\mathbf{x},\, \mathbf{w},\, b \;\Rightarrow\; z = \mathbf{w}^\top \mathbf{x} + b \;\Rightarrow\; a = \sigma(z) \;\Rightarrow\; \mathcal{L}(y, a).
+\mathbf{x},\, \mathbf{w},\, b \ \Rightarrow\ z = \mathbf{w}^\top \mathbf{x} + b \ \Rightarrow\ a = \sigma(z) \ \Rightarrow\ \mathcal{L}(y, a).
 $$
 
-With batch training, the same graph is repeated for many examples, or written in vector form so you process the whole batch at once. 
-Batch training repeats the same structure for each column of $\mathbf{X}$, or uses vectorized nodes for $\mathbf{Z}$ and $\mathbf{A}$. The structure is the same; only the shapes become matrices and vectors.
+With batch training, the same graph is repeated for many examples, or written in vector form so you process the whole batch at once. Batch training repeats the same structure for each column of $\mathbf{X}$, or uses vectorized nodes for $\mathbf{Z}$ and $\mathbf{A}$. The structure is the same; only the shapes become matrices and vectors.
 
 ---
 
-### 2.8 Derivatives with a computation graph
+### 1.7 Derivatives with a computation graph
 
-**Backpropagation** means walking backward through the graph and using the chain rule.traverses the graph backward: at each node, multiply local derivatives along paths (chain rule) and sum paths that merge.  If one variable affects the loss through more than one route, all those gradient contributions are added together.
+**Backpropagation** means walking **backward** through the graph and using the chain rule. At each node, multiply local derivatives along paths (chain rule) and **sum** paths that merge. If one variable affects the loss through more than one route, all those gradient contributions are added together.
 
-For a node $u = f(v)$, the contribution to $\dfrac{\partial \mathcal{L}}{\partial v}$ is $\dfrac{\partial \mathcal{L}}{\partial u}\dfrac{\partial f}{\partial v}$.
+For a node $u = f(v)$, the contribution to $\dfrac{\partial \mathcal{L}}{\partial v}$ is
+
+$$
+\frac{\partial \mathcal{L}}{\partial v} \mathrel{+}= \frac{\partial \mathcal{L}}{\partial u}\,\frac{\partial f}{\partial v}.
+$$
 
 ---
 
-### 2.9 Logistic regression: gradient descent (single example)
+### 1.8 Logistic regression: gradient descent (single example)
 
 **Forward:** $z = \mathbf{w}^\top \mathbf{x} + b$, $a = \sigma(z)$,
 
@@ -425,33 +265,31 @@ $$
 
 ---
 
-### 2.10 Gradient descent on $m$ examples (fully vectorized)
+### 1.9 Gradient descent on $m$ examples (fully vectorized)
 
-The main idea is that the gradient is computed over all examples at once: for many training examples, compute all prediction errors together, turn them into gradients with matrix multiplication, and then update 
-w
-w and 
-b
-b in one step.
+The main idea is that the gradient is computed over **all examples at once**: compute all prediction errors together, turn them into gradients with matrix multiplication, and then update $\mathbf{w}$ and $b$ in one step.
 
-Define the column vector of errors (same shape as $\mathbf{Z}^\top$ if $\mathbf{Z}$ is $1 \times m$):
+Define the row vector of errors (same shape as $\mathbf{Z}$, i.e. $1 \times m$):
 
 $$
-\mathbf{dZ} = \mathbf{A} - \mathbf{y} \quad \text{(element-wise; align shapes as } \mathbb{R}^{m} \text{ or } \mathbb{R}^{1\times m} \text{ consistently)},
+\mathbf{dZ} = \mathbf{A} - \mathbf{y} \ \in \mathbb{R}^{1 \times m},
 $$
 
 where
-- $Z$ is ...,
-- $A$ is ...,
-- $y$ is ...
 
-**Gradients of the average cost** $J = \frac{1}{m}\sum_i \mathcal{L}^{(i)}$:
+- $\mathbf{Z} \in \mathbb{R}^{1 \times m}$ is the row vector of logits $z^{(i)} = \mathbf{w}^\top \mathbf{x}^{(i)} + b$,
+- $\mathbf{A} = \sigma(\mathbf{Z}) \in \mathbb{R}^{1 \times m}$ is the row vector of predicted probabilities,
+- $\mathbf{y} \in \mathbb{R}^{1 \times m}$ is the row vector of true labels.
+
+**Gradients of the average cost** $J = \dfrac{1}{m}\sum_i \mathcal{L}^{(i)}$:
 
 $$
 \frac{\partial J}{\partial \mathbf{w}} = \frac{1}{m}\,\mathbf{X}\,\mathbf{dZ}^\top
-\quad \in \mathbb{R}^{n_x},
+\ \in \mathbb{R}^{n_x},
 \qquad
-\frac{\partial J}{\partial b} = \frac{1}{m}\,\mathbf{1}_m^\top \mathbf{dZ}^\top
-\quad \in \mathbb{R}.
+\frac{\partial J}{\partial b} = \frac{1}{m}\,\mathbf{dZ}\,\mathbf{1}_m
+= \frac{1}{m}\sum_{i=1}^{m} \bigl(a^{(i)} - y^{(i)}\bigr)
+\ \in \mathbb{R}.
 $$
 
 **Gradient descent step:**
@@ -461,15 +299,11 @@ $$
 b \leftarrow b - \alpha \,\frac{\partial J}{\partial b}.
 $$
 
-(If $\mathbf{dZ}$ is stored as a row vector $\mathbf{dZ} \in \mathbb{R}^{1\times m}$, use $\frac{\partial J}{\partial \mathbf{w}} = \frac{1}{m}\,\mathbf{X}\,\mathbf{dZ}^\top$ with matching transpose conventions.)
-
 ---
 
-
-
-
-
 ## Summary
+
+Logistic regression is the **simplest** neural network: one layer, one activation, trained by gradient descent on a convex cost — yet it already contains forward pass, loss, backward pass, and vectorization used in deep networks.
 
 | Item | Vectorized form |
 |------|------------------|
@@ -477,6 +311,6 @@ $$
 | Activations | $\mathbf{A} = \sigma(\mathbf{Z})$ |
 | Cost | $J = -\dfrac{1}{m}\sum_{i=1}^{m}\bigl( y^{(i)}\log a^{(i)} + (1-y^{(i)})\log(1-a^{(i)})\bigr)$ |
 | Error signal | $\dfrac{\partial \mathcal{L}^{(i)}}{\partial z^{(i)}} = a^{(i)} - y^{(i)}$; batch: $\mathbf{dZ} = \mathbf{A} - \mathbf{y}$ |
-| Gradients of $J$ | $\dfrac{\partial J}{\partial \mathbf{w}} = \dfrac{1}{m}\mathbf{X}\mathbf{dZ}^\top$, $\dfrac{\partial J}{\partial b} = \dfrac{1}{m}\mathbf{1}_m^\top\mathbf{dZ}^\top$ |
+| Gradients of $J$ | $\dfrac{\partial J}{\partial \mathbf{w}} = \dfrac{1}{m}\mathbf{X}\,\mathbf{dZ}^\top$, $\dfrac{\partial J}{\partial b} = \dfrac{1}{m}\mathbf{dZ}\,\mathbf{1}_m$ |
 
-This is the **simplest** neural network: one layer, one activation, trained by gradient descent on a convex cost—yet it already contains forward pass, loss, backward pass, and vectorization used in deep networks.
+
