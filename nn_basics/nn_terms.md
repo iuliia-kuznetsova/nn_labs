@@ -1,4 +1,4 @@
-# Neural Networks: Terms
+﻿# Neural Networks: Terms
 
 **Notation (used throughout).**
 
@@ -22,7 +22,7 @@
 
 **Layer.** A collection of neurons that share the same input vector (or tensor) and produce a vector of activations. A **fully connected** (dense) layer maps $\mathbf{x} \mapsto g(\mathbf{W}\mathbf{x} + \mathbf{b})$: each row of $\mathbf{W}$ and matching entry in $\mathbf{b}$ is one neuron. Often the same $g$ is applied **element-wise** to the vector $\mathbf{W}\mathbf{x} + \mathbf{b}$ (i.e. once per component).
 
-**Neuron vs layer.** A **neuron** is one such unit: one $\mathbf{w}$, one $b$, one $g$ after one dot product, so one output $a$. A **layer** is **several** neurons **in parallel** on the **same** input $\mathbf{x}$: each has its own $\mathbf{w}$ and $b$ (or, stacked, a matrix $\mathbf{W}$ and vector $\mathbf{b}$), and you collect their outputs into a **vector** $\mathbf{a}$. So: **1 neuron → 1 number; 1 layer → 1 vector** (as many numbers as there are neurons in that layer). The "layer" is the whole block; a "neuron" is one of the units inside it.
+**Neuron vs layer.** A **neuron** is one such unit: one $\mathbf{w}$, one $b$, one $g$ after one dot product, so one output $a$. A **layer** is **several** neurons **in parallel** on the **same** input $\mathbf{x}$: each has its own $\mathbf{w}$ and $b$ (or, stacked, a matrix $\mathbf{W}$ and vector $\mathbf{b}$), and you collect their outputs into a **vector** $\mathbf{a}$. So: **1 neuron â†’ 1 number; 1 layer â†’ 1 vector** (as many numbers as there are neurons in that layer). The "layer" is the whole block; a "neuron" is one of the units inside it.
 
 **Training.** Training a neural network is the process of adjusting its weights and biases to **minimize a loss** on data so it makes better predictions on new data. Training usually uses forward propagation to produce outputs, backpropagation to compute how each weight contributed to the error, and an optimizer like gradient descent to update the weights.
 
@@ -44,7 +44,7 @@
 
 ## 2. Activation Functions
 
-An activation function maps the pre-activation $z$ (a real number) to the activation $a = g(z)$. Its job is to introduce non-linearity — without it, a stack of layers would collapse into one big linear map.
+An activation function maps the pre-activation $z$ (a real number) to the activation $a = g(z)$. Its job is to introduce non-linearity. Without it, a stack of layers would collapse into one big linear map.
 
 ### 2.1 Sigmoid
 
@@ -82,6 +82,169 @@ $$
 - **Derivative.** $\tanh'(z) = 1 - \tanh^2(z)$.
 - **Relation to sigmoid.** $\tanh(z) = 2\sigma(2z) - 1$.
 - **Use.** Often preferred over sigmoid for hidden layers (zero-centered activations help optimization), but still saturates for large $|z|$, so ReLU-family functions usually win in deep nets.
+
+---
+
+### 2.4 Leaky ReLU
+
+$$
+\text{Leaky ReLU}(z) = \max(\alpha z,\; z) = \begin{cases} z, & z > 0 \\ \alpha z, & z \le 0 \end{cases}
+$$
+
+where $\alpha$ is a small constant (commonly $0.01$).
+
+- **Shape.** Linear for positive inputs; small negative slope $\alpha$ for negative inputs (unlike the flat zero of ReLU).
+- **Derivative.** $1$ if $z > 0$; $\alpha$ if $z < 0$ (undefined at $z = 0$; set to either in practice).
+- **Use.** Addresses the **dying ReLU** problem: neurons whose pre-activation is always negative still receive a non-zero gradient and can continue to learn.
+- **Note.** $\alpha$ can also be made a learnable parameter (Parametric ReLU / PReLU). Usually works slightly better than plain ReLU but is less commonly seen in practice.
+
+---
+
+### 2.5 Choosing an Activation Function
+
+| Where | Recommended choice | Why |
+|-------|--------------------|-----|
+| Hidden layers (default) | **ReLU** | Cheap, does not saturate for $z > 0$, fast learning |
+| Hidden layers (alternative) | **Tanh** | Zero-centered outputs make the next layer's optimization easier; still saturates for large $\lvert z\rvert$ |
+| Hidden layers (anti-dying) | **Leaky ReLU** | Avoids dead neurons; comparable to or slightly better than ReLU |
+| Output - binary classification | **Sigmoid** | Outputs a probability in $(0,1)$ |
+| Output - regression (real value) | **Linear (identity)** | $\hat y$ can range over all reals |
+| Output - non-negative regression | **ReLU** | Guarantees $\hat y \ge 0$ |
+
+- **Sigmoid** is almost never used in hidden layers of modern networks; tanh is strictly superior.
+- When unsure, try all candidates on a holdout validation set and keep whichever performs best.
+
+![Main activation functions](main_activation_functions.jpg)
+
+---
+
+### 2.6 Why Non-Linear Activation Functions Are Necessary
+
+If every layer uses a **linear (identity) activation** $g(z) = z$, composing two layers gives:
+
+$$
+a^{[2]} = W^{[2]}\!\bigl(W^{[1]}\mathbf{x} + \mathbf{b}^{[1]}\bigr) + \mathbf{b}^{[2]} = \underbrace{W^{[2]}W^{[1]}}_{W'}\,\mathbf{x} + \underbrace{W^{[2]}\mathbf{b}^{[1]}+\mathbf{b}^{[2]}}_{\mathbf{b}'}.
+$$
+
+No matter how many layers are stacked, the result is still $W'\mathbf{x} + \mathbf{b}'$ -- **a single linear map**. Adding hidden layers with linear activations is therefore pointless: the network cannot learn non-linear patterns and is equivalent to logistic/linear regression with no hidden layers.
+
+**One valid exception.** The **output layer** may use a linear activation when predicting a real-valued quantity (regression). All hidden layers must still use non-linear activations.
+
+---
+
+### 2.7 Derivatives of Activation Functions
+
+During **backpropagation** the network must evaluate the derivative (slope) of the activation function at every neuron. This section collects the formulas, explains the notation, and gives sanity checks.
+
+#### Notation
+
+For an activation function $g$, the derivative with respect to its scalar input $z$ is written either as $\dfrac{d}{dz}g(z)$ or, using the prime shorthand, as $g'(z)$.
+
+When the activation value $a = g(z)$ has already been computed during the forward pass, the derivative can often be expressed more cheaply in terms of $a$ — avoiding a second evaluation of $g$.
+
+#### 2.7.1 Sigmoid
+
+$$
+g(z) = \sigma(z) = \frac{1}{1+e^{-z}}
+$$
+
+$$
+\boxed{g'(z) = \sigma(z)\bigl(1 - \sigma(z)\bigr) = a(1-a)}
+$$
+
+**Derivation sketch.** Using the quotient rule on $\sigma(z)$ yields the product $\sigma(z)(1-\sigma(z))$.
+
+**Sanity checks.**
+
+| $z$ | $a = \sigma(z)$ | $g'(z) = a(1-a)$ | Intuition |
+|-----|-----------------|-------------------|-----------|
+| $+10$ | $\approx 1$ | $\approx 1 \cdot 0 = 0$ | Flat at right tail — gradient vanishes |
+| $-10$ | $\approx 0$ | $\approx 0 \cdot 1 = 0$ | Flat at left tail — gradient vanishes |
+| $0$ | $0.5$ | $0.5 \cdot 0.5 = 0.25$ | Maximum slope is at $z=0$ |
+
+**Cached-value form.** If $a$ is already stored from the forward pass: $g'(z) = a(1-a)$.
+
+---
+
+#### 2.7.2 Tanh
+
+$$
+g(z) = \tanh(z) = \frac{e^{z}-e^{-z}}{e^{z}+e^{-z}}
+$$
+
+$$
+\boxed{g'(z) = 1 - \tanh^2(z) = 1 - a^2}
+$$
+
+**Sanity checks.**
+
+| $z$ | $a = \tanh(z)$ | $g'(z) = 1-a^2$ | Intuition |
+|-----|----------------|-----------------|-----------|
+| $+10$ | $\approx +1$ | $\approx 1 - 1 = 0$ | Saturated — gradient vanishes |
+| $-10$ | $\approx -1$ | $\approx 1 - 1 = 0$ | Saturated — gradient vanishes |
+| $0$ | $0$ | $1 - 0 = 1$ | Maximum slope, steeper than sigmoid at $z=0$ |
+
+**Cached-value form.** $g'(z) = 1 - a^2$.
+
+---
+
+#### 2.7.3 ReLU
+
+$$
+g(z) = \max(0,\,z)
+$$
+
+$$
+\boxed{g'(z) = \begin{cases} 1, & z > 0 \\ 0, & z < 0 \end{cases}}
+$$
+
+- **At $z = 0$:** the derivative is technically undefined (the function has a kink). In practice, setting $g'(0) = 0$ or $g'(0) = 1$ both work; the probability of hitting exactly $z = 0$ in floating-point arithmetic is negligible.
+- **Sub-gradient perspective.** From the viewpoint of convex optimization, any value in $[0,1]$ is a valid sub-gradient at $z=0$, so gradient descent remains valid.
+- **Key advantage.** For $z > 0$ the gradient is a constant $1$ — gradients do **not** vanish in the positive half-space, which speeds up training compared to sigmoid/tanh.
+
+---
+
+#### 2.7.4 Leaky ReLU
+
+$$
+g(z) = \max(\alpha z,\, z), \quad \alpha \ll 1\ (\text{e.g.}\ 0.01)
+$$
+
+$$
+\boxed{g'(z) = \begin{cases} 1, & z > 0 \\ \alpha, & z < 0 \end{cases}}
+$$
+
+- At $z = 0$ the same sub-gradient argument applies; setting $g'(0) = 1$ or $g'(0) = \alpha$ are both acceptable.
+- The non-zero slope $\alpha$ for negative $z$ means **dead neurons cannot occur** — every neuron always receives a gradient signal.
+
+---
+
+#### 2.7.5 Summary Table
+
+| Function | $g(z)$ | $g'(z)$ | Cached form |
+|----------|--------|---------|-------------|
+| Sigmoid | $\sigma(z)$ | $\sigma(z)(1-\sigma(z))$ | $a(1-a)$ |
+| Tanh | $\tanh(z)$ | $1 - \tanh^2(z)$ | $1 - a^2$ |
+| ReLU | $\max(0,z)$ | $\mathbf{1}[z > 0]$ | same |
+| Leaky ReLU | $\max(\alpha z, z)$ | $\mathbf{1}[z > 0] + \alpha\,\mathbf{1}[z \le 0]$ | same |
+
+$\mathbf{1}[\cdot]$ is the indicator function (1 if true, 0 if false).
+
+**Why "cached form" matters.** In a neural network the forward pass already computes and stores $\mathbf{A}^{[\ell]}$. The backward pass can then reuse those stored values:
+
+```python
+# Sigmoid backward
+dZ = dA * A * (1 - A)
+
+# Tanh backward
+dZ = dA * (1 - A**2)
+
+# ReLU backward
+dZ = dA * (Z > 0).astype(float)
+
+# Leaky ReLU backward  (alpha = 0.01)
+dZ = dA * np.where(Z > 0, 1, alpha)
+```
 
 ---
 
@@ -242,3 +405,42 @@ The following table classifies tensor objects by their number of dimensions (ran
 | 3    | 3D tensor  | `[c, h, w]`     | RGB image (Channels, Height, Width) |
 |      | 3D tensor  | `[e, t, f]`     | Panel time series (Entities, Time, Features)
 | 4    | 4D tensor  | `[b, c, h, w]`  | Batch of RGB images (Batch, Channels, Height, Width) |
+
+---
+
+## 6. Weight Initialization
+
+### 6.1 The Symmetry-Breaking Problem
+
+If all weights are initialized to **zero** (or any identical constant), every hidden neuron in a layer computes exactly the same function of the input:
+
+- All neurons receive the same input and have identical weights, so $a^{[1]}_1 = a^{[1]}_2 = \cdots$.
+- Back-propagation produces identical gradients for every neuron.
+- After every weight update the neurons remain identical — by induction they stay symmetric for all iterations of training.
+
+Result: no matter how many hidden units exist, the network behaves as if it had only **one hidden unit per layer**. Multiple units buy nothing.
+
+> **Bias terms** b do **not** cause this problem and can safely be initialized to zero, as long as W is initialized randomly.
+
+### 6.2 Random Initialization
+
+Break symmetry by drawing weights from a random distribution and scaling by a small constant:
+
+```python
+W1 = np.random.randn(n1, n0) * 0.01   # small random values
+b1 = np.zeros((n1, 1))                 # zeros are fine for biases
+
+W2 = np.random.randn(n2, n1) * 0.01
+b2 = np.zeros((n2, 1))
+```
+
+**Why use a small constant (e.g. 0.01)?**
+
+If W is large, the pre-activations z = Wx + b are large in magnitude. For **tanh** or **sigmoid** activations this means the network starts in the **saturated** (flat) region of the curve, where the gradient is near zero, so gradient descent is very slow from the start. Multiplying by a small constant keeps initial z values near zero - in the high-gradient region - so learning starts quickly.
+
+**When to use a different constant.**
+
+| Setting | Typical choice |
+|---------|----------------|
+| Shallow network (1 hidden layer) | 0.01 is usually fine |
+| Deep network | Specialized initializations (Xavier / Glorot, He) are preferred; they scale the variance with layer width and are covered in later material |
