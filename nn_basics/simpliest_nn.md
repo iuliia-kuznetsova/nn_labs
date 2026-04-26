@@ -17,6 +17,8 @@ This note uses **vectorized** notation: one training step updates all parameters
 
 ## 1. Logistic Regression as the Simplest Neural Network
 
+![Simplest NN graph](simplest_nn_graph.png)
+
 ### 1.1 Binary classification
 
 **Goal.** Predict one of two classes, encoded as $y^{(i)} \in \{0, 1\}$.
