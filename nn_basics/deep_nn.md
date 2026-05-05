@@ -195,6 +195,43 @@ $$
 
 $\odot$ is element-wise multiplication. The column sum is `np.sum(..., axis=1, keepdims=True)`.
 
+### 5.3 Explanation of formulas
+
+The key idea is **the chain rule of calculus**. Every backward formula asks: "how does the loss $L$ change if I wiggle this variable a tiny bit?" Since the forward pass defines how variables depend on each other, the chain rule turns those dependencies into gradient formulas. Use shorthand: $dX$ always means $\frac{\partial L}{\partial X}$.
+
+**From $\mathbf{A}^{[\ell]} = g(\mathbf{Z}^{[\ell]})$ → derive $d\mathbf{Z}^{[\ell]}$**
+
+The forward relationship is elementwise: each element $A_i = g(Z_i)$. By the chain rule:
+
+$$\frac{\partial L}{\partial Z_i} = \frac{\partial L}{\partial A_i} \cdot g'(Z_i)$$
+
+Stacked into matrix form (elementwise product):
+
+$$d\mathbf{Z}^{[\ell]} = d\mathbf{A}^{[\ell]} \odot g^{\prime}\!\bigl(\mathbf{Z}^{[\ell]}\bigr)$$
+
+**From $\mathbf{Z}^{[\ell]} = \mathbf{W}^{[\ell]}\mathbf{A}^{[\ell-1]} + \mathbf{b}^{[\ell]}$ → derive $d\mathbf{W}^{[\ell]}$, $d\mathbf{b}^{[\ell]}$, $d\mathbf{A}^{[\ell-1]}$**
+
+$L$ depends on $\mathbf{W}$ only through $\mathbf{Z} = \mathbf{W}\mathbf{A}^{[\ell-1]}$. Differentiating this matrix product gives $\frac{\partial L}{\partial \mathbf{W}} = d\mathbf{Z}\,\mathbf{A}^{[\ell-1]\top}$. The $\frac{1}{m}$ appears because $\mathbf{A}^{[\ell-1]}$ has $m$ columns (one per training example) and you want the **average** gradient:
+
+$$d\mathbf{W}^{[\ell]} = \frac{1}{m}\,d\mathbf{Z}^{[\ell]}\,\mathbf{A}^{[\ell-1]\top}$$
+
+$\mathbf{b}$ is broadcast (added to every column of $\mathbf{Z}$). So its total effect on the loss is the sum of $d\mathbf{Z}$ across all $m$ columns, then averaged:
+
+$$d\mathbf{b}^{[\ell]} = \frac{1}{m}\sum_{\text{cols}} d\mathbf{Z}^{[\ell]}$$
+
+$L$ depends on $\mathbf{A}^{[\ell-1]}$ through $\mathbf{Z} = \mathbf{W}\mathbf{A}^{[\ell-1]}$. Differentiating gives — no $\frac{1}{m}$ because this is passed as-is to the previous layer, not averaged as a parameter update:
+
+$$d\mathbf{A}^{[\ell-1]} = \mathbf{W}^{[\ell]\top}\,d\mathbf{Z}^{[\ell]}$$
+
+The transpose rule ($\mathbf{W} \to \mathbf{W}^\top$, $\mathbf{A} \to \mathbf{A}^\top$) is the matrix analogue of the scalar chain rule — it reverses the direction of the matrix multiplication.
+
+| Forward operation | Backward formula |
+|---|---|
+| $\mathbf{A}^{[\ell]} = g(\mathbf{Z}^{[\ell]})$ | $d\mathbf{Z}^{[\ell]} = d\mathbf{A}^{[\ell]} \odot g'(\mathbf{Z}^{[\ell]})$ |
+| $\mathbf{Z}^{[\ell]} = \mathbf{W}^{[\ell]}\mathbf{A}^{[\ell-1]} + \mathbf{b}^{[\ell]}$ | $d\mathbf{W}^{[\ell]} = \frac{1}{m}\,d\mathbf{Z}^{[\ell]}\,\mathbf{A}^{[\ell-1]\top}$ |
+| $\mathbf{b}$ broadcast over $m$ examples | $d\mathbf{b}^{[\ell]} = \frac{1}{m}\sum_{\text{cols}} d\mathbf{Z}^{[\ell]}$ |
+| $\mathbf{Z}^{[\ell]} = \mathbf{W}^{[\ell]}\mathbf{A}^{[\ell-1]} + \mathbf{b}^{[\ell]}$ | $d\mathbf{A}^{[\ell-1]} = \mathbf{W}^{[\ell]\top}\,d\mathbf{Z}^{[\ell]}$ |
+
 ### 5.3 Cache Rationale
 
 The forward pass computes and stores $\mathbf{Z}^{[\ell]}$ (and optionally $\mathbf{W}^{[\ell]},\, \mathbf{b}^{[\ell]}$) in a cache. The backward pass reads those cached values when computing $g^{[\ell]\prime}(\mathbf{Z}^{[\ell]})$ and the weight gradients. This avoids recomputation.
