@@ -8,6 +8,8 @@ A **shallow neural network** refers to a neural network with exactly **one hidde
 
 ### 1.1 Architecture
 
+![Shallow NN graph](shallow_nn_graph.png)
+
 A shallow neural network with $n_0$ input features, $n_1$ hidden units, and $n_2$ output units has three layers:
 
 | Layer | Index | Description |
@@ -15,8 +17,6 @@ A shallow neural network with $n_0$ input features, $n_1$ hidden units, and $n_2
 | Input layer | $\ell = 0$ | Input features $\mathbf{x} = (x_1, x_2, \ldots, x_{n_0})$; also written $\mathbf{a}^{[0]} = \mathbf{x}$ |
 | Hidden layer | $\ell = 1$ | $n_1$ neurons; activations $\mathbf{a}^{[1]} \in \mathbb{R}^{n_1}$; **not observed** in training data |
 | Output layer | $\ell = 2$ | $n_2$ neurons (typically $n_2 = 1$ for binary classification); outputs $\hat{y} = \mathbf{a}^{[2]}$ |
-
-![Shallow NN graph](shallow_nn_graph.png)
 
 **Why "2-layer"?** By convention the input layer is not counted. The hidden layer is layer 1, the output layer is layer 2.
 

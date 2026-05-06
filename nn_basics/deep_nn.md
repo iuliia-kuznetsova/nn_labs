@@ -8,6 +8,8 @@ A **deep neural network** is a neural network with **more than one hidden layer*
 
 ### 1.1 Architecture
 
+![Deep NN graph](deep_nn_graph.png)
+
 A deep network has three kinds of layers:
 
 | Kind | Layer indices | Role |
