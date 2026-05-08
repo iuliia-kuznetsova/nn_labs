@@ -338,3 +338,51 @@ b1 -= alpha * db1
 W2 -= alpha * dW2
 b2 -= alpha * db2
 ```
+
+## 7. Softmax Regression (Multi-class Classification)
+
+![Softmax graph](softmax.png)
+
+Softmax is a function that turns a list of raw scores into probabilities that add up to 1, so the model can choose one class out of many. It is commonly used at the output layer of neural networks for multiclass classification.
+
+### 7.1 Softmax activation
+
+For $C$ classes, the output layer has $n^{[L]} = C$ units. Instead of sigmoid, apply:
+
+$$t_i = e^{z^{[L]}_i} \qquad (i = 1, \ldots, C)$$
+
+$$\boxed{a^{[L]}_i = \hat{y}_i = \frac{t_i}{\sum_{j=1}^{C} t_j} = \frac{e^{z^{[L]}_i}}{\sum_{j=1}^{C} e^{z^{[L]}_j}}}$$
+
+The output is a probability vector: $\sum_i \hat{y}_i = 1$, all $\hat{y}_i \geq 0$.
+
+NB!
+- Special case of $C = 2$ reduces to logistic regression;
+- Softmax is best when each example belongs to exactly one class. If an example can belong to multiple classes at once, you usually use separate sigmoid outputs instead.
+
+### 7.2 Loss function (cross-entropy)
+
+Softmax is useful because it makes the output easy to interpret and works naturally when the classes are mutually exclusive. It is typically paired with cross-entropy loss, which encourages the model to assign high probability to the correct class and low probability to the others.
+
+For a single example with ground-truth one-hot label $y \in \mathbb{R}^C$:
+
+$$\mathcal{L}(\hat{y}, y) = -\sum_{j=1}^{C} y_j \log \hat{y}_j$$
+
+Since $y$ is one-hot (only one $y_k = 1$, rest zero), this simplifies to:
+
+$$\mathcal{L}(\hat{y}, y) = -\log \hat{y}_k$$
+
+where $k$ is the true class. Minimizing the loss maximizes the predicted probability of the correct class.
+
+**Cost over the full training set:**
+
+$$J = \frac{1}{m}\sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})$$
+
+### 7.3 Backprop for the output layer
+
+The gradient of the loss with respect to $z^{[L]}$ is:
+
+$$dz^{[L]} = \hat{y} - y$$
+
+This is a $C \times 1$ vector (or $C \times m$ for a mini-batch). All other backprop equations proceed as normal from here.
+
+---

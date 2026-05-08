@@ -25,7 +25,7 @@ Not all hyperparameters are equally important. Spend most of your search budget 
 
 **Random search** samples each trial independently at random. For the same number of trials, it explores more distinct values of every hyperparameter — especially valuable when you don't know in advance which ones will matter most.
 
-> Rule: **always prefer random search** in deep learning.
+Rule: **always prefer random search** in deep learning.
 
 ### 2.2 Coarse-to-Fine Search
 
@@ -90,7 +90,10 @@ beta = 1 - 10 ** r
 
 ## 4. Batch Normalization
 
-Batch normalization (Ioffe & Szegedy, 2015) makes hyperparameter search much easier, enables training of very deep networks, and acts as a mild regularizer.
+Batch normalization is a technique that normalizes a layer’s activations within each mini-batch during training, usually by making them have roughly zero mean and unit variance, and then letting the model learn a scale and shift afterward.Batch normalization makes hyperparameter search much easier, enables training of very deep networks, and acts as a mild regularizer.
+
+**Idea**
+Instead of feeding wildly changing activation values into the next layer, batch normalization keeps them in a more stable range from batch to batch. That stability makes optimization easier because gradients tend to behave more smoothly, so training often becomes faster and less sensitive to initialization.
 
 ### 4.1 Batch Norm for a single layer
 
@@ -106,7 +109,8 @@ $$\tilde{z}^{(i)} = \gamma\, z^{(i)}_{\text{norm}} + \beta$$
 
 $\gamma$ and $\beta$ are **learnable parameters** (one per hidden unit per layer), updated by gradient descent (or Adam/RMSprop) just like $W$ and $b$. They allow the network to learn the optimal mean and variance for each layer's activations — setting $\gamma = \sqrt{\sigma^2 + \varepsilon}$ and $\beta = \mu$ recovers the identity map.
 
-> **Note:** the $\beta$ in batch norm is unrelated to the $\beta$ hyperparameters in momentum/Adam.
+**NB!** 
+The $\beta$ in batch norm is unrelated to the $\beta$ hyperparameters in momentum/Adam.
 
 ### 4.2 Integration into a deep network
 
@@ -145,51 +149,11 @@ At test time, substitute $\mu_{\text{run}}$ and $\sigma^2_{\text{run}}$ into the
 
 ---
 
-## 5. Softmax Regression (Multi-class Classification)
-
-### 5.1 Softmax activation
-
-For $C$ classes, the output layer has $n^{[L]} = C$ units. Instead of sigmoid, apply:
-
-$$t_i = e^{z^{[L]}_i} \qquad (i = 1, \ldots, C)$$
-
-$$\boxed{a^{[L]}_i = \hat{y}_i = \frac{t_i}{\sum_{j=1}^{C} t_j} = \frac{e^{z^{[L]}_i}}{\sum_{j=1}^{C} e^{z^{[L]}_j}}}$$
-
-The output is a probability vector: $\sum_i \hat{y}_i = 1$, all $\hat{y}_i \geq 0$.
-
-**Special case:** $C = 2$ reduces to logistic regression.
-
-### 5.2 Loss function (cross-entropy)
-
-For a single example with ground-truth one-hot label $y \in \mathbb{R}^C$:
-
-$$\mathcal{L}(\hat{y}, y) = -\sum_{j=1}^{C} y_j \log \hat{y}_j$$
-
-Since $y$ is one-hot (only one $y_k = 1$, rest zero), this simplifies to:
-
-$$\mathcal{L}(\hat{y}, y) = -\log \hat{y}_k$$
-
-where $k$ is the true class. Minimizing the loss maximizes the predicted probability of the correct class.
-
-**Cost over the full training set:**
-
-$$J = \frac{1}{m}\sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})$$
-
-### 5.3 Backprop for the output layer
-
-The gradient of the loss with respect to $z^{[L]}$ is:
-
-$$dz^{[L]} = \hat{y} - y$$
-
-This is a $C \times 1$ vector (or $C \times m$ for a mini-batch). All other backprop equations proceed as normal from here.
-
----
-
-## 6. Advanced Hyperparameter Optimization Methods
+## 5. Advanced Hyperparameter Optimization Methods
 
 Beyond random/grid search, several more principled algorithms exist.
 
-### 6.1 Bayesian Optimization
+### 5.1 Bayesian Optimization
 
 Builds a **probabilistic surrogate model** (usually a Gaussian Process) of the objective function $f(\lambda)$ (validation loss as a function of hyperparameters $\lambda$). Uses an **acquisition function** to decide where to evaluate next, trading off exploration vs. exploitation.
 
@@ -208,7 +172,7 @@ Common acquisition functions:
 **Cons:** surrogate model fitting becomes expensive with many hyperparameters ($\gtrsim 20$); each evaluation must be sequential.  
 **Libraries:** `scikit-optimize`, `GPyOpt`, `Ax` (Meta), `SMAC`.
 
-### 6.2 Tree-structured Parzen Estimator (TPE)
+### 5.2 Tree-structured Parzen Estimator (TPE)
 
 Used by **Hyperopt** and **Optuna**. Models $p(\lambda \mid \text{good})$ and $p(\lambda \mid \text{bad})$ separately (instead of the full $p(\text{score} \mid \lambda)$) and maximizes the ratio $\frac{p(\lambda \mid \text{good})}{p(\lambda \mid \text{bad})}$.
 
@@ -229,14 +193,14 @@ study.optimize(objective, n_trials=100)
 print(study.best_params)
 ```
 
-### 6.3 Population-Based Training (PBT)
+### 5.3 Population-Based Training (PBT)
 
 Trains a **population** of models in parallel. Periodically, low-performing models **copy** the weights of high-performing ones and **perturb** their hyperparameters. Simultaneously optimizes weights and hyperparameters.
 
 **Pros:** adapts hyperparameters during training (e.g. learning rate schedule emerges automatically); very efficient on large clusters.  
 **Cons:** requires running many models simultaneously.
 
-### 6.4 Hyperband / ASHA
+### 5.4 Hyperband / ASHA
 
 Extends random search with early stopping. Allocates a small budget (e.g. few epochs) to many configurations, keeps the top fraction, gives them more budget, and repeats — like a tournament bracket.
 
@@ -246,7 +210,7 @@ Extends random search with early stopping. Allocates a small budget (e.g. few ep
 **Pros:** much faster than random search when poor configs can be identified early.  
 **Cons:** some hyperparameters (e.g. batch size, architecture) affect performance trajectories non-monotonically — a config that looks bad at epoch 5 might be best at epoch 100.
 
-### 6.5 Summary
+## 7. Summary
 
 | Method | Parallelism | Sample efficiency | Best for |
 |---|---|---|---|
@@ -259,7 +223,7 @@ Extends random search with early stopping. Allocates a small budget (e.g. few ep
 
 ---
 
-## 7. Practical Checklist
+## 8. Practical Checklist
 
 1. **Start with random search** over the most important hyperparameters ($\alpha$, hidden units, batch size).
 2. **Use log scale** for $\alpha$, $\beta$, weight decay $\lambda$.
