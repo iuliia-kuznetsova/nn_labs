@@ -20,43 +20,65 @@ Applied ML is an iterative process: idea → code → experiment → refine. Spl
 
 ### 2.1 Mathematical Origin of Bias and Variance
 
-Assume the true relationship is:
+**Setup.** Assume the true data-generating process is:
 
-$$y = f(x) + \varepsilon, \qquad \varepsilon \sim \mathcal{N}(0, \sigma^2_\varepsilon)$$
+$$y = f(x) + \varepsilon, \qquad \varepsilon \sim \mathcal{N}(0, \sigma^2_\varepsilon), \quad \varepsilon \perp \mathcal{D}$$
 
-where $f(x)$ is the true unknown function and $\varepsilon$ is irreducible noise. You train a model $\hat{f}(x)$ on a dataset $\mathcal{D}$. Because $\mathcal{D}$ is random, $\hat{f}$ is also random — it changes with every different training set you could draw.
+where $f(x)$ is the true unknown function and $\varepsilon$ is irreducible noise independent of everything else. You train a model $\hat{f}(x)$ on a dataset $\mathcal{D}$. Because $\mathcal{D}$ is a random draw, $\hat{f}$ is also random — it changes with every different training set you could draw.
 
-The **expected squared error** at a point $x$, averaged over all possible training datasets, decomposes as:
+We want to understand the **expected MSE** at a fixed point $x$, averaged over all possible training sets $\mathcal{D}$ and noise draws $\varepsilon$:
 
-$$\boxed{\mathbb{E}_{\mathcal{D}}\!\left[(y - \hat{f}(x))^2\right] = \underbrace{\left(f(x) - \mathbb{E}[\hat{f}(x)]\right)^2}_{\text{Bias}^2} + \underbrace{\mathbb{E}\!\left[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2\right]}_{\text{Variance}} + \underbrace{\sigma^2_\varepsilon}_{\text{Irreducible noise}}}$$
+$$\text{MSE}(x) = \mathbb{E}_{\mathcal{D},\,\varepsilon}\!\left[(y - \hat{f}(x))^2\right]$$
 
-**Bias²** — how far the average prediction of your model family is from the truth:
+**Step 1 — substitute** $y = f(x) + \varepsilon$:
+
+$$= \mathbb{E}\!\left[(f(x) + \varepsilon - \hat{f}(x))^2\right]$$
+
+**Step 2 — expand** the square $(a + b)^2 = a^2 + 2ab + b^2$ with $a = f(x) - \hat{f}(x)$ and $b = \varepsilon$:
+
+$$= \mathbb{E}\!\left[(f(x) - \hat{f}(x))^2\right] + 2\,\mathbb{E}\!\left[\varepsilon\,(f(x) - \hat{f}(x))\right] + \mathbb{E}\!\left[\varepsilon^2\right]$$
+
+The middle term vanishes because $\varepsilon$ is independent of $\hat{f}$ and $\mathbb{E}[\varepsilon] = 0$. The last term is the definition of variance of $\varepsilon$, i.e. $\sigma^2_\varepsilon$:
+
+$$= \mathbb{E}_{\mathcal{D}}\!\left[(f(x) - \hat{f}(x))^2\right] + \sigma^2_\varepsilon$$
+
+**Step 3 — decompose** $\mathbb{E}_{\mathcal{D}}[(f(x) - \hat{f}(x))^2]$. Introduce the shorthand $\bar{f}(x) = \mathbb{E}_{\mathcal{D}}[\hat{f}(x)]$ (the mean prediction over all datasets). Add and subtract $\bar{f}(x)$ inside the square:
+
+$$f(x) - \hat{f}(x) = \underbrace{(f(x) - \bar{f}(x))}_{\text{constant w.r.t. }\mathcal{D}} + \underbrace{(\bar{f}(x) - \hat{f}(x))}_{\text{zero-mean w.r.t. }\mathcal{D}}$$
+
+Squaring and taking the expectation over $\mathcal{D}$:
+
+$$\mathbb{E}_{\mathcal{D}}\!\left[(f(x) - \hat{f}(x))^2\right] = (f(x) - \bar{f}(x))^2 + 2\underbrace{(f(x) - \bar{f}(x))}_{\text{const.}}\underbrace{\mathbb{E}_\mathcal{D}[\bar{f}(x) - \hat{f}(x)]}_{=\,0} + \mathbb{E}_{\mathcal{D}}\!\left[(\hat{f}(x) - \bar{f}(x))^2\right]$$
+
+The cross term is zero because $\mathbb{E}_\mathcal{D}[\hat{f}(x)] = \bar{f}(x)$. We are left with:
+
+$$= \underbrace{(f(x) - \bar{f}(x))^2}_{\text{Bias}^2} + \underbrace{\mathbb{E}_{\mathcal{D}}\!\left[(\hat{f}(x) - \bar{f}(x))^2\right]}_{\text{Variance}}$$
+
+**Result — the bias-variance decomposition:**
+
+$$\boxed{\mathbb{E}_{\mathcal{D},\varepsilon}\!\left[(y - \hat{f}(x))^2\right] = \underbrace{\left(f(x) - \mathbb{E}_\mathcal{D}[\hat{f}(x)]\right)^2}_{\text{Bias}^2} + \underbrace{\mathbb{E}_\mathcal{D}\!\left[(\hat{f}(x) - \mathbb{E}_\mathcal{D}[\hat{f}(x)])^2\right]}_{\text{Variance}} + \underbrace{\sigma^2_\varepsilon}_{\text{Irreducible noise}}}$$
+
+**Interpreting each term:**
+
+**Bias²** — the systematic gap between the average prediction of your learning algorithm at $x$ and the true function value $f(x)$:
 
 $$\text{Bias}^2 = \left(f(x) - \mathbb{E}_{\mathcal{D}}[\hat{f}(x)]\right)^2$$
 
-This is a property of the **model class**, not any specific training run. A linear model fitting quadratic data will always be systematically wrong — no amount of data fixes this.
+This is a property of the **model class**, not any specific training run. High bias means the model family is too rigid or misspecified (e.g. a linear model for a strongly nonlinear function). It does not vanish by collecting more data if the model class is fundamentally wrong.
 
-**Variance** — how much predictions fluctuate across different training sets:
+**Variance** — how much the learned function $\hat{f}(x)$ fluctuates around its mean when you retrain on different datasets:
 
 $$\text{Variance} = \mathbb{E}_{\mathcal{D}}\!\left[\left(\hat{f}(x) - \mathbb{E}_{\mathcal{D}}[\hat{f}(x)]\right)^2\right]$$
 
-A complex model memorizes noise in whichever training set it sees, so $\hat{f}$ swings wildly across datasets.
+High variance means the model is too flexible and heavily tuned to specific samples — small changes in data lead to very different $\hat{f}$.
 
-**Irreducible noise** $\sigma^2_\varepsilon$ — inherent randomness in $y$ itself. No model can beat this floor.
+**Irreducible noise** $\sigma^2_\varepsilon$ — randomness in the target that no model can capture (measurement error, intrinsic randomness). No model can beat this floor.
 
 The total error has a **U-shape** as a function of model complexity:
 
 $$\text{Total Error} = \text{Bias}^2 + \text{Variance} + \sigma^2_\varepsilon$$
 
-```
-Error
-  │          Total error
-  │        ╲            ╱
-  │  Variance╲        ╱
-  │            ╲    ╱
-  │       Bias²  ╲╱  ← optimal complexity
-  │──────────────────────── complexity
-```
+![Bias variance](bias_variance.jpg)
 
 | Model | Bias | Variance |
 |---|---|---|
@@ -65,19 +87,57 @@ Error
 
 Deep learning escapes the U-curve because with large networks and enough data: **Bias² → 0** (the network can express $f$), and with regularization + more data **Variance stays controlled**. Instead of picking a point on the tradeoff curve, you move the whole curve down.
 
-### 2.2 Bias-Variance Tradeoff in classical ML
+### 2.2 Bias-Variance Tradeoff in Classical ML
 
 **Bias** is the error from a model being too simple to capture the true pattern — it **underfits**. A high-bias model makes the same systematic mistakes regardless of which training data it sees.
 
 **Variance** is the error from a model being too sensitive to the specific training data it was trained on — it **overfits**. A high-variance model fits the training set well but fails to generalize.
 
-In traditional ML, most things you could do to reduce one would worsen the other:
+![Bias variance tradeoff](bias_variance_tradeoff.png)
 
-- **Increase model complexity** → bias ↓, variance ↑
-- **Decrease model complexity** → bias ↑, variance ↓
-- **Add more training data** → helps variance, but not bias
-- **Reduce regularization** → bias ↓, variance ↑
-- **Increase regularization** → bias ↑, variance ↓
+**The U-shape.** As you increase model complexity (capacity), bias and variance move in opposite directions:
+
+- Bias typically **decreases**: a more flexible model class can better match the true function $f$.
+- Variance typically **increases**: a more flexible model can also fit random noise in the training data.
+
+The total expected error is therefore a sum of two competing terms (plus the irreducible floor):
+
+$$\text{Total Error} = \text{Bias}^2 + \text{Variance} + \sigma^2_\varepsilon$$
+
+- Very simple models: **high bias, low variance** — systematic error dominates.
+- Very complex models: **low bias, high variance** — sensitivity to noise dominates.
+- The sum is often **U-shaped** as a function of complexity: it first decreases (the bias drop dominates) then increases again (the variance explosion dominates).
+
+Training, regularization, and architecture choices are about finding the point on this curve where the total error is minimized — not minimizing bias or variance alone.
+
+In traditional ML, most levers move you along this curve rather than shifting it:
+
+| Action | Bias | Variance |
+|---|---|---|
+| Increase model complexity | ↓ | ↑ |
+| Decrease model complexity | ↑ | ↓ |
+| Add more training data | neutral | ↓ |
+| Reduce regularization | ↓ | ↑ |
+| Increase regularization | ↑ | ↓ |
+
+**Example — polynomial regression.** 
+
+![Two models graph](linear_polynomial_tradeoff.png)
+
+Suppose two models are fitted to data drawn from a curved true function:
+
+- **Degree-1 polynomial (linear regression):** a straight line cannot bend to follow a curved relationship, so it misses key structure in $f$ → **high bias**. But a line has only two parameters, so retraining on different datasets barely changes it → **low variance**.
+
+- **Degree-20 polynomial:** a high-degree polynomial can twist through many training points. On average its predictions can be close to $f$ → **low bias**. However, small changes in the training set cause large swings in the fitted curve, as the polynomial is busy fitting noise → **high variance**.
+
+Concretely, in terms of the decomposition:
+
+| Model | Bias² | Variance | Dominant error source |
+|---|---|---|---|
+| Degree 1 (line) | Large — line can't match the curve | Small — retraining barely moves the line | Bias |
+| Degree 20 | Small — flexible enough to match $f$ on average | Large — wiggles heavily with each dataset | Variance |
+
+The degree-10 model (for example) sits between the two extremes: the function class is flexible enough to match the underlying curve closely on average (low bias), but can still overfit noise, so variance begins to dominate.
 
 ### 2.3 Bias-Variance Tradeoff in the Modern Big-data Deep Models Era
 
@@ -226,19 +286,39 @@ Gradient descent becomes very slow or unstable. Careful weight initialization pa
 
 ## 7. Weight Initialization for Deep Networks
 
-To keep $z = \sum_j w_j x_j$ from exploding or vanishing, set:
+### 7.1 Why Initialization Matters
+
+**Symmetry.** If all weights in a layer are initialized to the same value (including zero), every neuron receives an identical gradient and updates identically forever — the network effectively has only one neuron per layer no matter how wide it is. Weights $W^{[\ell]}$ must be initialized **randomly** to break this symmetry so that different hidden units can learn different features. Biases $b^{[\ell]}$ can safely be set to zero as long as $W^{[\ell]}$ is random.
+
+**Scale matters as much as randomness.** Simply drawing large random values does not work well either:
+
+- Large initial weights push pre-activations $z$ into the saturated tails of sigmoid/tanh, where gradients are nearly zero → training is very slow from step one.
+- With large weights the output $\hat{y}$ is pushed close to 0 or 1 on many examples. When the model is wrong on such an example the cross-entropy loss is enormous, making the cost start very high and optimization erratic.
+- Large weights are also the direct cause of **exploding gradients** in deep networks, which further destabilizes training.
+
+Small random values avoid both saturation and gradient explosion. The cost starts at a reasonable level and gradient descent makes steady progress from the beginning.
+
+**Key takeaways:**
+- Different initializations lead to very different results — initialization is not a detail.
+- Random initialization breaks symmetry; identical initialization (including all-zeros) destroys it.
+- Resist initializing to values that are too large.
+- He initialization is specifically designed for ReLU activations and is the default choice for modern deep networks.
+
+### 7.2 Variance-Calibrated Initialization
+
+To keep $z = \sum_j w_j x_j$ from exploding or vanishing as the signal travels through many layers, choose the initial weight variance to compensate for the fan-in of each layer:
 
 $$\text{Var}(w_j) = \frac{c}{n^{[\ell-1]}}$$
 
-where $n^{[\ell-1]}$ is the number of inputs to the layer. In practice:
+where $n^{[\ell-1]}$ is the number of inputs to the layer and $c$ depends on the activation function:
 
-| Activation | Initialization | Constant $c$ | Name |
+| Activation | Formula | Constant $c$ | Name |
 |---|---|---|---|
 | ReLU | `np.random.randn(...) * np.sqrt(2 / n^[l-1])` | 2 | He initialization |
 | Tanh | `np.random.randn(...) * np.sqrt(1 / n^[l-1])` | 1 | Xavier initialization |
-| Alternative | `np.random.randn(...) * np.sqrt(2 / (n^[l-1] + n^[l]))` | — | Glorot |
+| General | `np.random.randn(...) * np.sqrt(2 / (n^[l-1] + n^[l]))` | — | Glorot |
 
-The variance parameter can also be treated as a hyperparameter to tune.
+The factor of 2 in He initialization accounts for the fact that ReLU zeros out half of its inputs on average, so the effective variance would otherwise be halved at every layer. The variance scaling constant can also be treated as a hyperparameter and tuned on a validation set.
 
 ---
 
@@ -272,3 +352,42 @@ $$\text{ratio} = \frac{\|d\theta_{\text{approx}} - d\theta\|_2}{\|d\theta_{\text
 - **Include the regularization term** in $J$ when checking.
 - **Does not work with dropout** (cost is not deterministic). Turn dropout off, verify grad check passes, then re-enable dropout.
 - Consider running grad check both at initialization (small $w$) and after some training steps (larger $w$) to catch bugs that only appear away from zero.
+
+---
+
+## Summary: Techniques and What Problem They Solve
+
+### Core techniques (covered in this document)
+
+| Technique | Main problem it addresses | How it helps |
+|---|---|---|
+| **L2 regularization** (weight decay) | Overfitting / high variance; large weights | Penalizes large weights, shrinking them toward zero; reduces effective model complexity and improves generalization |
+| **Dropout** | Overfitting / high variance; co-adaptation of neurons | Randomly turns off neurons during training so the network cannot rely on any single path; behaves like an ensemble, reducing variance |
+| **Data augmentation** | Overfitting due to small or non-diverse training data | Artificially enlarges and diversifies the training set (crops, rotations, noise); the model learns robust patterns instead of memorizing specific examples |
+| **Gradient checking** | Bugs in gradient computation (wrong backprop implementation) | Numerically verifies that analytical gradients are correct; does **not** reduce overfitting or improve generalization |
+| **Weight initialization** (Xavier, He, Glorot) | Unstable training — vanishing or exploding gradients, slow convergence | Makes activations and gradients better-behaved at the start of training; improves **trainability**, not directly variance or overfitting |
+
+### Additional techniques (broader toolkit)
+
+| Technique | Main problem it addresses | How it helps |
+|---|---|---|
+| **L1 regularization** (Lasso) | Overfitting; irrelevant features | Shrinks some weights exactly to zero, reducing overfitting and performing implicit feature selection |
+| **Early stopping** | Overfitting | Halts training when validation loss stops improving, cutting off the point where the model starts memorizing noise |
+| **More training data** | High variance | Naturally reduces variance by giving the model better statistics to learn from |
+| **Ensemble methods** (bagging, random forests, …) | High variance | Average many models trained on different data subsets; individual errors cancel out, lowering overall variance |
+| **Reducing model capacity** (fewer layers / units / simpler architecture) | High variance | Trades some bias for lower variance by limiting the model's ability to fit noise |
+| **Batch normalization** | Unstable training; slow convergence; sometimes variance | Normalizes layer inputs, smoothing the loss surface and stabilizing gradients; often improves generalization as a side effect |
+
+### Quick-reference: bias vs. variance vs. optimization
+
+| Technique | Reduces bias | Reduces variance | Improves optimization |
+|---|:---:|:---:|:---:|
+| Bigger / more complex model | ✓ | | |
+| L2 / L1 regularization | | ✓ | |
+| Dropout | | ✓ | |
+| More training data | | ✓ | |
+| Data augmentation | | ✓ | |
+| Early stopping | | ✓ | |
+| Weight initialization | | | ✓ |
+| Batch normalization | | (✓) | ✓ |
+| Gradient checking | | | ✓ (debugging) |
