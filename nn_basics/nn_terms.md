@@ -444,3 +444,73 @@ If W is large, the pre-activations z = Wx + b are large in magnitude. For **tanh
 |---------|----------------|
 | Shallow network (1 hidden layer) | 0.01 is usually fine |
 | Deep network | Specialized initializations (Xavier / Glorot, He) are preferred; they scale the variance with layer width and are covered in later material |
+
+---
+
+## 7. Model Performance Evaluation
+
+### 7.1 Training Accuracy vs. Test Accuracy
+
+After training, two key numbers are usually reported:
+
+- **Training accuracy** — how well the model performs on the examples it was trained on.
+- **Test accuracy** — how well it performs on held-out examples it has never seen.
+
+The relationship between these two numbers is the primary signal for diagnosing how well a model generalizes.
+
+### 7.2 The Common Pattern and the Common Misconception
+
+It is widely observed that *test accuracy tends to be lower than training accuracy* when a model overfits — and this is true. However, it is **not** a law:
+
+> Test accuracy is not required to be lower than training accuracy.
+
+It can be slightly higher, roughly equal, or clearly lower depending on the situation. Treating "test accuracy > training accuracy" as proof of no overfitting, or "test accuracy ≤ training accuracy" as the only valid outcome, are both mistakes.
+
+### 7.3 Why Test Accuracy Can Be Higher Than Training Accuracy
+
+Several factors can produce test accuracy that equals or exceeds training accuracy even in a correctly functioning model:
+
+**1. Regularization is active during training but not at test time.**
+Techniques like dropout zero out neurons during the forward pass at training time, which makes training harder and effectively lowers training accuracy. At test time the full network is used, so test accuracy benefits from all neurons — this alone can make the test number higher than the training number.
+
+**2. Train/test split randomness.**
+With small datasets, a random split can produce a test set that is slightly "easier" than the training set — better-balanced classes, less noisy examples, or fewer hard edge cases. This is a statistical artifact of the split, not evidence of good or bad generalization.
+
+**3. How metrics are computed.**
+Train accuracy is often measured with dropout on and batch normalization in training mode; test accuracy is measured with dropout off and batch normalization in inference mode. These are not the same computational graph, so a direct numerical comparison needs to account for these differences.
+
+### 7.4 How to Actually Judge Generalization
+
+A small gap between training and test accuracy, with both numbers being high, is the reliable indicator of good generalization — not the sign of the difference.
+
+| Observation | Likely interpretation |
+|---|---|
+| Train: high, Test: much lower | Overfitting — model memorizes training data |
+| Train: low, Test: low | Underfitting — model too simple or undertrained |
+| Train: high, Test: similarly high | Good generalization |
+| Train: slightly lower than Test | Normal when regularization is active during training; not a problem |
+| Train: high, Test: high, gap tiny | Strong signal that the model generalizes well |
+
+**Better diagnostic checklist:**
+1. Both train and test accuracy are reasonably high.
+2. The gap between them is small.
+3. Results are stable across different random seeds and splits (not a lucky split artifact).
+4. Dev-set performance guided hyperparameter choices (test set was not touched until the end).
+
+### 7.5 Overfitting, Underfitting, and the Accuracy Gap
+
+**Overfitting** (high variance): the model has learned noise specific to the training set.
+- Train accuracy: high.
+- Test accuracy: notably lower.
+- Fix: regularization (L2, dropout), more data, simpler architecture.
+
+**Underfitting** (high bias): the model is too simple to capture the true pattern.
+- Train accuracy: low.
+- Test accuracy: similarly low (or even close to train).
+- Fix: bigger network, more training, better features.
+
+**Good fit**: the model captures the true pattern without memorizing noise.
+- Train accuracy: high.
+- Test accuracy: close to train accuracy (may be slightly above or below).
+
+The goal of training is not to achieve the lowest possible training error, but to achieve the smallest possible gap between training and test error while keeping both high.

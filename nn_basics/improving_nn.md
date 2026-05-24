@@ -186,72 +186,126 @@ Done (low bias + low variance)
 
 ### 4.1 L2 Regularization (Weight Decay)
 
-**Logistic regression cost with L2:**
+L2 regularization addresses overfitting by adding a penalty term to the cost function that discourages large weights. Forcing the model to use smaller, smoother weights reduces its ability to memorize noise in the training set, which lowers variance — often at the cost of a slight increase in bias if $\lambda$ is set too large.
+
+**Effect on the cost function.** A regularization term proportional to the squared magnitude of the weights is added to the original loss:
 
 $$J(w, b) = \frac{1}{m}\sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)}) + \frac{\lambda}{2m}\|w\|_2^2$$
 
-where $\|w\|_2^2 = \sum_{j=1}^{n_x} w_j^2 = w^\top w$.
+where $\|w\|_2^2 = \sum_{j} w_j^2 = w^\top w$. For a full neural network the penalty sums over every layer using the Frobenius norm:
 
-**Neural network cost with L2 (Frobenius norm):**
+$$J = \frac{1}{m}\sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)}) + \frac{\lambda}{2m}\sum_{\ell=1}^{L} \left\|W^{[\ell]}\right\|_F^2, \qquad \left\|W^{[\ell]}\right\|_F^2 = \sum_{i,j} \left(W^{[\ell]}_{i,j}\right)^2$$
 
-$$J = \frac{1}{m}\sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)}) + \frac{\lambda}{2m}\sum_{\ell=1}^{L} \left\|W^{[\ell]}\right\|_F^2$$
-
-$$\left\|W^{[\ell]}\right\|_F^2 = \sum_{i=1}^{n^{[\ell]}} \sum_{j=1}^{n^{[\ell-1]}} \left(W^{[\ell]}_{i,j}\right)^2$$
-
-**Modified gradient (backprop + regularization term):**
+**Effect on backpropagation.** The regularization term contributes an extra term to every weight gradient:
 
 $$dW^{[\ell]} \leftarrow dW^{[\ell]} + \frac{\lambda}{m} W^{[\ell]}$$
 
-**Weight update (why it's called "weight decay"):**
+**Effect on the weight update — weight decay.** Substituting into the gradient descent update:
 
 $$W^{[\ell]} \leftarrow W^{[\ell]} - \alpha \, dW^{[\ell]} = \left(1 - \frac{\alpha\lambda}{m}\right)W^{[\ell]} - \alpha \cdot (\text{backprop term})$$
 
-The factor $\left(1 - \frac{\alpha\lambda}{m}\right)$ is slightly less than 1, so the weights shrink on every step.
+The factor $\left(1 - \frac{\alpha\lambda}{m}\right)$ is slightly less than 1, so the weights are multiplied by a number less than one on every update step — they *decay* toward zero. This is why L2 regularization is also called **weight decay**.
 
 **Why it reduces overfitting:**
-1. Large $\lambda$ forces $W \approx 0$, effectively simplifying the network toward logistic regression.
-2. Small weights → small $z$ values → activations stay in the linear region of tanh → network behaves more like a linear model, less able to overfit.
+1. Large $\lambda$ pushes $W \approx 0$, effectively simplifying the network toward logistic regression.
+2. Smaller weights → smaller pre-activations $z$ → activations stay in the approximately linear region of tanh/sigmoid → the network behaves more like a linear model and has less capacity to overfit.
+3. The decision boundary becomes smoother. However, if $\lambda$ is **too large**, the model over-smooths and develops high bias — so $\lambda$ must be tuned.
 
-**L1 regularization** (less common): replaces $\|w\|_2^2$ with $\|w\|_1 = \sum |w_j|$. Produces sparse weights.
+$\lambda$ is a hyperparameter that should be tuned on the dev set.
 
-$\lambda$ is a hyperparameter tuned on the dev set.
+**L1 regularization** (less common): replaces $\|w\|_2^2$ with $\|w\|_1 = \sum |w_j|$. Produces sparse weights and performs implicit feature selection.
 
 ---
 
 ### 4.2 Dropout Regularization
 
-Randomly zero out each hidden unit with probability $1 - \text{keep\_prob}$ on every forward pass.
+Dropout randomly shuts down a fraction of neurons on each training iteration. At each forward pass, every neuron in a layer is independently kept with probability $\text{keep\_prob}$ or zeroed out with probability $1 - \text{keep\_prob}$. Dropped neurons contribute nothing to either the forward or the backward pass for that iteration.
 
-**Inverted dropout (recommended implementation) for layer $\ell$:**
+The key intuition: at each iteration you are effectively training a different, smaller network that uses only a random subset of neurons. Because any neuron might be absent at the next step, neurons cannot co-adapt — they cannot learn to rely on specific other neurons always being present. This forces the network to learn more robust, distributed representations, which reduces variance.
+
+#### The four steps of inverted dropout
+
+For each hidden layer $\ell$ and each forward pass:
+
+1. **Sample a Bernoulli mask** $D^{[\ell]}$ with the same shape as $A^{[\ell]}$, where each entry is 1 with probability $\text{keep\_prob}$ and 0 otherwise:
 
 ```python
-d_l = np.random.rand(*a_l.shape) < keep_prob   # boolean mask
-a_l = a_l * d_l                                 # zero out units
-a_l = a_l / keep_prob                           # rescale (inverted dropout)
+D_l = (np.random.rand(*A_l.shape) < keep_prob).astype(int)
 ```
 
-Dividing by `keep_prob` ensures the **expected value** of $a^{[\ell]}$ is unchanged, so test-time predictions need no extra scaling.
+2. **Zero out neurons** by element-wise multiplying the activations with the mask:
 
-**At test time:** do not apply dropout (use the full network).
+```python
+A_l = A_l * D_l
+```
 
-**Why it works:**
-- Each unit cannot rely on any single input feature → forced to spread weights → similar effect to L2 regularization.
-- Formally, dropout is an adaptive form of L2 regularization with different penalties per weight.
+3. **Scale the surviving activations** by $1/\text{keep\_prob}$ (inverted dropout):
 
-**Practical notes:**
-- Apply stronger dropout (lower `keep_prob`) to larger layers (more parameters → more risk of overfitting).
-- Dropout is most common in computer vision where data is scarce.
-- Dropout makes the cost function $J$ non-deterministic → turn off dropout (set `keep_prob = 1`) when plotting $J$ to verify it decreases.
+```python
+A_l = A_l / keep_prob
+```
+
+4. Pass $A^{[\ell]}$ forward as usual.
+
+#### Why divide by keep_prob? (Inverted dropout)
+
+Without the scaling step, dropout would shrink the expected activation of every neuron. For a single neuron with activation $a$ and $\text{keep\_prob} = p$:
+
+$$\mathbb{E}[A_{\text{drop}}] = p \cdot a + (1-p) \cdot 0 = p \cdot a$$
+
+The next layer would receive, on average, only a fraction $p$ of the signal it expects — but at test time (when dropout is off) it receives the full $a$. This train–test scale mismatch hurts performance.
+
+By dividing surviving activations by $p$, the expectation is restored:
+
+$$\mathbb{E}[A_{\text{drop}}] = p \cdot \frac{a}{p} + (1-p) \cdot 0 = a$$
+
+The network sees the same expected signal scale during training and inference, so **no adjustment is needed at test time** — just run the full network as-is. This is the practical reason modern frameworks (PyTorch, TensorFlow, etc.) use inverted dropout by default: the inference graph requires no special-case rescaling, which simplifies deployment.
+
+> **Alternative (original dropout paper style):** do not rescale during training, but multiply the outgoing weights of the next layer by $\text{keep\_prob}$ at test time. Both approaches solve the same scaling mismatch, but inverted dropout is preferred because it keeps the test-time graph clean.
+
+**At test time:** disable dropout entirely and use the full network (no masks, no rescaling).
+
+#### Why it reduces overfitting
+
+- Neurons cannot rely on any single co-activated partner, so the network spreads information across many paths — an implicit ensemble effect.
+- Formally, dropout can be seen as an adaptive form of L2 regularization with per-weight penalties.
+- Each training step optimizes a different random sub-network; averaging over many such sub-networks reduces variance.
+
+#### Practical notes
+
+- Use lower `keep_prob` (stronger dropout) for larger layers, which carry more risk of overfitting.
+- Dropout is most commonly applied in computer vision, where labeled data can be scarce.
+- Dropout makes $J$ non-deterministic. When verifying that $J$ decreases over iterations, **set `keep_prob = 1`** to disable dropout and get a deterministic cost curve.
 
 ---
 
 ### 4.3 Other Regularization Methods
 
-**Data augmentation:** artificially expand the training set (e.g. flip, crop, rotate images; distort digits). Acts as a regularizer at near-zero extra cost.
+#### Data augmentation
 
-**Early stopping:** stop training when dev-set error starts increasing.
-- Advantage: tries many values of $\|W\|$ in one training run.
-- Disadvantage: couples optimization (minimize $J$) and regularization (reduce variance), making each harder to tune independently. L2 regularization is preferred because it decouples the two.
+Data augmentation artificially expands and diversifies the training set by applying label-preserving transformations to existing examples — for instance, random crops, horizontal flips, rotations, color jitter, or small noise additions for images, and character distortions for digit recognition.
+
+The model is exposed to many variants of the same underlying pattern during training, so it is forced to learn invariant features (e.g. "this is a cat regardless of orientation or lighting") rather than memorizing specific pixel-level details. This reduces overfitting because the model cannot simply cram individual training examples; it must generalize from a richer, more varied distribution.
+
+Data augmentation acts as a regularizer at near-zero extra cost: you do not need more labeled data, only more computationally cheap transformations of what you already have.
+
+#### How L2, dropout, and data augmentation all fight overfitting
+
+All three techniques attack the same core problem — the model being too sensitive to noise in the training set — but through different mechanisms:
+
+| Technique | Mechanism | Main effect |
+|---|---|---|
+| **L2 regularization** | Penalizes large weights in the cost, constraining model capacity | Learns smoother, simpler mappings; reduces variance |
+| **Dropout** | Randomly disables neurons each step, preventing co-adaptation | Implicit ensemble; forces robust distributed representations; reduces variance |
+| **Data augmentation** | Expands training distribution with label-preserving transforms | Model sees more varied examples; learns invariant features; reduces variance |
+
+Each pushes the model away from memorizing noise and toward learning patterns that generalize.
+
+#### Early stopping
+
+Stop training when dev-set error starts increasing.
+- **Advantage:** explores many values of $\|W\|$ in a single training run.
+- **Disadvantage:** couples optimization (minimize $J$) with regularization (reduce variance), making each harder to tune independently. L2 regularization is generally preferred because it decouples the two concerns.
 
 ---
 
@@ -324,34 +378,63 @@ The factor of 2 in He initialization accounts for the fact that ReLU zeros out h
 
 ## 8. Gradient Checking
 
-Used to verify that backprop is implemented correctly. Uses the **two-sided (centered) difference** approximation, which has error $O(\varepsilon^2)$ vs. $O(\varepsilon)$ for one-sided:
+Gradient checking is a debugging technique used to verify that a backpropagation implementation is correct. It works by comparing the analytical gradients produced by backprop against a purely numerical approximation computed using only forward passes. If the two agree closely, the backprop code is almost certainly correct; a large discrepancy reveals a bug.
 
-$$g(\theta) \approx \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2\varepsilon}$$
+Gradient checking is **slow** — it requires two forward passes per parameter — so it should never be left on during normal training. Run it once to confirm correctness, then disable it.
 
-### Procedure
+### 8.1 The Numerical Approximation
 
-1. Reshape and concatenate all parameters $W^{[1]}, b^{[1]}, \ldots, W^{[L]}, b^{[L]}$ into one vector $\theta$.
-2. Do the same for all gradients to get $d\theta$.
-3. For each component $i$, compute:
+For a scalar parameter $\theta$, the gradient can be approximated by the **two-sided (centered) difference**:
+
+$$\frac{\partial J}{\partial \theta} \approx \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2\varepsilon}$$
+
+
+This is the **central difference formula** for the derivative — a symmetric approximation of the slope at $\theta$:
+
+- Look a little to the right: evaluate $J(\theta + \varepsilon)$.
+- Look a little to the left: evaluate $J(\theta - \varepsilon)$.
+- Take the difference in outputs and divide by the total distance between the two points, $2\varepsilon$.
+
+Because the two evaluation points are placed symmetrically around $\theta$, the first-order errors cancel out, giving approximation error $O(\varepsilon^2)$ — much more accurate than the one-sided difference $\frac{J(\theta+\varepsilon) - J(\theta)}{\varepsilon}$ whose error is only $O(\varepsilon)$. A typical value is $\varepsilon = 10^{-7}$.
+
+### 8.2 Flattening Parameters into a Vector
+
+In a real network, $\theta$ is not a scalar — it is a collection of matrices and vectors: $W^{[1]}, b^{[1]}, \ldots, W^{[L]}, b^{[L]}$. Gradient checking requires operating on all parameters uniformly, so they are first **flattened and concatenated** into a single long vector $\theta \in \mathbb{R}^P$, where $P$ is the total number of parameters.
+
+```
+parameters dict  ──►  dictionary_to_vector()  ──►  θ  (flat vector, length P)
+                 ◄──  vector_to_dictionary()  ◄──
+```
+
+- `dictionary_to_vector`: reshapes every parameter matrix/vector into a 1-D array and stacks them all into one vector $\theta$.
+- `vector_to_dictionary`: the inverse — splits $\theta$ back into the original shapes and rebuilds the parameters dictionary.
+
+The same flattening is applied to the gradient dictionary produced by backprop, giving a single vector $d\theta$ of the same length $P$.
+
+### 8.3 Procedure
+
+1. **Flatten** all parameters into $\theta \in \mathbb{R}^P$ and all backprop gradients into $d\theta \in \mathbb{R}^P$.
+2. **For each index $i$** from $1$ to $P$, nudge only the $i$-th component and compute the numerical gradient:
 
 $$d\theta_{\text{approx}}^{[i]} = \frac{J(\theta_1, \ldots, \theta_i + \varepsilon, \ldots) - J(\theta_1, \ldots, \theta_i - \varepsilon, \ldots)}{2\varepsilon}$$
 
-4. Check the relative difference:
+3. **Compare** the full numerical gradient vector $d\theta_{\text{approx}}$ against the backprop gradient $d\theta$ using a normalized difference (Euclidean distance divided by the combined norm):
 
 $$\text{ratio} = \frac{\|d\theta_{\text{approx}} - d\theta\|_2}{\|d\theta_{\text{approx}}\|_2 + \|d\theta\|_2}$$
 
 | Ratio | Verdict |
 |---|---|
-| $\sim 10^{-7}$ or smaller | Correct |
-| $\sim 10^{-5}$ | Examine closely |
-| $\sim 10^{-3}$ or larger | Likely a bug |
+| $\sim 10^{-7}$ or smaller | Correct — backprop is almost certainly bug-free |
+| $\sim 10^{-5}$ | Suspicious — examine individual components |
+| $\sim 10^{-3}$ or larger | Bug present — something in backprop is wrong |
 
-### Implementation notes
-- Only use grad check for **debugging**, not during training (too slow).
-- If check fails, inspect individual components of $d\theta_{\text{approx}} - d\theta$ to localize the bug (e.g. all large errors in $db^{[\ell]}$ → bug in that layer's bias gradient).
-- **Include the regularization term** in $J$ when checking.
-- **Does not work with dropout** (cost is not deterministic). Turn dropout off, verify grad check passes, then re-enable dropout.
-- Consider running grad check both at initialization (small $w$) and after some training steps (larger $w$) to catch bugs that only appear away from zero.
+### 8.4 Implementation Notes
+
+- **Debug only, never train.** Each call to grad check costs $2P$ forward passes, which is prohibitively slow during training.
+- **Localize bugs by component.** If the ratio is large, inspect the individual entries of $d\theta_{\text{approx}} - d\theta$. A cluster of large errors in the entries corresponding to $db^{[\ell]}$, for example, points directly to a bug in that layer's bias gradient.
+- **Include regularization.** If the cost $J$ includes an L2 penalty, that term must also be included when computing $J(\theta \pm \varepsilon)$; otherwise the numerical and analytical gradients measure different things.
+- **Incompatible with dropout.** Dropout makes $J$ non-deterministic (different neurons are dropped on each call), so the numerical approximation is unreliable. Disable dropout (set `keep_prob = 1`) before running grad check, verify correctness, then re-enable dropout.
+- **Check at multiple points.** Run grad check both at initialization (small $W$) and after a few training steps (larger $W$) to catch bugs that only surface away from zero.
 
 ---
 
