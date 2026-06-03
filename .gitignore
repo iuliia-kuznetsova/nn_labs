@@ -1,0 +1,51 @@
+# ============================================================
+# .gitignore for nn_labs
+# ============================================================
+
+# ── Virtual environment ──────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── Jupyter Notebook artifacts ───────────────────────────────
+# Checkpoint files auto-created by Jupyter (not source code)
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# ── Python cache ─────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ── Trained model files ──────────────────────────────────────
+*.keras
+*.h5
+*.weights.h5
+saved_model/
+
+# ── Dataset files (large, not meant for version control) ─────
+*.csv
+*.json
+# Keep metadata files if needed — comment out the line above
+# and uncomment below to be more selective:
+# time_series/data/
+
+# ── OS / editor noise ────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+
+# ── Cursor IDE ───────────────────────────────────────────────
+.cursor/
+
+# ── Pytest / coverage ────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Distribution / build artifacts ───────────────────────────
+dist/
+build/
+*.egg-info/

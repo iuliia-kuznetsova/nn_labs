@@ -1,0 +1,33 @@
+# ============================================================
+# Requirements for nn_basics/labs
+# ============================================================
+# Install all dependencies with:
+#   pip install -r requirements.txt
+#
+# NOTE: lab8_tensorflow_introduction.ipynb was originally
+# written against TensorFlow 2.3.0 (Coursera assignment).
+# The tensorflow pin below targets the current stable release
+# and is fully compatible with lab8_tensorflow.ipynb.
+# If you need strict 2.3 compatibility for the grader, pin:
+#   tensorflow==2.3.0
+# ============================================================
+
+# ── Core numerical / scientific stack ───────────────────────
+numpy>=1.24,<3.0          # arrays, linear algebra  (labs 1–8)
+scipy>=1.10               # ndimage, io.loadmat      (labs 2, 7)
+
+# ── Data I/O ─────────────────────────────────────────────────
+h5py>=3.8                 # read .h5 dataset files  (labs 2, 8_intro)
+
+# ── Visualisation ───────────────────────────────────────────
+matplotlib>=3.7           # plots, decision boundaries (labs 2–8)
+
+# ── Image processing ────────────────────────────────────────
+Pillow>=9.5               # PIL.Image loading        (lab 2)
+
+# ── Machine learning utilities ──────────────────────────────
+scikit-learn>=1.2         # datasets, linear_model   (labs 3, 4, 7)
+
+# ── Deep learning framework ─────────────────────────────────
+tensorflow>=2.12          # tf.Variable, GradientTape, Keras (labs 8, 8_intro)
+# tensorflow-cpu>=2.12    # uncomment instead if you have no GPU
