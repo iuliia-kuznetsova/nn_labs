@@ -1,5 +1,17 @@
 # Optimization Algorithms
 
+A practical reference for tuning neural networks: 
+- Mini-Batch Gradient Descent;
+- Exponentially Weighted Averages;
+- Momentum;
+- RMSprop (Root Mean Square Prop);
+- ADAM (Adaptive Moment Estimation);
+- Learning Rate Decay;
+- The Problem of Local Optima
+and interview-style pitfalls.
+
+---
+
 ## 1. Mini-Batch Gradient Descent
 
 Mini-batch gradient descent is an optimization method that splits the training set into small subsets called mini-batches and performs one gradient descent update per mini-batch. This lets the model start making progress before processing the entire dataset, combining the stability of batch gradient descent with the speed of stochastic gradient descent.
@@ -581,3 +593,5 @@ Algorithms like momentum, RMSprop, and Adam help escape plateaus faster by accum
 - **Plot $J$ vs. epoch** to diagnose: if $J$ increases or oscillates wildly, $\alpha$ is too large; if $J$ decreases very slowly, $\alpha$ is too small.
 - With **dropout**, $J$ is non-deterministic — temporarily set `keep_prob = 1` to verify $J$ decreases monotonically before enabling dropout.
 - **Learning rate decay** is more important for fine-grained convergence near the end of training than for early-phase learning.
+
+---

@@ -1,5 +1,17 @@
 # Neural Networks: Logistic Regression as the Simplest Network
 
+Logistic Regression as the Simplest Neural Network basic:
+ Terms and Architecture;
+ Activation Functions;
+ Gradients and Derivatives;
+ Gradient Descent;
+ Tensors;
+ Weights Initialization;
+ Model Performance Evaluation
+and interview-style pitfalls.
+
+---
+
 This note uses **vectorized** notation: one training step updates all parameters using full matrices for $m$ examples at once.
 
 **Notation (used throughout).**

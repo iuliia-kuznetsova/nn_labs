@@ -1,5 +1,17 @@
 ﻿# Neural Networks: Terms
 
+Neural networks basic:
+ Terms and Architecture;
+ Activation Functions;
+ Gradients and Derivatives;
+ Gradient Descent;
+ Tensors;
+ Weights Initialization;
+ Model Performance Evaluation
+and interview-style pitfalls.
+
+---
+
 **Notation (used throughout).**
 
 - $n_x$: number of features per example.
@@ -39,6 +51,17 @@
 **Linear regression** is a **single neuron** with identity activation and no hidden layer.
 
 **Logistic regression** is a **single neuron** with sigmoid activation and no hidden layer.
+
+### 1.1 Tricky interview questions
+
+**Q1. If a neural network has many layers but no nonlinear activations, is it still more powerful than one linear layer?**  
+No. A composition of linear maps is still one linear map, so hidden linear layers do not add representational power.
+
+**Q2. Is logistic regression a neural network?**  
+Yes, it can be viewed as a single neuron with sigmoid activation and no hidden layer.
+
+**Q3. What is the difference between a parameter and a hyperparameter?**  
+Parameters such as weights and biases are learned during training; hyperparameters such as learning rate, number of layers, and activation choice are set before or around training.
 
 ---
 
@@ -246,6 +269,17 @@ dZ = dA * (Z > 0).astype(float)
 dZ = dA * np.where(Z > 0, 1, alpha)
 ```
 
+### 2.8 Tricky interview questions
+
+**Q1. Why is sigmoid usually a bad hidden-layer activation in deep networks?**  
+For large positive or negative inputs it saturates, making its derivative close to zero and causing weak gradient flow.
+
+**Q2. ReLU is not differentiable at zero. Why can neural networks still use it?**  
+The exact point $z=0$ is rarely hit in practice, and implementations choose a valid convention or sub-gradient there.
+
+**Q3. Can the output layer use a different activation from the hidden layers?**  
+Yes. Hidden layers usually need nonlinear activations for representation power, while the output activation should match the prediction target, such as sigmoid for binary classification or identity for regression.
+
 ---
 
 ## 3. Gradients and Derivatives
@@ -287,6 +321,17 @@ $$
 $$
 
 This identity is used everywhere $\sigma$ appears inside a loss.
+
+### 3.3 Tricky interview questions
+
+**Q1. Does the gradient point toward the minimum of a function?**  
+No. The gradient points in the direction of steepest increase; gradient descent moves in the opposite direction.
+
+**Q2. Why does backpropagation rely on the chain rule?**  
+Each layer depends on the previous layer, so the effect of a parameter on the final loss must be computed through a chain of intermediate dependencies.
+
+**Q3. Is a partial derivative the same thing as a gradient?**  
+No. A partial derivative is one component; the gradient is the vector containing all partial derivatives.
 
 ---
 
@@ -375,6 +420,17 @@ where $\theta$ is a parameter, $\eta$ is the **learning rate**, and $\nabla J(\t
 
 **Learning rate.** The learning rate is a hyperparameter that controls step size: too large can **overshoot** the minimum, and too small can make training very slow.
 
+### 4.3 Tricky interview questions
+
+**Q1. If the loss increases after a gradient descent step, does that mean the gradient was wrong?**  
+Not necessarily. The learning rate may be too large, causing the update to overshoot a better region.
+
+**Q2. Why do we subtract the gradient instead of adding it?**  
+The gradient points toward steepest increase, so subtracting it moves the parameters toward steepest local decrease.
+
+**Q3. Can gradient descent get stuck even when implemented correctly?**  
+Yes. It can be slowed by plateaus, poor conditioning, bad learning rates, saddle points, or local minima depending on the loss surface.
+
 ---
 
 ## 5. Tensors
@@ -405,6 +461,17 @@ The following table classifies tensor objects by their number of dimensions (ran
 | 3    | 3D tensor  | `[c, h, w]`     | RGB image (Channels, Height, Width) |
 |      | 3D tensor  | `[e, t, f]`     | Panel time series (Entities, Time, Features)
 | 4    | 4D tensor  | `[b, c, h, w]`  | Batch of RGB images (Batch, Channels, Height, Width) |
+
+### 5.3 Tricky interview questions
+
+**Q1. Is every matrix a tensor?**  
+Yes. A matrix is a rank-2 tensor in the computer-science sense.
+
+**Q2. Does tensor rank always mean the same thing in math and in machine learning code?**  
+Not always. In code, rank usually means the number of axes or dimensions; in math, tensor rank can also refer to more formal transformation properties.
+
+**Q3. For image data, why might the same 4D tensor be written as `[b, c, h, w]` or `[b, h, w, c]`?**  
+Different frameworks use different channel conventions. The data can represent the same batch of images, but operations must know which axis stores channels.
 
 ---
 
@@ -444,6 +511,17 @@ If W is large, the pre-activations z = Wx + b are large in magnitude. For **tanh
 |---------|----------------|
 | Shallow network (1 hidden layer) | 0.01 is usually fine |
 | Deep network | Specialized initializations (Xavier / Glorot, He) are preferred; they scale the variance with layer width and are covered in later material |
+
+### 6.3 Tricky interview questions
+
+**Q1. Why is initializing all hidden-layer weights to zero a problem?**  
+All neurons in the same layer start identical, receive identical gradients, and remain identical, so the layer fails to learn diverse features.
+
+**Q2. Can biases be initialized to zero?**  
+Yes. Zero biases do not cause the same symmetry problem as long as the weights are randomly initialized.
+
+**Q3. Why can very large random weights make training slow with sigmoid or tanh?**  
+They can push pre-activations into saturated regions where derivatives are near zero, causing vanishing gradients from the first updates.
 
 ---
 
@@ -514,3 +592,16 @@ A small gap between training and test accuracy, with both numbers being high, is
 - Test accuracy: close to train accuracy (may be slightly above or below).
 
 The goal of training is not to achieve the lowest possible training error, but to achieve the smallest possible gap between training and test error while keeping both high.
+
+### 7.6 Tricky interview questions
+
+**Q1. Does test accuracy higher than training accuracy prove the model is not overfitting?**  
+No. It can happen because of regularization, an easier test split, metric differences, or random variation.
+
+**Q2. Is very high training accuracy always good?**  
+Not by itself. If test accuracy is much lower, the model may be memorizing training data instead of generalizing.
+
+**Q3. Why should the test set not be used repeatedly during tuning?**  
+Repeated test-set feedback leaks information into model selection, making the test result too optimistic as an estimate of real generalization.
+
+---
