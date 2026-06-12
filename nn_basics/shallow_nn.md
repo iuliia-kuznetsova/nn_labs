@@ -2,13 +2,24 @@
 
 A **shallow neural network** refers to a neural network with exactly **one hidden layer** — making it technically a **2-layer network** (input layer is not counted as an official layer).
 
+Shallow Neural Network basic:
+- Representation;
+- Computing the Neural Network Output (Single Example);
+- Vectorizing Across Multiple Examples;
+- Why the Vectorized Equations Are Correct;
+- Gradient Descent;
+- Backpropagation;
+- Softmax Regression (Multi-class Classification)
+
+and interview-style pitfalls.
+
 ---
 
 ## 1. Representation
 
-### 1.1 Architecture
+### 1.1. Architecture
 
-![Shallow NN graph](shallow_nn_graph.png)
+![Shallow NN graph](graphs\shallow_nn_graph.png)
 
 A shallow neural network with $n_0$ input features, $n_1$ hidden units, and $n_2$ output units has three layers:
 
@@ -22,7 +33,7 @@ A shallow neural network with $n_0$ input features, $n_1$ hidden units, and $n_2
 
 **Why "hidden"?** In a supervised training set you observe inputs $x$ and labels $y$, but never the intermediate values $a^{[1]}$ — hence "hidden."
 
-### 1.2 Parameters and Dimensions
+### 1.2. Parameters and Dimensions
 
 Each layer $\ell$ has a weight matrix $\mathbf{W}^{[\ell]}$ and a bias vector $\mathbf{b}^{[\ell]}$:
 
@@ -35,18 +46,29 @@ Each layer $\ell$ has a weight matrix $\mathbf{W}^{[\ell]}$ and a bias vector $\
 
 **Dimension rule of thumb.** $\mathbf{W}^{[\ell]}$ has shape $n_\ell \times n_{\ell-1}$: rows = neurons in the current layer, columns = neurons (or features) in the previous layer.
 
-### 1.3 Notation
+### 1.3. Notation
 
 - Superscript $[\ell]$ in square brackets denotes the **layer number**.
 - Subscript $i$ denotes the **node index** within a layer.
 - Superscript $(i)$ in round brackets denotes the **training example index**.
 - $g^{[\ell]}$ is the activation function used in layer $\ell$; $g^{[\ell]\prime}$ is its derivative.
 
+### 1.4. Tricky interview questions
+
+**Q1. Why is a network with one hidden layer called a 2-layer network?**  
+By convention, only trainable layers are counted, so the hidden layer is layer 1 and the output layer is layer 2.
+
+**Q2. What does "hidden" mean in hidden layer?**  
+The hidden activations are not observed directly in the training data; they are internal representations learned by the network.
+
+**Q3. What shape should $\mathbf{W}^{[\ell]}$ have?**  
+$\mathbf{W}^{[\ell]}$ has shape $n_\ell \times n_{\ell-1}$: one row per current-layer neuron and one column per previous-layer unit.
+
 ---
 
 ## 2. Computing the Neural Network Output (Single Example)
 
-### 2.1 Per-Neuron View
+### 2.1. Per-Neuron View
 
 Each neuron $i$ in the hidden layer performs two steps — identical to logistic regression:
 
@@ -55,7 +77,7 @@ z^{[1]}_i = \mathbf{w}^{[1]\top}_i\,\mathbf{x} + b^{[1]}_i, \qquad
 a^{[1]}_i = g^{[1]}\!\bigl(z^{[1]}_i\bigr).
 $$
 
-### 2.2 Vectorized Over the Layer
+### 2.2. Vectorized Over the Layer
 
 Stacking the individual weight vectors as rows of $\mathbf{W}^{[1]}$ and computing all hidden neurons simultaneously:
 
@@ -83,7 +105,7 @@ $$
 
 For binary classification $n_2 = 1$ and $g^{[2]} = \sigma$ (sigmoid), so $a^{[2]} \in (0,1)$ is a probability.
 
-### 2.3 Four Forward-Prop Equations (Summary)
+### 2.3. Four Forward-Prop Equations (Summary)
 
 $$
 \begin{aligned}
@@ -96,11 +118,22 @@ $$
 
 This is conceptually $n_1 + 1$ logistic-regression units, computed all at once.
 
+### 2.4. Tricky interview questions
+
+**Q1. Why is the hidden layer computed with a matrix multiplication?**  
+Each row of $\mathbf{W}^{[1]}$ is one neuron's weight vector, so $\mathbf{W}^{[1]}\mathbf{x}$ computes all hidden logits at once.
+
+**Q2. Why is $g^{[1]}$ applied element-wise?**  
+Each hidden neuron has its own scalar pre-activation, so the activation function is applied separately to each component.
+
+**Q3. For binary classification, why is the output usually sigmoid?**  
+With one output unit, sigmoid maps the output logit to a probability in $(0,1)$.
+
 ---
 
 ## 3. Vectorizing Across Multiple Examples
 
-### 3.1 From Loops to Matrices
+### 3.1. From Loops to Matrices
 
 For $m$ training examples, a naive implementation loops over examples:
 
@@ -118,7 +151,7 @@ $$
 \mathbf{X} = \begin{bmatrix} | & | & & | \\ \mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(m)} \\ | & | & & | \end{bmatrix} \in \mathbb{R}^{n_0 \times m}.
 $$
 
-### 3.2 Vectorized Forward Propagation
+### 3.2. Vectorized Forward Propagation
 
 Replace the lowercase vectors with uppercase matrices ($\mathbf{X}, \mathbf{Z}^{[1]}, \mathbf{A}^{[1]}, \ldots$) formed by stacking the corresponding column vectors for each training example:
 
@@ -133,7 +166,7 @@ $$
 
 The bias vectors $\mathbf{b}^{[\ell]}$ are added via **broadcasting**: each bias column is replicated across all $m$ columns.
 
-### 3.3 Index Interpretation
+### 3.3. Index Interpretation
 
 | Axis | Meaning |
 |------|---------|
@@ -141,6 +174,17 @@ The bias vectors $\mathbf{b}^{[\ell]}$ are added via **broadcasting**: each bias
 | **Vertical** (rows) | Different nodes / features in that layer |
 
 So the top-left element of $\mathbf{A}^{[1]}$ is the activation of hidden unit 1 on training example 1; moving right gives the same unit on different examples; moving down gives different units on the same example.
+
+### 3.4. Tricky interview questions
+
+**Q1. Why are training examples stored as columns?**  
+This convention lets $\mathbf{W}^{[\ell]}\mathbf{A}^{[\ell-1]}$ compute every example in one matrix multiplication.
+
+**Q2. What do columns and rows mean in $\mathbf{A}^{[\ell]}$?**  
+Columns correspond to different examples, and rows correspond to different neurons in layer $\ell$.
+
+**Q3. Does vectorization change the math of the network?**  
+No. It computes the same per-example equations, but batches them into matrix operations.
 
 ---
 
@@ -175,11 +219,22 @@ $$
 
 This pattern extends naturally to deeper networks.
 
+### 4.1. Tricky interview questions
+
+**Q1. Why does $\mathbf{W}^{[1]}\mathbf{X}$ contain all examples' logits?**  
+Matrix multiplication applies the same weight matrix to every column of $\mathbf{X}$, producing one output column per example.
+
+**Q2. Why can the same formula work for both layers?**  
+Each layer takes the previous layer's activations as input, so $\mathbf{A}^{[\ell-1]}$ plays the same role at every layer.
+
+**Q3. Why is broadcasting the bias valid?**  
+The same bias vector should be added to every example's pre-activation, which is exactly what broadcasting does.
+
 ---
 
 ## 5. Gradient Descent
 
-### 5.1 Cost Function
+### 5.1. Cost Function
 
 For binary classification with $m$ training examples, the cost is the average binary cross-entropy loss:
 
@@ -192,7 +247,7 @@ $$
 \mathcal{L}(\hat{y}, y) = -\bigl[y \log \hat{y} + (1 - y)\log(1 - \hat{y})\bigr].
 $$
 
-### 5.2 Training Loop
+### 5.2. Training Loop
 
 ```
 Initialize parameters randomly
@@ -209,7 +264,7 @@ Repeat until convergence:
 
 where $\alpha$ is the **learning rate**.
 
-### 5.3 Weight Initialization
+### 5.3. Weight Initialization
 
 Weights **must not** be initialized to zero — all neurons would be symmetric and would learn the same function forever (see `nn_terms.md`, Section 6). Instead:
 
@@ -222,11 +277,22 @@ b2 = np.zeros((n2, 1))
 
 The small multiplier $0.01$ keeps pre-activations near zero, avoiding saturation of tanh/sigmoid at the start of training.
 
+### 5.4. Tricky interview questions
+
+**Q1. Why are weights initialized randomly?**  
+Random weights break symmetry so hidden neurons can learn different functions.
+
+**Q2. Why can biases be initialized to zero?**  
+Zero biases do not make hidden neurons identical as long as the weights are randomly initialized.
+
+**Q3. What role does the learning rate $\alpha$ play?**  
+It controls how large each parameter update is during gradient descent.
+
 ---
 
 ## 6. Backpropagation
 
-### 6.1 Intuition
+### 6.1. Intuition
 
 Backprop applies the **chain rule** backwards through the computation graph to obtain the gradient of $J$ with respect to every parameter.
 
@@ -240,7 +306,7 @@ resulting in $dz = a - y$, $d\mathbf{w} = dz \cdot \mathbf{x}$, $db = dz$.
 
 A shallow neural network runs the same logic **twice** — once through the output layer, then again through the hidden layer.
 
-### 6.2 Vectorized Backprop Equations
+### 6.2. Vectorized Backprop Equations
 
 **Forward pass (recap):**
 
@@ -266,7 +332,7 @@ $$
 
 $\odot$ denotes element-wise (Hadamard) multiplication. The column-sum is `np.sum(..., axis=1, keepdims=True)` in NumPy.
 
-### 6.3 Step-by-Step Derivation
+### 6.3. Step-by-Step Derivation
 
 **Step 1 — Output layer ($\ell = 2$).** For the sigmoid output with binary cross-entropy, the chain rule collapses to:
 
@@ -300,7 +366,7 @@ $$
 
 Since $\mathbf{X} = \mathbf{A}^{[0]}$, these are structurally identical to the layer-2 updates with the index shifted by one.
 
-### 6.4 Dimension Check
+### 6.4. Dimension Check
 
 A useful sanity check: **every parameter and its gradient always have the same shape**.
 
@@ -314,7 +380,7 @@ A useful sanity check: **every parameter and its gradient always have the same s
 
 Verifying these dimensions when implementing backprop catches the majority of bugs.
 
-### 6.5 NumPy Implementation Sketch
+### 6.5. NumPy Implementation Sketch
 
 ```python
 # --- Forward propagation ---
@@ -339,13 +405,26 @@ W2 -= alpha * dW2
 b2 -= alpha * db2
 ```
 
+### 6.6. Tricky interview questions
+
+**Q1. Why does the output-layer error become $d\mathbf{Z}^{[2]} = \mathbf{A}^{[2]} - \mathbf{Y}$?**  
+For sigmoid output with binary cross-entropy, the chain-rule terms simplify to prediction minus label.
+
+**Q2. Why does $d\mathbf{Z}^{[1]}$ include $\mathbf{W}^{[2]\top}$?**  
+The hidden layer receives its error signal through the output layer weights, and the transpose maps that signal back to hidden-unit dimensions.
+
+**Q3. What is the easiest way to catch many backprop bugs?**  
+Check that every parameter and its gradient have the same shape.
+
+---
+
 ## 7. Softmax Regression (Multi-class Classification)
 
-![Softmax graph](softmax.png)
+![Softmax graph](graphs\softmax.png)
 
 Softmax is a function that turns a list of raw scores into probabilities that add up to 1, so the model can choose one class out of many. It is commonly used at the output layer of neural networks for multiclass classification.
 
-### 7.1 Softmax activation
+### 7.1. Softmax activation
 
 For $C$ classes, the output layer has $n^{[L]} = C$ units. Instead of sigmoid, apply:
 
@@ -359,7 +438,7 @@ NB!
 - Special case of $C = 2$ reduces to logistic regression;
 - Softmax is best when each example belongs to exactly one class. If an example can belong to multiple classes at once, you usually use separate sigmoid outputs instead.
 
-### 7.2 Loss function (cross-entropy)
+### 7.2. Loss function (cross-entropy)
 
 Softmax is useful because it makes the output easy to interpret and works naturally when the classes are mutually exclusive. It is typically paired with cross-entropy loss, which encourages the model to assign high probability to the correct class and low probability to the others.
 
@@ -377,12 +456,23 @@ where $k$ is the true class. Minimizing the loss maximizes the predicted probabi
 
 $$J = \frac{1}{m}\sum_{i=1}^{m} \mathcal{L}(\hat{y}^{(i)}, y^{(i)})$$
 
-### 7.3 Backprop for the output layer
+### 7.3. Backprop for the output layer
 
 The gradient of the loss with respect to $z^{[L]}$ is:
 
 $$dz^{[L]} = \hat{y} - y$$
 
 This is a $C \times 1$ vector (or $C \times m$ for a mini-batch). All other backprop equations proceed as normal from here.
+
+### 7.4. Tricky interview questions
+
+**Q1. When should softmax be used instead of sigmoid?**  
+Use softmax when each example belongs to exactly one of several mutually exclusive classes.
+
+**Q2. Why do softmax outputs sum to 1?**  
+Each exponentiated score is divided by the sum of all exponentiated scores, producing a probability distribution.
+
+**Q3. What is the output-layer gradient for softmax with cross-entropy?**  
+It has the same simple form: predicted probability vector minus the one-hot label vector.
 
 ---

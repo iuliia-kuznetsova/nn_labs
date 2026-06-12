@@ -2,13 +2,25 @@
 
 A **deep neural network** is a neural network with **more than one hidden layer**. The word "deep" refers to the number of hidden layers. By convention, a network is called an $L$-layer network when it has $L$ trainable layers (input layer not counted).
 
+Deep Neural Network basic:
+- Representation;
+- Computing the Output (Single Example);
+- Vectorizing Across Multiple Examples;
+- Why Deep Representations;
+- Building Blocks: Forward and Backward Functions;
+- Gradient Descent;
+- Backpropagation;
+- Hyperparameters
+
+and interview-style pitfalls.
+
 ---
 
 ## 1. Representation
 
-### 1.1 Architecture
+### 1.1. Architecture
 
-![Deep NN graph](deep_nn_graph.png)
+![Deep NN graph](graphs\deep_nn_graph.png)
 
 A deep network has three kinds of layers:
 
@@ -20,7 +32,7 @@ A deep network has three kinds of layers:
 
 A network with 1 hidden layer is called a 2-layer network, one with 4 hidden layers is called a 5-layer network, and so on (input layer is never counted).
 
-### 1.2 Notation
+### 1.2. Notation
 
 | Symbol | Meaning |
 |--------|---------|
@@ -35,7 +47,7 @@ A network with 1 hidden layer is called a 2-layer network, one with 4 hidden lay
 
 Superscript $[\ell]$ in square brackets denotes the **layer number**; superscript $(i)$ in round brackets denotes the **training example index**.
 
-### 1.3 Parameters and Dimensions
+### 1.3. Parameters and Dimensions
 
 Each layer $\ell$ has a weight matrix and a bias vector whose shapes are fully determined by the layer sizes:
 
@@ -56,11 +68,22 @@ Each layer $\ell$ has a weight matrix and a bias vector whose shapes are fully d
 
 **Gradient shapes always match parameter shapes.** $d\mathbf{W}^{[\ell]}$ has the same shape as $\mathbf{W}^{[\ell]}$; $d\mathbf{b}^{[\ell]}$ has the same shape as $\mathbf{b}^{[\ell]}$. This is a useful debugging check.
 
+### 1.4. Tricky interview questions
+
+**Q1. What makes a neural network "deep"?**  
+It has more than one hidden layer; depth refers to the number of trainable layers excluding the input layer.
+
+**Q2. Why is the input layer not counted in $L$?**  
+The input layer only holds raw features and has no trainable weights or biases.
+
+**Q3. What is the shape rule for $\mathbf{W}^{[\ell]}$?**  
+$\mathbf{W}^{[\ell]}$ has shape $n^{[\ell]} \times n^{[\ell-1]}$, mapping activations from the previous layer to the current layer.
+
 ---
 
 ## 2. Computing the Output (Single Example)
 
-### 2.1 Per-Neuron View
+### 2.1. Per-Neuron View
 
 Each neuron $i$ in layer $\ell$ performs two computations — identical to a single logistic-regression unit:
 
@@ -69,7 +92,7 @@ z^{[\ell]}_i = \mathbf{w}^{[\ell]\top}_i\,\mathbf{a}^{[\ell-1]} + b^{[\ell]}_i, 
 a^{[\ell]}_i = g^{[\ell]}\!\bigl(z^{[\ell]}_i\bigr).
 $$
 
-### 2.2 Vectorized Over a Layer
+### 2.2. Vectorized Over a Layer
 
 Stacking the $n^{[\ell]}$ weight vectors as rows of $\mathbf{W}^{[\ell]}$:
 
@@ -80,7 +103,7 @@ $$
 
 $g^{[\ell]}$ is applied **element-wise**. Shapes: $\mathbf{z}^{[\ell]},\, \mathbf{a}^{[\ell]} \in \mathbb{R}^{n^{[\ell]} \times 1}$.
 
-### 2.3 General Forward-Propagation Equations
+### 2.3. General Forward-Propagation Equations
 
 The same rule applies at every layer. Starting from $\mathbf{a}^{[0]} = \mathbf{x}$:
 
@@ -103,11 +126,22 @@ for l in range(1, L + 1):
 y_hat = a                # a^[L]
 ```
 
+### 2.4. Tricky interview questions
+
+**Q1. Why is there still a loop over layers?**  
+Each layer depends on the previous layer's activations, so layers must be evaluated sequentially from $1$ to $L$.
+
+**Q2. What is $\mathbf{a}^{[0]}$?**  
+It is the input vector $\mathbf{x}$, written in layer notation so the same formula works for every layer.
+
+**Q3. Why can activation functions differ by layer?**  
+Hidden layers and output layers often serve different purposes, so their activations are chosen to match those roles.
+
 ---
 
 ## 3. Vectorizing Across Multiple Examples
 
-### 3.1 Matrix Notation
+### 3.1. Matrix Notation
 
 Stack all $m$ training examples as columns of $\mathbf{X} \in \mathbb{R}^{n^{[0]} \times m}$. Replace lowercase vectors with uppercase matrices:
 
@@ -120,7 +154,7 @@ $$
 
 Initialize with $\mathbf{A}^{[0]} = \mathbf{X}$.
 
-### 3.2 Dimension Table (vectorized)
+### 3.2. Dimension Table (vectorized)
 
 | Quantity | Shape (single) | Shape (vectorized) |
 |----------|---------------|-------------------|
@@ -135,13 +169,24 @@ Initialize with $\mathbf{A}^{[0]} = \mathbf{X}$.
 
 The bias $\mathbf{b}^{[\ell]}$ (shape $n^{[\ell]} \times 1$) is added to every column via Python/NumPy broadcasting.
 
+### 3.3. Tricky interview questions
+
+**Q1. What changes when going from one example to $m$ examples?**  
+Activations and pre-activations become matrices with $m$ columns, while weights and biases keep the same shapes.
+
+**Q2. Why does $\mathbf{b}^{[\ell]}$ keep shape $n^{[\ell]} \times 1$?**  
+There is one bias per neuron, reused for every training example in the batch.
+
+**Q3. What does one column of $\mathbf{A}^{[\ell]}$ represent?**  
+It is the activation vector of layer $\ell$ for one training example.
+
 ---
 
 ## 4. Why Deep Representations?
 
 Deep networks can sometimes compute functions much more efficiently than shallow networks. Two key intuitions:
 
-### 4.1 Hierarchical Feature Learning
+### 4.1. Hierarchical Feature Learning
 
 In an image-recognition network, earlier layers detect low-level features (edges, textures), intermediate layers combine them into parts (eyes, nose), and deeper layers recognize the final objects (faces). Each layer builds on the previous one.
 
@@ -153,9 +198,20 @@ The same hierarchy arises in other domains:
 | Speech | Low-level waveforms | Phonemes | Words, phrases |
 | Text | Characters / tokens | Morphemes | Sentences, meanings |
 
-### 4.2 Circuit-Theory Argument
+### 4.2. Circuit-Theory Argument
 
 Certain functions (e.g., XOR parity of $n$ input bits) can be computed by a **deep** network with $O(\log n)$ layers and $O(n)$ total gates. A **shallow** single-hidden-layer network would need $O(2^n)$ hidden units to compute the same function — exponentially larger. This illustrates that depth enables exponentially more efficient representations for some function classes.
+
+### 4.3. Tricky interview questions
+
+**Q1. Why can depth help representation learning?**  
+Each layer can build higher-level features from lower-level features learned by earlier layers.
+
+**Q2. Does a deeper network always perform better?**  
+No. Depth increases capacity but can make optimization harder and may overfit without enough data or regularization.
+
+**Q3. What does the circuit-theory argument illustrate?**  
+Some functions can be represented much more compactly with depth than with a single hidden layer.
 
 ---
 
@@ -163,7 +219,7 @@ Certain functions (e.g., XOR parity of $n$ input bits) can be computed by a **de
 
 A clean way to think about implementing a deep network is as a sequence of **layer functions**:
 
-### 5.1 Forward Function (layer $\ell$)
+### 5.1. Forward Function (layer $\ell$)
 
 - **Input:** $\mathbf{A}^{[\ell-1]}$ (activations from previous layer)
 - **Output:** $\mathbf{A}^{[\ell]}$ (activations for this layer)
@@ -174,7 +230,7 @@ $$
 \mathbf{A}^{[\ell]} = g^{[\ell]}\!\bigl(\mathbf{Z}^{[\ell]}\bigr).
 $$
 
-### 5.2 Backward Function (layer $\ell$)
+### 5.2. Backward Function (layer $\ell$)
 
 - **Input:** $d\mathbf{A}^{[\ell]}$ (gradient of loss w.r.t. activations in this layer); uses cached $\mathbf{Z}^{[\ell]},\, \mathbf{W}^{[\ell]},\, \mathbf{b}^{[\ell]}$
 - **Output:** $d\mathbf{A}^{[\ell-1]}$, $d\mathbf{W}^{[\ell]}$, $d\mathbf{b}^{[\ell]}$
@@ -197,7 +253,7 @@ $$
 
 $\odot$ is element-wise multiplication. The column sum is `np.sum(..., axis=1, keepdims=True)`.
 
-### 5.3 Explanation of formulas
+### 5.3. Explanation of formulas
 
 The key idea is **the chain rule of calculus**. Every backward formula asks: "how does the loss $L$ change if I wiggle this variable a tiny bit?" Since the forward pass defines how variables depend on each other, the chain rule turns those dependencies into gradient formulas. Use shorthand: $dX$ always means $\frac{\partial L}{\partial X}$.
 
@@ -234,7 +290,7 @@ The transpose rule ($\mathbf{W} \to \mathbf{W}^\top$, $\mathbf{A} \to \mathbf{A}
 | $\mathbf{b}$ broadcast over $m$ examples | $d\mathbf{b}^{[\ell]} = \frac{1}{m}\sum_{\text{cols}} d\mathbf{Z}^{[\ell]}$ |
 | $\mathbf{Z}^{[\ell]} = \mathbf{W}^{[\ell]}\mathbf{A}^{[\ell-1]} + \mathbf{b}^{[\ell]}$ | $d\mathbf{A}^{[\ell-1]} = \mathbf{W}^{[\ell]\top}\,d\mathbf{Z}^{[\ell]}$ |
 
-### 5.3 Cache Rationale
+### 5.4. Cache Rationale
 
 The forward pass computes and stores $\mathbf{Z}^{[\ell]}$ (and optionally $\mathbf{W}^{[\ell]},\, \mathbf{b}^{[\ell]}$) in a cache. The backward pass reads those cached values when computing $g^{[\ell]\prime}(\mathbf{Z}^{[\ell]})$ and the weight gradients. This avoids recomputation.
 
@@ -246,11 +302,22 @@ Backward:  dA^[0] ← [backward_1, read cache] ← [backward_2, read cache] ← 
            outputs: dW^[1], db^[1], dW^[2], db^[2], ..., dW^[L], db^[L]
 ```
 
+### 5.5. Tricky interview questions
+
+**Q1. Why are caches needed during forward propagation?**  
+Backward propagation needs stored values such as $\mathbf{Z}^{[\ell]}$ and $\mathbf{A}^{[\ell-1]}$ to compute gradients efficiently.
+
+**Q2. Why does $d\mathbf{W}^{[\ell]}$ use $\mathbf{A}^{[\ell-1]\top}$?**  
+The weights connect previous-layer activations to current-layer logits, so the gradient accumulates error signals against previous activations.
+
+**Q3. Why is there no $\frac{1}{m}$ in $d\mathbf{A}^{[\ell-1]}$?**  
+$d\mathbf{A}^{[\ell-1]}$ is an error signal passed backward, not an averaged parameter gradient.
+
 ---
 
 ## 6. Gradient Descent
 
-### 6.1 Cost Function
+### 6.1. Cost Function
 
 For binary classification with $m$ training examples:
 
@@ -261,7 +328,7 @@ $$
 
 The parameters across all layers are $\{\mathbf{W}^{[1]}, \mathbf{b}^{[1]}, \ldots, \mathbf{W}^{[L]}, \mathbf{b}^{[L]}\}$.
 
-### 6.2 Training Loop
+### 6.2. Training Loop
 
 ```
 Initialize all W^[l] randomly (small values), all b^[l] = 0.
@@ -276,7 +343,7 @@ Repeat until convergence:
 
 $\alpha$ is the **learning rate**.
 
-### 6.3 Initialization
+### 6.3. Initialization
 
 Weights **must** be initialized randomly (not to zero) to break symmetry — see `nn_terms.md`, Section 6. Biases can be initialized to zero.
 
@@ -285,15 +352,26 @@ W[l] = np.random.randn(n[l], n[l-1]) * 0.01
 b[l] = np.zeros((n[l], 1))
 ```
 
+### 6.4. Tricky interview questions
+
+**Q1. Which values are learned parameters in a deep network?**  
+All weight matrices and bias vectors: $\mathbf{W}^{[1]}, \mathbf{b}^{[1]}, \ldots, \mathbf{W}^{[L]}, \mathbf{b}^{[L]}$.
+
+**Q2. Why should weights not all start at zero?**  
+Identical initialization makes neurons in the same layer learn the same function, so symmetry is never broken.
+
+**Q3. Why are parameters updated for every layer?**  
+Each trainable layer contributes to the final loss, so gradient descent adjusts every layer's weights and biases.
+
 ---
 
 ## 7. Backpropagation
 
-### 7.1 Overview
+### 7.1. Overview
 
 Backpropagation applies the **chain rule** repeatedly, moving backward from the output layer to the input layer. Each layer's backward function takes the gradient from the layer above and returns the gradient to the layer below, plus the weight gradients for that layer.
 
-### 7.2 Initializing the Backward Pass
+### 7.2. Initializing the Backward Pass
 
 For binary cross-entropy with sigmoid output, the gradient at the final layer is:
 
@@ -303,7 +381,7 @@ $$
 
 (element-wise). This seeds the backward recursion.
 
-### 7.3 Backward Equations for Layer $\ell$ (General, Vectorized)
+### 7.3. Backward Equations for Layer $\ell$ (General, Vectorized)
 
 Given $d\mathbf{A}^{[\ell]}$ and the cached $\mathbf{Z}^{[\ell]},\, \mathbf{W}^{[\ell]},\, \mathbf{A}^{[\ell-1]}$:
 
@@ -318,7 +396,7 @@ $$
 
 The last equation propagates the error signal one layer back and is used as the input to the backward function of layer $\ell - 1$.
 
-### 7.4 Dimension Sanity Check
+### 7.4. Dimension Sanity Check
 
 Every parameter and its gradient share the same shape:
 
@@ -330,7 +408,7 @@ Every parameter and its gradient share the same shape:
 
 Checking these dimensions when implementing backprop catches the majority of bugs.
 
-### 7.5 NumPy Implementation Sketch
+### 7.5. NumPy Implementation Sketch
 
 ```python
 # ---- Forward propagation ----
@@ -361,6 +439,17 @@ for l in range(1, L + 1):
     b[l] -= alpha * grads['db' + str(l)]
 ```
 
+### 7.6. Tricky interview questions
+
+**Q1. Why does backpropagation run from layer $L$ down to layer $1$?**  
+Gradients for earlier layers depend on error signals propagated back from later layers.
+
+**Q2. What does $d\mathbf{A}^{[\ell-1]}$ do?**  
+It carries the loss gradient back to the previous layer so that layer can compute its own gradients.
+
+**Q3. What is a common implementation sanity check?**  
+Verify that $d\mathbf{W}^{[\ell]}$ matches $\mathbf{W}^{[\ell]}$ and $d\mathbf{b}^{[\ell]}$ matches $\mathbf{b}^{[\ell]}$ for every layer.
+
 ---
 
 ## 8. Hyperparameters
@@ -383,3 +472,16 @@ Hyperparameters determine the final values of the learned parameters — hence t
 3. Adjust hyperparameters based on results and repeat.
 
 Because optimal hyperparameters vary by problem and dataset, it is common to search over a range of values (e.g., try $\alpha \in \{0.001, 0.01, 0.1\}$ and compare). The number of hidden layers $L$ itself is often treated as a hyperparameter to tune.
+
+### 8.1. Tricky interview questions
+
+**Q1. What is the difference between a parameter and a hyperparameter?**  
+Parameters are learned during training; hyperparameters are chosen before or around training and control the learning process.
+
+**Q2. Why is the number of hidden layers a hyperparameter?**  
+It is chosen by the practitioner and affects model capacity, computation cost, and optimization difficulty.
+
+**Q3. Why use a validation set for hyperparameter tuning?**  
+It estimates how well different hyperparameter choices generalize without repeatedly using the test set.
+
+---

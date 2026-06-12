@@ -1,20 +1,25 @@
 # Neural Networks: Logistic Regression as the Simplest Network
 
 Logistic Regression as the Simplest Neural Network basic:
- Terms and Architecture;
- Activation Functions;
- Gradients and Derivatives;
- Gradient Descent;
- Tensors;
- Weights Initialization;
- Model Performance Evaluation
+- Computational graph of Logistic Regression;
+- Binary classification;
+- Logistic regression (vectorized);
+- Logistic regression cost function (vectorized);
+- Binary cross-entropy as a cost function;
+- Gradient descent;
+- Computation graph;
+- Derivatives with a computation graph;
+- Logistic regression: gradient descent (single example);
+- Gradient descent on $m$ examples (fully vectorized);
+- Summary
+
 and interview-style pitfalls.
 
 ---
 
 This note uses **vectorized** notation: one training step updates all parameters using full matrices for $m$ examples at once.
 
-**Notation (used throughout).**
+**Notation**
 
 - $n_x$: number of features per example.
 - $m$: number of examples (batch size).
@@ -27,11 +32,24 @@ This note uses **vectorized** notation: one training step updates all parameters
 
 ---
 
-## 1. Logistic Regression as the Simplest Neural Network
+## 1. Computational graph of Logistic Regression
 
-![Simplest NN graph](simplest_nn_graph.png)
+![Simplest NN graph](graphs\simplest_nn_graph.png)
 
-### 1.1 Binary classification
+### 1.1. Tricky interview questions
+
+**Q1. Why can logistic regression be viewed as the simplest neural network?**  
+It has one linear unit followed by a sigmoid activation, with no hidden layer.
+
+**Q2. What does the graph show at a high level?**  
+It shows the forward flow from inputs and parameters to a logit, then to a sigmoid output and loss.
+
+**Q3. Does logistic regression learn nonlinear decision boundaries by itself?**  
+No. It learns a linear decision boundary in the original feature space, unless the input features are transformed first.
+
+---
+
+## 2. Binary classification
 
 **Goal.** Predict one of two classes, encoded as $y^{(i)} \in \{0, 1\}$.
 
@@ -43,9 +61,20 @@ $$
 
 **Decision rule.** Predict class $1$ if $\hat{y}^{(i)} \ge \tfrac{1}{2}$, else class $0$.
 
+### 2.1. Tricky interview questions
+
+**Q1. Why is the output written as a probability?**  
+Because sigmoid maps the logit to a value in $(0,1)$, which can be interpreted as $P(y=1 \mid \mathbf{x})$.
+
+**Q2. Is the threshold always required to be $0.5$?**  
+No. $0.5$ is the default when classes and costs are balanced, but it can be changed for imbalanced data or different error costs.
+
+**Q3. What does $y^{(i)} \in \{0,1\}$ mean?**  
+It means each example has one binary label: class $0$ or class $1$.
+
 ---
 
-### 1.2 Logistic regression (vectorized)
+## 3. Logistic regression (vectorized)
 
 For one example,
 
@@ -107,9 +136,20 @@ so that
 - If $z$ is a large negative number, $\sigma(z) \approx 0$.
 - If $z = 0$, $\sigma(z) = 0.5$.
 
+### 3.1. Tricky interview questions
+
+**Q1. Why is $\mathbf{X}$ shaped as $n_x \times m$?**  
+Each column is one example, so multiplying $\mathbf{w}^\top \mathbf{X}$ produces one logit per example.
+
+**Q2. Why does $b$ need broadcasting?**  
+$b$ is a scalar, but the batch needs one bias term added to each example's logit.
+
+**Q3. What is the shape of $\mathbf{A}$?**  
+$\mathbf{A} \in \mathbb{R}^{1 \times m}$, with one predicted probability per training example.
+
 ---
 
-### 1.3 Logistic regression cost function (vectorized)
+## 4. Logistic regression cost function (vectorized)
 
 **Loss function (binary cross-entropy, negative log-likelihood for Bernoulli labels).**
 
@@ -148,9 +188,20 @@ $$
 J = -\frac{1}{m}\,\mathbf{1}_m^\top\Bigl( \mathbf{y}_c \odot \log \mathbf{A}_c + (\mathbf{1}_m - \mathbf{y}_c) \odot \log(\mathbf{1}_m - \mathbf{A}_c) \Bigr).
 $$
 
+### 4.1. Tricky interview questions
+
+**Q1. What is the difference between loss and cost?**  
+Loss is computed for one example; cost is the average loss over the whole training set or batch.
+
+**Q2. Why do we average by $m$?**  
+Averaging makes the cost scale independent of the number of examples in the batch.
+
+**Q3. Why are logs applied element-wise in the vector form?**  
+Each prediction-label pair contributes its own binary cross-entropy term.
+
 ---
 
-### 1.4 Binary cross-entropy as a cost function
+## 5. Binary cross-entropy as a cost function
 
 **Cross-entropy** is a way to measure how different two probability distributions are. In machine learning, it usually measures how well a model's predicted probabilities match the true labels, so it is commonly used as a loss function for classification.
 
@@ -186,7 +237,7 @@ $$
 
 which is exactly $J$.
 
-**Properties.**
+**Properties**
 
 - **Convex** in $(\mathbf{w}, b)$ for logistic regression (sigmoid + cross-entropy), so gradient descent with a suitable learning rate $\alpha$ finds the global minimum under typical conditions.
   For logistic regression, sigmoid plus cross-entropy gives a convex objective in $(\mathbf{w}, b)$. That means optimization is much easier than with many other neural-network losses, because gradient descent is not fighting lots of bad local minima in this case.
@@ -200,9 +251,20 @@ which is exactly $J$.
 - **Matches outputs to probabilities** when trained with this loss, so $a^{(i)}$ is calibrated as an estimate of class probability under the model assumptions.
   Because the output is interpreted as a probability, the model is trained to make the predicted probability match the observed label. So after training, $a$ can be read as the model's estimate of class probability, not just a raw score.
 
+### 5.1. Tricky interview questions
+
+**Q1. Why not use squared error for logistic regression classification?**  
+Binary cross-entropy matches the Bernoulli likelihood and gives a better optimization objective for probabilistic binary labels.
+
+**Q2. Why does binary cross-entropy punish confident mistakes heavily?**  
+Because $\log(a)$ or $\log(1-a)$ becomes very negative when the model assigns near-zero probability to the true class.
+
+**Q3. Why is convexity important here?**  
+For logistic regression, a convex objective means suitable gradient descent can find the global minimum rather than a bad local minimum.
+
 ---
 
-### 1.5 Gradient descent
+## 6. Gradient descent
 
 Gradient descent is used for NN training during backpropagation.
 
@@ -215,9 +277,20 @@ $$
 
 where $\alpha > 0$ is the **learning rate**.
 
+### 6.1. Tricky interview questions
+
+**Q1. Why do we subtract the gradient?**  
+The gradient points toward steepest increase, so subtracting it moves parameters toward lower cost.
+
+**Q2. What happens if the learning rate is too large?**  
+The updates may overshoot good parameter values and make the cost increase or diverge.
+
+**Q3. What happens if the learning rate is too small?**  
+Training can become very slow because each update changes the parameters only slightly.
+
 ---
 
-### 1.6 Computation graph
+## 7. Computation graph
 
 A **computation graph** is a directed acyclic graph of operations: inputs $\to$ intermediate nodes (sums, products, nonlinearities) $\to$ output loss. A computation graph is a step-by-step map of the forward calculation, and backpropagation uses that map **in reverse** to apply the chain rule and compute gradients efficiently. Each step is a small operation like add, multiply, or apply a function like sigmoid.
 
@@ -234,9 +307,20 @@ $$
 
 With batch training, the same graph is repeated for many examples, or written in vector form so you process the whole batch at once. Batch training repeats the same structure for each column of $\mathbf{X}$, or uses vectorized nodes for $\mathbf{Z}$ and $\mathbf{A}$. The structure is the same; only the shapes become matrices and vectors.
 
+### 7.1. Tricky interview questions
+
+**Q1. Why is a computation graph useful for backpropagation?**  
+It records how each value was computed, so gradients can be propagated backward through the same operations.
+
+**Q2. What are the nodes in the logistic regression graph?**  
+Typical nodes are inputs, parameters, the linear score $z$, sigmoid activation $a$, and loss $\mathcal{L}$.
+
+**Q3. Does vectorization change the computation graph conceptually?**  
+No. It processes many examples at once, but the forward and backward dependencies are the same.
+
 ---
 
-### 1.7 Derivatives with a computation graph
+## 8. Derivatives with a computation graph
 
 **Backpropagation** means walking **backward** through the graph and using the chain rule. At each node, multiply local derivatives along paths (chain rule) and **sum** paths that merge. If one variable affects the loss through more than one route, all those gradient contributions are added together.
 
@@ -246,9 +330,20 @@ $$
 \frac{\partial \mathcal{L}}{\partial v} \mathrel{+}= \frac{\partial \mathcal{L}}{\partial u}\,\frac{\partial f}{\partial v}.
 $$
 
+### 8.1. Tricky interview questions
+
+**Q1. Why does backpropagation use the chain rule?**  
+The loss depends on parameters through intermediate variables, so gradients must be multiplied through those dependencies.
+
+**Q2. Why do gradient contributions get summed?**  
+If a variable affects the loss through multiple paths, the total derivative is the sum of all path contributions.
+
+**Q3. What is a local derivative?**  
+It is the derivative of one graph operation with respect to one of its direct inputs.
+
 ---
 
-### 1.8 Logistic regression: gradient descent (single example)
+## 9. Logistic regression: gradient descent (single example)
 
 **Forward:** $z = \mathbf{w}^\top \mathbf{x} + b$, $a = \sigma(z)$,
 
@@ -277,9 +372,20 @@ $$
 \frac{\partial \mathcal{L}}{\partial b} = a - y.
 $$
 
+### 9.1. Tricky interview questions
+
+**Q1. Why does $\frac{\partial \mathcal{L}}{\partial z}$ simplify to $a-y$?**  
+For sigmoid plus binary cross-entropy, the derivative terms cancel neatly, leaving prediction minus label.
+
+**Q2. What does $a-y$ represent intuitively?**  
+It is the prediction error for one example in probability space.
+
+**Q3. Why is the weight gradient proportional to $\mathbf{x}$?**  
+Each weight controls the logit through its matching input feature, so the error is scaled by that feature value.
+
 ---
 
-### 1.9 Gradient descent on $m$ examples (fully vectorized)
+## 10. Gradient descent on $m$ examples (fully vectorized)
 
 The main idea is that the gradient is computed over **all examples at once**: compute all prediction errors together, turn them into gradients with matrix multiplication, and then update $\mathbf{w}$ and $b$ in one step.
 
@@ -313,9 +419,20 @@ $$
 b \leftarrow b - \alpha \,\frac{\partial J}{\partial b}.
 $$
 
+### 10.1. Tricky interview questions
+
+**Q1. Why is $\mathbf{dZ} = \mathbf{A} - \mathbf{y}$?**  
+It stacks the single-example derivative $a^{(i)} - y^{(i)}$ for all examples in the batch.
+
+**Q2. Why does $\mathbf{X}\mathbf{dZ}^\top$ produce the weight gradient shape?**  
+$\mathbf{X}$ has shape $n_x \times m$ and $\mathbf{dZ}^\top$ has shape $m \times 1$, so the result has one gradient per feature.
+
+**Q3. Why is the bias gradient the average of all errors?**  
+The same scalar bias contributes to every example's logit, so its gradient sums all example errors and averages them.
+
 ---
 
-## Summary
+## 11. Summary
 
 Logistic regression is the **simplest** neural network: one layer, one activation, trained by gradient descent on a convex cost — yet it already contains forward pass, loss, backward pass, and vectorization used in deep networks.
 
@@ -326,5 +443,16 @@ Logistic regression is the **simplest** neural network: one layer, one activatio
 | Cost | $J = -\dfrac{1}{m}\sum_{i=1}^{m}\bigl( y^{(i)}\log a^{(i)} + (1-y^{(i)})\log(1-a^{(i)})\bigr)$ |
 | Error signal | $\dfrac{\partial \mathcal{L}^{(i)}}{\partial z^{(i)}} = a^{(i)} - y^{(i)}$; batch: $\mathbf{dZ} = \mathbf{A} - \mathbf{y}$ |
 | Gradients of $J$ | $\dfrac{\partial J}{\partial \mathbf{w}} = \dfrac{1}{m}\mathbf{X}\,\mathbf{dZ}^\top$, $\dfrac{\partial J}{\partial b} = \dfrac{1}{m}\mathbf{dZ}\,\mathbf{1}_m$ |
+
+### 11.1. Tricky interview questions
+
+**Q1. What are the four main pieces of logistic regression training?**  
+Compute logits, apply sigmoid, compute binary cross-entropy cost, and update parameters using gradients.
+
+**Q2. What is the key error signal used in backpropagation?**  
+For each example it is $a^{(i)} - y^{(i)}$; in vectorized form it is $\mathbf{dZ} = \mathbf{A} - \mathbf{y}$.
+
+**Q3. What makes this model a good first neural-network example?**  
+It contains forward propagation, loss, backpropagation, gradient descent, and vectorization in the simplest possible setting.
 
 

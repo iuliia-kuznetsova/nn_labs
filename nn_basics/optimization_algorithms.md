@@ -8,6 +8,7 @@ A practical reference for tuning neural networks:
 - ADAM (Adaptive Moment Estimation);
 - Learning Rate Decay;
 - The Problem of Local Optima
+
 and interview-style pitfalls.
 
 ---

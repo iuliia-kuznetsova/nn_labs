@@ -1,18 +1,18 @@
 ﻿# Neural Networks: Terms
 
 Neural networks basic:
- Terms and Architecture;
- Activation Functions;
- Gradients and Derivatives;
- Gradient Descent;
- Tensors;
- Weights Initialization;
- Model Performance Evaluation
+- Terms and Architecture;
+- Activation Functions;
+- Gradients and Derivatives;
+- Gradient Descent;
+- Tensors;
+- Weights Initialization;
+- Model Performance Evaluation
 and interview-style pitfalls.
 
 ---
 
-**Notation (used throughout).**
+**Notation**
 
 - $n_x$: number of features per example.
 - $m$: number of examples (batch size).
@@ -28,31 +28,55 @@ and interview-style pitfalls.
 
 ## 1. Neural networks: basic terms and architecture
 
-**Neural network (general).** A neural network is a type of machine learning model that uses layers of interconnected artificial neurons to learn a function mapping inputs to outputs, often capturing complex, non-linear patterns. **Depth** usually means how many (trainable) layers the network has; **width** is how many neurons a layer has. Inputs and outputs of the full network are often vectors or higher-dimensional **tensors**; one "neuron" still refers to one scalar output node inside a layer.
+**Neural network (general)** 
 
-**Neuron (one unit).** Computes a **linear** score (logit) $z = \mathbf{w}^\top \mathbf{x} + b$, then a **nonlinear** **activation** $a = g(z)$. The pair $(\mathbf{w}, b)$ are **parameters** (learned by training). A neuron outputs a **single** scalar $a$ for that step.
+A neural network is a type of machine learning model that uses layers of interconnected artificial neurons to learn a function mapping inputs to outputs, often capturing complex, non-linear patterns. **Depth** usually means how many (trainable) layers the network has; **width** is how many neurons a layer has. Inputs and outputs of the full network are often vectors or higher-dimensional **tensors**; one "neuron" still refers to one scalar output node inside a layer.
 
-**Layer.** A collection of neurons that share the same input vector (or tensor) and produce a vector of activations. A **fully connected** (dense) layer maps $\mathbf{x} \mapsto g(\mathbf{W}\mathbf{x} + \mathbf{b})$: each row of $\mathbf{W}$ and matching entry in $\mathbf{b}$ is one neuron. Often the same $g$ is applied **element-wise** to the vector $\mathbf{W}\mathbf{x} + \mathbf{b}$ (i.e. once per component).
+**Neuron (one unit)** 
 
-**Neuron vs layer.** A **neuron** is one such unit: one $\mathbf{w}$, one $b$, one $g$ after one dot product, so one output $a$. A **layer** is **several** neurons **in parallel** on the **same** input $\mathbf{x}$: each has its own $\mathbf{w}$ and $b$ (or, stacked, a matrix $\mathbf{W}$ and vector $\mathbf{b}$), and you collect their outputs into a **vector** $\mathbf{a}$. So: **1 neuron â†’ 1 number; 1 layer â†’ 1 vector** (as many numbers as there are neurons in that layer). The "layer" is the whole block; a "neuron" is one of the units inside it.
+Computes a **linear** score (logit) $z = \mathbf{w}^\top \mathbf{x} + b$, then a **nonlinear** **activation** $a = g(z)$. The pair $(\mathbf{w}, b)$ are **parameters** (learned by training). A neuron outputs a **single** scalar $a$ for that step.
 
-**Training.** Training a neural network is the process of adjusting its weights and biases to **minimize a loss** on data so it makes better predictions on new data. Training usually uses forward propagation to produce outputs, backpropagation to compute how each weight contributed to the error, and an optimizer like gradient descent to update the weights.
+**Layer** 
 
-**Activation function.** An **activation function** $g$ (or **nonlinearity**) is a fixed, usually nonlinear, map from one real number to one real number. It **turns a linear function of the input into a nonlinear response**. Examples: sigmoid $\sigma$, ReLU, tanh, identity (linear output layer). You pick $g$ when you design the model. Sometimes different neurons use different $g$'s, but a dense layer often uses the same $g$ for all units in that layer.
+A collection of neurons that share the same input vector (or tensor) and produce a vector of activations. A **fully connected** (dense) layer maps $\mathbf{x} \mapsto g(\mathbf{W}\mathbf{x} + \mathbf{b})$: each row of $\mathbf{W}$ and matching entry in $\mathbf{b}$ is one neuron. Often the same $g$ is applied **element-wise** to the vector $\mathbf{W}\mathbf{x} + \mathbf{b}$ (i.e. once per component).
 
-**Epoch.** One **epoch** is one **complete** pass over the **training** dataset: every training example is used at least once in that cycle (e.g. one presentation of the full set in a fixed or shuffled order, or a sequence of mini-batches that together cover all data once). Training is typically run for many epochs; the loss and metrics are often reported **per epoch** or averaged within an epoch.
+**Neuron vs layer** 
 
-**Loss.** A scalar $\mathcal{L}$ (or average over examples) measuring how wrong predictions are. Training **minimizes** expected loss over data.
+A **neuron** is one such unit: one $\mathbf{w}$, one $b$, one $g$ after one dot product, so one output $a$. A **layer** is **several** neurons **in parallel** on the **same** input $\mathbf{x}$: each has its own $\mathbf{w}$ and $b$ (or, stacked, a matrix $\mathbf{W}$ and vector $\mathbf{b}$), and you collect their outputs into a **vector** $\mathbf{a}$. So: **1 neuron â†’ 1 number; 1 layer â†’ 1 vector** (as many numbers as there are neurons in that layer). The "layer" is the whole block; a "neuron" is one of the units inside it.
 
-**Forward pass.** Compute predictions from inputs and current parameters.
+**Training** 
 
-**Backward pass (backpropagation).** Apply the chain rule to obtain gradients of the loss with respect to all parameters, moving from the output layer back toward the input.
+Training a neural network is the process of adjusting its weights and biases to **minimize a loss** on data so it makes better predictions on new data. Training usually uses forward propagation to produce outputs, backpropagation to compute how each weight contributed to the error, and an optimizer like gradient descent to update the weights.
 
-**Linear regression** is a **single neuron** with identity activation and no hidden layer.
+**Activation function** 
 
-**Logistic regression** is a **single neuron** with sigmoid activation and no hidden layer.
+An **activation function** $g$ (or **nonlinearity**) is a fixed, usually nonlinear, map from one real number to one real number. It **turns a linear function of the input into a nonlinear response**. Examples: sigmoid $\sigma$, ReLU, tanh, identity (linear output layer). You pick $g$ when you design the model. Sometimes different neurons use different $g$'s, but a dense layer often uses the same $g$ for all units in that layer.
 
-### 1.1 Tricky interview questions
+**Epoch** 
+
+One **epoch** is one **complete** pass over the **training** dataset: every training example is used at least once in that cycle (e.g. one presentation of the full set in a fixed or shuffled order, or a sequence of mini-batches that together cover all data once). Training is typically run for many epochs; the loss and metrics are often reported **per epoch** or averaged within an epoch.
+
+**Loss** 
+
+A scalar $\mathcal{L}$ (or average over examples) measuring how wrong predictions are. Training **minimizes** expected loss over data.
+
+**Forward pass** 
+
+Compute predictions from inputs and current parameters.
+
+**Backward pass (backpropagation)** 
+
+Apply the chain rule to obtain gradients of the loss with respect to all parameters, moving from the output layer back toward the input.
+
+**Linear regression** 
+
+Linear regression is a **single neuron** with identity activation and no hidden layer.
+
+**Logistic regression** 
+
+Logistic regression is a **single neuron** with sigmoid activation and no hidden layer.
+
+### 1.1. Tricky interview questions
 
 **Q1. If a neural network has many layers but no nonlinear activations, is it still more powerful than one linear layer?**  
 No. A composition of linear maps is still one linear map, so hidden linear layers do not add representational power.
@@ -69,7 +93,7 @@ Parameters such as weights and biases are learned during training; hyperparamete
 
 An activation function maps the pre-activation $z$ (a real number) to the activation $a = g(z)$. Its job is to introduce non-linearity. Without it, a stack of layers would collapse into one big linear map.
 
-### 2.1 Sigmoid
+### 2.1. Sigmoid
 
 $$
 \sigma(z) = \frac{1}{1 + e^{-z}}, \qquad \sigma(z) \in (0, 1).
@@ -82,7 +106,7 @@ $$
 
 ---
 
-### 2.2 ReLU (Rectified Linear Unit)
+### 2.2. ReLU (Rectified Linear Unit)
 
 $$
 \mathrm{ReLU}(z) = \max(0, z) = \begin{cases} z, & z > 0 \\ 0, & z \le 0 \end{cases}
@@ -95,7 +119,7 @@ $$
 
 ---
 
-### 2.3 Tanh
+### 2.3. Tanh
 
 $$
 \tanh(z) = \frac{e^{z} - e^{-z}}{e^{z} + e^{-z}}, \qquad \tanh(z) \in (-1, 1).
@@ -108,7 +132,7 @@ $$
 
 ---
 
-### 2.4 Leaky ReLU
+### 2.4. Leaky ReLU
 
 $$
 \text{Leaky ReLU}(z) = \max(\alpha z,\; z) = \begin{cases} z, & z > 0 \\ \alpha z, & z \le 0 \end{cases}
@@ -123,7 +147,7 @@ where $\alpha$ is a small constant (commonly $0.01$).
 
 ---
 
-### 2.5 Choosing an Activation Function
+### 2.5. Choosing an Activation Function
 
 | Where | Recommended choice | Why |
 |-------|--------------------|-----|
@@ -137,11 +161,11 @@ where $\alpha$ is a small constant (commonly $0.01$).
 - **Sigmoid** is almost never used in hidden layers of modern networks; tanh is strictly superior.
 - When unsure, try all candidates on a holdout validation set and keep whichever performs best.
 
-![Main activation functions](main_activation_functions.jpg)
+![Main activation functions](graphs\main_activation_functions.jpg)
 
 ---
 
-### 2.6 Why Non-Linear Activation Functions Are Necessary
+### 2.6. Why Non-Linear Activation Functions Are Necessary
 
 If every layer uses a **linear (identity) activation** $g(z) = z$, composing two layers gives:
 
@@ -155,7 +179,7 @@ No matter how many layers are stacked, the result is still $W'\mathbf{x} + \math
 
 ---
 
-### 2.7 Derivatives of Activation Functions
+### 2.7. Derivatives of Activation Functions
 
 During **backpropagation** the network must evaluate the derivative (slope) of the activation function at every neuron. This section collects the formulas, explains the notation, and gives sanity checks.
 
@@ -165,7 +189,7 @@ For an activation function $g$, the derivative with respect to its scalar input 
 
 When the activation value $a = g(z)$ has already been computed during the forward pass, the derivative can often be expressed more cheaply in terms of $a$ — avoiding a second evaluation of $g$.
 
-#### 2.7.1 Sigmoid
+#### 2.7.1. Sigmoid
 
 $$
 g(z) = \sigma(z) = \frac{1}{1+e^{-z}}
@@ -189,7 +213,7 @@ $$
 
 ---
 
-#### 2.7.2 Tanh
+#### 2.7.2. Tanh
 
 $$
 g(z) = \tanh(z) = \frac{e^{z}-e^{-z}}{e^{z}+e^{-z}}
@@ -211,7 +235,7 @@ $$
 
 ---
 
-#### 2.7.3 ReLU
+#### 2.7.3. ReLU
 
 $$
 g(z) = \max(0,\,z)
@@ -227,7 +251,7 @@ $$
 
 ---
 
-#### 2.7.4 Leaky ReLU
+#### 2.7.4. Leaky ReLU
 
 $$
 g(z) = \max(\alpha z,\, z), \quad \alpha \ll 1\ (\text{e.g.}\ 0.01)
@@ -242,7 +266,7 @@ $$
 
 ---
 
-#### 2.7.5 Summary Table
+#### 2.7.5. Summary Table
 
 | Function | $g(z)$ | $g'(z)$ | Cached form |
 |----------|--------|---------|-------------|
@@ -253,7 +277,9 @@ $$
 
 $\mathbf{1}[\cdot]$ is the indicator function (1 if true, 0 if false).
 
-**Why "cached form" matters.** In a neural network the forward pass already computes and stores $\mathbf{A}^{[\ell]}$. The backward pass can then reuse those stored values:
+**Why "cached form" matters** 
+
+In a neural network the forward pass already computes and stores $\mathbf{A}^{[\ell]}$. The backward pass can then reuse those stored values:
 
 ```python
 # Sigmoid backward
@@ -269,7 +295,7 @@ dZ = dA * (Z > 0).astype(float)
 dZ = dA * np.where(Z > 0, 1, alpha)
 ```
 
-### 2.8 Tricky interview questions
+### 2.8. Tricky interview questions
 
 **Q1. Why is sigmoid usually a bad hidden-layer activation in deep networks?**  
 For large positive or negative inputs it saturates, making its derivative close to zero and causing weak gradient flow.
@@ -284,11 +310,15 @@ Yes. Hidden layers usually need nonlinear activations for representation power, 
 
 ## 3. Gradients and Derivatives
 
-### 3.1 Partial derivative and gradient
+### 3.1. Partial derivative and gradient
 
-**Partial derivative.** A partial derivative is the slope of a multivariable function in one chosen direction, while keeping the other variables fixed. For example, $\partial f / \partial x$ tells you how steep the surface is if you move **only** in the $x$-direction.
+**Partial derivative** 
 
-**Gradient.** The gradient is the vector made from **all** the partial derivatives. So for $f(x, y)$,
+A partial derivative is the slope of a multivariable function in one chosen direction, while keeping the other variables fixed. For example, $\partial f / \partial x$ tells you how steep the surface is if you move **only** in the $x$-direction.
+
+**Gradient** 
+
+The gradient is the vector made from **all** the partial derivatives. So for $f(x, y)$,
 
 $$
 \nabla f = \left( \frac{\partial f}{\partial x},\ \frac{\partial f}{\partial y} \right).
@@ -296,19 +326,23 @@ $$
 
 Each component is a slope in one coordinate direction, and together they tell you the **direction of steepest increase**.
 
-**Intuition.** If a partial derivative is "the slope along one axis," then the gradient is "the full slope information" at that point. Its direction points uphill most steeply, and its length tells you how steep that uphill direction is.
+**Intuition** 
+
+If a partial derivative is "the slope along one axis," then the gradient is "the full slope information" at that point. Its direction points uphill most steeply, and its length tells you how steep that uphill direction is.
 
 ---
 
-### 3.2 Chain rule and common derivatives
+### 3.2. Chain rule and common derivatives
 
-**Chain rule.** The chain rule is a calculus rule for differentiating a function that is inside another function. It says: take the derivative of the outer function, then multiply by the derivative of the inner function. If $y = f(u)$ and $u = g(x)$, then
+**Chain rule** 
+
+The chain rule is a calculus rule for differentiating a function that is inside another function. It says: take the derivative of the outer function, then multiply by the derivative of the inner function. If $y = f(u)$ and $u = g(x)$, then
 
 $$
 \frac{dy}{dx} = \frac{dy}{du}\,\frac{du}{dx}.
 $$
 
-**Main derivative rules.**
+**Main derivative rules**
 
 - $\dfrac{d}{dz} z^2 = 2z$.
 - $\dfrac{d}{dz} \log z = \dfrac{1}{z}$ (for $z > 0$).
@@ -322,7 +356,7 @@ $$
 
 This identity is used everywhere $\sigma$ appears inside a loss.
 
-### 3.3 Tricky interview questions
+### 3.3. Tricky interview questions
 
 **Q1. Does the gradient point toward the minimum of a function?**  
 No. The gradient points in the direction of steepest increase; gradient descent moves in the opposite direction.
@@ -337,7 +371,7 @@ No. A partial derivative is one component; the gradient is the vector containing
 
 ## 4. Gradient Descent
 
-### 4.1 Gradient and gradient descent
+### 4.1. Gradient and gradient descent
 
 For a scalar function $f(x, y, z)$ of multiple variables, the gradient is the vector
 
@@ -365,7 +399,9 @@ where:
 - $J(\theta)$: cost function evaluated at $\theta$;
 - $\nabla J(\theta)$: gradient of the cost function.
 
-**Worked example.** For our function $z = 2x^2 + 3y^2$ the gradient is $\nabla J(\theta) = (4x, 6y)$. Let's choose $\alpha = 0.05$.
+**Worked example** 
+
+For our function $z = 2x^2 + 3y^2$ the gradient is $\nabla J(\theta) = (4x, 6y)$. Let's choose $\alpha = 0.05$.
 
 **Step 0.** Start at the random point
 
@@ -397,11 +433,11 @@ $$
 J(\theta_1) = 2\,(1.6)^2 + 3\,(-2.1)^2 = 5.12 + 13.23 = 18.35 \quad (\text{decreased } \downarrow).
 $$
 
-### 4.2 Gradient descent in neural networks
+### 4.2. Gradient descent in neural networks
 
 Gradient descent is an optimization algorithm used to **minimize a loss function** by repeatedly moving the model parameters in the direction that reduces error the most.  Gradient descent is what helps neural networks learn. Backpropagation computes the gradients, and gradient descent uses them to update weights and biases.
 
-**Logic.**
+**Logic**
 
 1. Start with initial weights and biases, usually random.
 2. Compute the model's prediction (forward pass).
@@ -410,7 +446,9 @@ Gradient descent is an optimization algorithm used to **minimize a loss function
 5. Update parameters in the **opposite** direction of the gradient.
 6. Repeat until the loss stops improving much.
 
-**Update rule.** A common form is
+**Update rule** 
+
+A common form is
 
 $$
 \theta := \theta - \eta\,\nabla J(\theta),
@@ -418,9 +456,11 @@ $$
 
 where $\theta$ is a parameter, $\eta$ is the **learning rate**, and $\nabla J(\theta)$ is the gradient of the loss.
 
-**Learning rate.** The learning rate is a hyperparameter that controls step size: too large can **overshoot** the minimum, and too small can make training very slow.
+**Learning rate** 
 
-### 4.3 Tricky interview questions
+The learning rate is a hyperparameter that controls step size: too large can **overshoot** the minimum, and too small can make training very slow.
+
+### 4.3. Tricky interview questions
 
 **Q1. If the loss increases after a gradient descent step, does that mean the gradient was wrong?**  
 Not necessarily. The learning rate may be too large, causing the update to overshoot a better region.
@@ -435,9 +475,11 @@ Yes. It can be slowed by plateaus, poor conditioning, bad learning rates, saddle
 
 ## 5. Tensors
 
-### 5.1 In math
+### 5.1. In math
 
-**Definition.** In math, an $n$-th-rank tensor in $m$-dimensional space is a mathematical object that has $n$ indices and $m^n$ components and obeys certain transformation rules.
+**Definition** 
+
+In math, an $n$-th-rank tensor in $m$-dimensional space is a mathematical object that has $n$ indices and $m^n$ components and obeys certain transformation rules.
 
 The following table classifies tensor objects by their number of dimensions (rank):
 
@@ -448,9 +490,11 @@ The following table classifies tensor objects by their number of dimensions (ran
 | $2$      | $m \times m$ matrix |
 | $\ge 3$  | tensor |
 
-### 5.2 In computer science
+### 5.2. In computer science
 
-**Definition.** In computer science, a tensor is essentially a **multidimensional array of numbers**.
+**Definition** 
+
+In computer science, a tensor is essentially a **multidimensional array of numbers**.
 
 | Rank | CS term    | Shape (typical) | Use-case example |
 |------|------------|-----------------|------------------|
@@ -462,7 +506,7 @@ The following table classifies tensor objects by their number of dimensions (ran
 |      | 3D tensor  | `[e, t, f]`     | Panel time series (Entities, Time, Features)
 | 4    | 4D tensor  | `[b, c, h, w]`  | Batch of RGB images (Batch, Channels, Height, Width) |
 
-### 5.3 Tricky interview questions
+### 5.3. Tricky interview questions
 
 **Q1. Is every matrix a tensor?**  
 Yes. A matrix is a rank-2 tensor in the computer-science sense.
@@ -477,7 +521,7 @@ Different frameworks use different channel conventions. The data can represent t
 
 ## 6. Weight Initialization
 
-### 6.1 The Symmetry-Breaking Problem
+### 6.1. The Symmetry-Breaking Problem
 
 If all weights are initialized to **zero** (or any identical constant), every hidden neuron in a layer computes exactly the same function of the input:
 
@@ -489,7 +533,7 @@ Result: no matter how many hidden units exist, the network behaves as if it had 
 
 > **Bias terms** b do **not** cause this problem and can safely be initialized to zero, as long as W is initialized randomly.
 
-### 6.2 Random Initialization
+### 6.2. Random Initialization
 
 Break symmetry by drawing weights from a random distribution and scaling by a small constant:
 
@@ -501,18 +545,18 @@ W2 = np.random.randn(n2, n1) * 0.01
 b2 = np.zeros((n2, 1))
 ```
 
-**Why use a small constant (e.g. 0.01)?**
+**Why use a small constant (e.g. 0.01)**
 
 If W is large, the pre-activations z = Wx + b are large in magnitude. For **tanh** or **sigmoid** activations this means the network starts in the **saturated** (flat) region of the curve, where the gradient is near zero, so gradient descent is very slow from the start. Multiplying by a small constant keeps initial z values near zero - in the high-gradient region - so learning starts quickly.
 
-**When to use a different constant.**
+**When to use a different constant**
 
 | Setting | Typical choice |
 |---------|----------------|
 | Shallow network (1 hidden layer) | 0.01 is usually fine |
 | Deep network | Specialized initializations (Xavier / Glorot, He) are preferred; they scale the variance with layer width and are covered in later material |
 
-### 6.3 Tricky interview questions
+### 6.3. Tricky interview questions
 
 **Q1. Why is initializing all hidden-layer weights to zero a problem?**  
 All neurons in the same layer start identical, receive identical gradients, and remain identical, so the layer fails to learn diverse features.
@@ -527,7 +571,7 @@ They can push pre-activations into saturated regions where derivatives are near 
 
 ## 7. Model Performance Evaluation
 
-### 7.1 Training Accuracy vs. Test Accuracy
+### 7.1. Training Accuracy vs. Test Accuracy
 
 After training, two key numbers are usually reported:
 
@@ -536,7 +580,7 @@ After training, two key numbers are usually reported:
 
 The relationship between these two numbers is the primary signal for diagnosing how well a model generalizes.
 
-### 7.2 The Common Pattern and the Common Misconception
+### 7.2. The Common Pattern and the Common Misconception
 
 It is widely observed that *test accuracy tends to be lower than training accuracy* when a model overfits — and this is true. However, it is **not** a law:
 
@@ -544,20 +588,20 @@ It is widely observed that *test accuracy tends to be lower than training accura
 
 It can be slightly higher, roughly equal, or clearly lower depending on the situation. Treating "test accuracy > training accuracy" as proof of no overfitting, or "test accuracy ≤ training accuracy" as the only valid outcome, are both mistakes.
 
-### 7.3 Why Test Accuracy Can Be Higher Than Training Accuracy
+### 7.3. Why Test Accuracy Can Be Higher Than Training Accuracy
 
 Several factors can produce test accuracy that equals or exceeds training accuracy even in a correctly functioning model:
 
-**1. Regularization is active during training but not at test time.**
+**1. Regularization is active during training but not at test time**
 Techniques like dropout zero out neurons during the forward pass at training time, which makes training harder and effectively lowers training accuracy. At test time the full network is used, so test accuracy benefits from all neurons — this alone can make the test number higher than the training number.
 
-**2. Train/test split randomness.**
+**2. Train/test split randomness**
 With small datasets, a random split can produce a test set that is slightly "easier" than the training set — better-balanced classes, less noisy examples, or fewer hard edge cases. This is a statistical artifact of the split, not evidence of good or bad generalization.
 
-**3. How metrics are computed.**
+**3. How metrics are computed**
 Train accuracy is often measured with dropout on and batch normalization in training mode; test accuracy is measured with dropout off and batch normalization in inference mode. These are not the same computational graph, so a direct numerical comparison needs to account for these differences.
 
-### 7.4 How to Actually Judge Generalization
+### 7.4. How to Actually Judge Generalization
 
 A small gap between training and test accuracy, with both numbers being high, is the reliable indicator of good generalization — not the sign of the difference.
 
@@ -575,7 +619,7 @@ A small gap between training and test accuracy, with both numbers being high, is
 3. Results are stable across different random seeds and splits (not a lucky split artifact).
 4. Dev-set performance guided hyperparameter choices (test set was not touched until the end).
 
-### 7.5 Overfitting, Underfitting, and the Accuracy Gap
+### 7.5. Overfitting, Underfitting, and the Accuracy Gap
 
 **Overfitting** (high variance): the model has learned noise specific to the training set.
 - Train accuracy: high.
@@ -593,7 +637,7 @@ A small gap between training and test accuracy, with both numbers being high, is
 
 The goal of training is not to achieve the lowest possible training error, but to achieve the smallest possible gap between training and test error while keeping both high.
 
-### 7.6 Tricky interview questions
+### 7.6. Tricky interview questions
 
 **Q1. Does test accuracy higher than training accuracy prove the model is not overfitting?**  
 No. It can happen because of regularization, an easier test split, metric differences, or random variation.
