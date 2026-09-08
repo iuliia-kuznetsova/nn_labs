@@ -64,6 +64,8 @@ Not all hyperparameters matter equally. Allocate most of your search budget to t
 
 **Rule of thumb:** tune $\alpha$ first (and optionally $\beta_1$, $B$, width). Fix Adam’s $\beta_2$ and $\varepsilon$ unless you have strong evidence they matter for your task.
 
+![A pyramid of hyperparameters: learning rate on top, then β₁/batch/width, then depth/schedule/λ, then Adam β₂ and ε.](figures/hp-priority.svg)
+
 **Panda vs. Caviar** (organizing the search process)
 
 
@@ -74,6 +76,8 @@ Not all hyperparameters matter equally. Allocate most of your search budget to t
 
 
 Re-tune periodically (every few months on long-lived systems). Data drift, new data volume, and faster hardware can make old settings suboptimal.
+
+![Panda: one orange box babysat daily. Caviar: a grid of many small training runs.](figures/hp-panda.svg)
 
 ### 1.3. Tricky interview questions
 
@@ -193,6 +197,8 @@ The key insight (Bergstra & Bengio, 2012): if only one hyperparameter truly matt
 | Distinct $\varepsilon$ values | **5** | **~25** |
 
 If lr dominates and $\varepsilon$ is irrelevant, random search explores lr **5× more thoroughly** for the same cost.
+
+![Grid points on a 4×4 lattice versus random points denser along the important axis.](figures/hp-grid.svg)
 
 
 **How it differs**
@@ -819,6 +825,8 @@ $$\tilde{Z}^{[\ell]} = \gamma^{[\ell]} \odot Z^{[\ell]}_{\text{norm}} + \beta^{[
 $$A^{[\ell]} = g^{[\ell]}(\tilde{Z}^{[\ell]})$$
 
 **Parameters per layer:** $W^{[\ell]}, \gamma^{[\ell]}, \beta^{[\ell]}$ (no separate $b^{[\ell]}$ when BN includes $\beta$).
+
+![Layer pipeline: previous activations, linear map, normalize, scale-and-shift with γ and β, then the nonlinearity.](figures/hp-bn.svg)
 
 ### 3.4. Batch norm at test time
 

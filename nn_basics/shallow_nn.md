@@ -21,6 +21,8 @@ and interview-style pitfalls.
 
 ![Shallow NN graph](graphs\shallow_nn_graph.png)
 
+![A shallow network: three gray input units, four green hidden units, one red output unit, fully connected.](figures/sha-arch.svg)
+
 A shallow neural network with $n_0$ input features, $n_1$ hidden units, and $n_2$ output units has three layers:
 
 | Layer | Index | Description |
@@ -117,6 +119,8 @@ $$
 $$
 
 This is conceptually $n_1 + 1$ logistic-regression units, computed all at once.
+
+![Forward pass as five boxes: x, z[1], a[1], z[2], ŷ.](figures/sha-forward.svg)
 
 ### 2.4. Tricky interview questions
 
@@ -421,6 +425,8 @@ Check that every parameter and its gradient have the same shape.
 ## 7. Softmax Regression (Multi-class Classification)
 
 ![Softmax graph](graphs\softmax.png)
+
+![Softmax: three logits become three nonnegative probabilities that sum to one, labeled cat, dog, and bird.](figures/sha-softmax.svg)
 
 Softmax is a function that turns a list of raw scores into probabilities that add up to 1, so the model can choose one class out of many. It is commonly used at the output layer of neural networks for multiclass classification.
 

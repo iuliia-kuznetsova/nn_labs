@@ -36,6 +36,8 @@ This note uses **vectorized** notation: one training step updates all parameters
 
 ![Simplest NN graph](graphs\simplest_nn_graph.png)
 
+![Logistic regression as a one-neuron network: input x, parameters w and b, logit z, sigmoid a, output ŷ.](figures/log-neuron.svg)
+
 ### 1.1. Tricky interview questions
 
 **Q1. Why can logistic regression be viewed as the simplest neural network?**  
@@ -135,6 +137,8 @@ so that
 - If $z$ is a large positive number, $\sigma(z) \approx 1$.
 - If $z$ is a large negative number, $\sigma(z) \approx 0$.
 - If $z = 0$, $\sigma(z) = 0.5$.
+
+![Design matrix X with one example per column, multiplied by w⊤ to produce a 1×m row of logits.](figures/log-vectorized.svg)
 
 ### 3.1. Tricky interview questions
 
@@ -277,6 +281,8 @@ $$
 
 where $\alpha > 0$ is the **learning rate**.
 
+![Nested contours of a convex bowl, with red gradient-descent steps shrinking toward the green minimum.](figures/log-gd.svg)
+
 ### 6.1. Tricky interview questions
 
 **Q1. Why do we subtract the gradient?**  
@@ -306,6 +312,8 @@ $$
 $$
 
 With batch training, the same graph is repeated for many examples, or written in vector form so you process the whole batch at once. Batch training repeats the same structure for each column of $\mathbf{X}$, or uses vectorized nodes for $\mathbf{Z}$ and $\mathbf{A}$. The structure is the same; only the shapes become matrices and vectors.
+
+![Forward boxes from x and (w, b) through z, a, and the loss; a red return path labeled backward.](figures/log-compgraph.svg)
 
 ### 7.1. Tricky interview questions
 

@@ -1,0 +1,96 @@
+The transpose convolution is a key part of the
+unit architecture. How do you take a
+two-by-two inputs and blow it up into a four-
+by-four-dimensional output? The transpose convolution
+lets you do that. Let's dig into the details. You're familiar with the
+normal convolution in which a typical layer of
+a new network may input a six by six
+by three image, convolve that with a set of, say, three by three by three filters and if you have five of these, then you end up with an output that is four by four by five. A transpose convolution
+looks a bit difference. You might inputs a two-by-two,
+said that activation, convolve that with a
+three by three filter, and end up with an output
+that is four by four, that's bigger than
+the original inputs. Let's step through a
+more detailed example of how this works. In this example,
+we're going to take a two-by-two inputs like they're shown on the left
+and we want to end up with a four by four outputs. But to go from two-by-two
+to four-by-four, I'm going to choose to use a filter that is three by three. The filter is f by f, and I'm going to
+choose three by three and let's say that's
+the filter we will use. I'm also going to use a padding p is equal to
+one and in the outputs, I'm going to apply, that's one p padding,
+,and then finally, the last parameter,
+I'm going to use a stride s equal to
+two for this example. Let's see how the transpose
+convolution will work. In the regular convolution, you would take the
+filter and place it on top of the inputs and
+then multiply and sum up. In the transpose convolution, instead of placing the
+filter on the input, you would instead place
+a filter on the output. Let me illustrate that
+by mechanically stepping through the steps of the transpose
+convolution calculation. Let's starts with
+this upper left entry of the input, which is a two. We are going to take
+this number two and multiply it by every
+single value in the filter and we're going to take the output
+which is three by three and paste it
+in this position. Now, the padding area isn't
+going to contain any values. What we're going
+to end up doing is ignore this paddy
+region and just throw in four values in the
+red highlighted area and specifically, the upper left entry is zero
+times two, so that's zero. The second entry is one
+times two, that is two. Down here is two times two, that's four, and then over here is one times two so
+that's equal to two. Next, let's look at the second entry of the
+input which is a one. I'm going to switch to
+green pen for this. Once again, we're going
+to take a one and multiply by one every single
+elements of the filter, because we're using
+a stride of two, we're now going to
+shift to box in which we copy the numbers
+over by two steps. Again, we'll ignore the area
+which is in the padding and the only area that
+we need to copy the numbers over is
+this green shaded area. You may notice that there is some overlap between the
+places where we copy the red-colored version
+of the filter and the green version
+and we cannot simply copy the green value
+over the red one. Where the red and the
+green boxes overlap, you add two values together. Where there's already a two from the first
+weighted filter, you add to it this first value from the green
+region which is also two. You end up with two plus two. The next entry, zero
+times one is zero, then you have one, two
+plus zero times one, so two plus zero followed by two, followed by one and again, we shifted two squares over from the red box here to the green box here because it using
+a stride of two. Next, let's look at the lower-left entry of
+the input, which is three. We'll take the filter, multiply every element by three and we've gone down
+by one step here. We're going to go down
+by two steps here. We will be filling in
+our numbers in this three by three square
+and you find that the numbers you copying
+over are two times three, which is six, one times three, which is three, zero times three, which is zero, and so on, three, six, three
+,and then lastly, let's go into the last input
+element, which is two. We will multiply every
+elements of the filter by two and add them to this block and you
+end up with adding one times two which is plus two, and so on for the
+rest of the elements. The final step is to
+take all the numbers in these four by four matrix of values in the 16 values
+and add them up. You end up with zero here, two plus two is four, zero, one, four plus six is 10, two plus zero plus three
+plus two is seven, two plus four is six. I know this looks like a little
+bit of a mess because I'm writing on top of
+things there is zero, three plus four was
+seven, zero, two, six, three plus zero was three, four, two, hence that's
+your four-by-four outputs. In case you're wondering why do we have to do it this way, I think there are
+multiple possible ways to take small inputs and turn
+it into bigger outputs, but the transpose convolution
+happens to be one that is effective and when you learn all the parameters
+of the filter here, this turns out to give good
+results when you put this in the context of the union which is the learning
+algorithm will use now. Let's go back and keep
+on building the unit. In this video, we step
+through step-by-step how the transpose convolution
+lets you take a small input, say two-by-two, and blow
+it up into larger output, say four by four. This is the key building block
+of the unit architecture which you get to implement
+and play within this week's programming
+exercises well. Now that you understand
+a transpose convolution, let's take this
+building block you now have and see how it fits into the overall unit architecture that you can use for
+semantic segmentation. Let's go on to the next video.

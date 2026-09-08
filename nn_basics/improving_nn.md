@@ -14,6 +14,8 @@ Applied ML is an iterative process: idea → code → experiment → refine. Spl
 - Training data may come from a different distribution (e.g. web-crawled images vs. user uploads).
 - It is acceptable to have no test set if an unbiased final estimate is not needed (train + dev only).
 
+![Stacked bars: a 60/20/20 split on a small dataset versus 98/1/1 on a million-example dataset.](figures/str-splits.svg)
+
 ---
 
 ## 2. Bias and Variance
@@ -80,6 +82,8 @@ $$\text{Total Error} = \text{Bias}^2 + \text{Variance} + \sigma^2_\varepsilon$$
 
 ![Bias variance](bias_variance.jpg)
 
+![Bias² falling, variance rising, and their U-shaped sum as model complexity grows.](figures/imp-ushape.svg)
+
 | Model | Bias | Variance |
 |---|---|---|
 | Constant $\hat{f}(x) = c$ | High — always predicts the mean | Zero — never changes with data |
@@ -123,6 +127,8 @@ In traditional ML, most levers move you along this curve rather than shifting it
 **Example — polynomial regression.** 
 
 ![Two models graph](linear_polynomial_tradeoff.png)
+
+![Three panels of the same noisy points: a straight underfit, a smooth curve, and a wiggly overfit.](figures/imp-poly.svg)
 
 Suppose two models are fitted to data drawn from a curved true function:
 
@@ -179,6 +185,8 @@ High variance?  (look at dev error)
     ↓
 Done (low bias + low variance)
 ```
+
+![A vertical checklist: train, then fix high train error, then fix a high dev gap.](figures/imp-recipe.svg)
 
 ---
 
@@ -246,6 +254,8 @@ A_l = A_l / keep_prob
 ```
 
 4. Pass $A^{[\ell]}$ forward as usual.
+
+![A hidden layer with two units zeroed out; only the surviving green units connect forward, scaled by 1/p.](figures/imp-dropout.svg)
 
 #### Why divide by keep_prob? (Inverted dropout)
 
@@ -323,6 +333,8 @@ Use the **same** $\mu$ and $\sigma^2$ computed on the training set to normalize 
 
 Unnormalized features on very different scales (e.g. $x_1 \in [0, 1000]$, $x_2 \in [0, 1]$) create a highly elongated cost surface where gradient descent oscillates and needs a tiny learning rate. After normalization the surface is more symmetric and gradient descent converges faster with larger steps.
 
+![A long ravine with a zig-zag path beside a round bowl with a short direct path.](figures/imp-normalize.svg)
+
 ---
 
 ## 6. Vanishing / Exploding Gradients
@@ -335,6 +347,8 @@ $$\hat{y} = W^{[L]} W^{[L-1]} \cdots W^{[1]} x$$
 - If $W^{[\ell]} \approx 0.5\,\mathbf{I}$, then activations (and gradients) shrink as $\sim 0.5^L$ → **vanishing**.
 
 Gradient descent becomes very slow or unstable. Careful weight initialization partially addresses this.
+
+![Log-scale plot: a red exploding curve for W ≈ 1.5 I and a blue vanishing curve for W ≈ 0.5 I.](figures/imp-vanish.svg)
 
 ---
 
@@ -396,6 +410,8 @@ This is the **central difference formula** for the derivative — a symmetric ap
 - Take the difference in outputs and divide by the total distance between the two points, $2\varepsilon$.
 
 Because the two evaluation points are placed symmetrically around $\theta$, the first-order errors cancel out, giving approximation error $O(\varepsilon^2)$ — much more accurate than the one-sided difference $\frac{J(\theta+\varepsilon) - J(\theta)}{\varepsilon}$ whose error is only $O(\varepsilon)$. A typical value is $\varepsilon = 10^{-7}$.
+
+![A green cost curve with a red chord from θ−ε to θ+ε approximating the tangent at θ.](figures/imp-gradcheck.svg)
 
 ### 8.2 Flattening Parameters into a Vector
 

@@ -36,6 +36,8 @@ A neural network is a type of machine learning model that uses layers of interco
 
 Computes a **linear** score (logit) $z = \mathbf{w}^\top \mathbf{x} + b$, then a **nonlinear** **activation** $a = g(z)$. The pair $(\mathbf{w}, b)$ are **parameters** (learned by training). A neuron outputs a **single** scalar $a$ for that step.
 
+![One neuron: three gray inputs wired into a green logit z, then a red activation a = g(z).](figures/term-neuron.svg)
+
 **Layer** 
 
 A collection of neurons that share the same input vector (or tensor) and produce a vector of activations. A **fully connected** (dense) layer maps $\mathbf{x} \mapsto g(\mathbf{W}\mathbf{x} + \mathbf{b})$: each row of $\mathbf{W}$ and matching entry in $\mathbf{b}$ is one neuron. Often the same $g$ is applied **element-wise** to the vector $\mathbf{W}\mathbf{x} + \mathbf{b}$ (i.e. once per component).
@@ -163,6 +165,8 @@ where $\alpha$ is a small constant (commonly $0.01$).
 
 ![Main activation functions](graphs\main_activation_functions.jpg)
 
+![Sigmoid, tanh, ReLU, and leaky ReLU drawn on the same axes style: green/orange/red curves matching the lecture palette.](figures/term-activations.svg)
+
 ---
 
 ### 2.6. Why Non-Linear Activation Functions Are Necessary
@@ -174,6 +178,8 @@ a^{[2]} = W^{[2]}\!\bigl(W^{[1]}\mathbf{x} + \mathbf{b}^{[1]}\bigr) + \mathbf{b}
 $$
 
 No matter how many layers are stacked, the result is still $W'\mathbf{x} + \mathbf{b}'$ -- **a single linear map**. Adding hidden layers with linear activations is therefore pointless: the network cannot learn non-linear patterns and is equivalent to logistic/linear regression with no hidden layers.
+
+![Two orange linear maps in a row collapsing into one equivalent linear map.](figures/term-linear.svg)
 
 **One valid exception.** The **output layer** may use a linear activation when predicting a real-valued quantity (regression). All hidden layers must still use non-linear activations.
 
@@ -399,6 +405,8 @@ where:
 - $J(\theta)$: cost function evaluated at $\theta$;
 - $\nabla J(\theta)$: gradient of the cost function.
 
+![Nested contours of a convex bowl, with red gradient-descent steps shrinking toward the green minimum.](figures/log-gd.svg)
+
 **Worked example** 
 
 For our function $z = 2x^2 + 3y^2$ the gradient is $\nabla J(\theta) = (4x, 6y)$. Let's choose $\alpha = 0.05$.
@@ -506,6 +514,8 @@ In computer science, a tensor is essentially a **multidimensional array of numbe
 |      | 3D tensor  | `[e, t, f]`     | Panel time series (Entities, Time, Features)
 | 4    | 4D tensor  | `[b, c, h, w]`  | Batch of RGB images (Batch, Channels, Height, Width) |
 
+![Scalar, vector, matrix, and a stacked 3-D volume, using the same gray/green/orange/red palette.](figures/term-tensor.svg)
+
 ### 5.3. Tricky interview questions
 
 **Q1. Is every matrix a tensor?**  
@@ -530,6 +540,8 @@ If all weights are initialized to **zero** (or any identical constant), every hi
 - After every weight update the neurons remain identical — by induction they stay symmetric for all iterations of training.
 
 Result: no matter how many hidden units exist, the network behaves as if it had only **one hidden unit per layer**. Multiple units buy nothing.
+
+![Two tiny nets: identical red wires on the left (copied neurons) versus random green wires on the right (specialized units).](figures/term-symmetry.svg)
 
 > **Bias terms** b do **not** cause this problem and can safely be initialized to zero, as long as W is initialized randomly.
 

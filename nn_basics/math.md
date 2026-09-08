@@ -35,6 +35,8 @@ $$f'(x) = \frac{df}{dx} = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$
 
 The derivative measures the instantaneous rate of change of $f$ at $x$.
 
+![A green curve with a red secant from x to x+h, shrinking toward the tangent.](figures/math-derivative.svg)
+
 ---
 
 ### 1.3 Basic Derivative Rules
@@ -81,6 +83,8 @@ $$\frac{d}{dx} f(g(h(x))) = f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)$$
 
 This is the backbone of backpropagation in neural networks.
 
+![Boxes x → h(x) → g(h) → f(g(h)), with df/dx = f' · g' · h' underneath.](figures/math-chain.svg)
+
 **Example** — derivative of $\sigma(w^\top x + b)$ with respect to $w_j$:
 
 $$\frac{\partial}{\partial w_j} \sigma(w^\top x + b) = \sigma(z)(1 - \sigma(z)) \cdot x_j, \quad z = w^\top x + b$$
@@ -108,6 +112,8 @@ $$\nabla f(\mathbf{x}) = \begin{pmatrix} \frac{\partial f}{\partial x_1} \\ \vdo
 - The gradient points in the direction of **steepest ascent**.
 - $-\nabla f$ points toward steepest descent — the basis of gradient descent.
 - $\nabla f(\mathbf{x}^*) = \mathbf{0}$ is a necessary condition for a local extremum.
+
+![Nested contours with red arrows pointing outward (uphill) away from a green minimum.](figures/math-grad.svg)
 
 ---
 
@@ -275,6 +281,8 @@ c * A
 $(AB)_{ij} = \sum_k A_{ik} B_{kj}$ — requires inner dimensions to match: $(m \times k)(k \times n) \to (m \times n)$.
 
 **Not commutative:** $AB \neq BA$ in general.
+
+![A 3×2 matrix times a 2×3 matrix: one highlighted row of A and column of B producing one highlighted entry of AB.](figures/math-matmul.svg)
 
 ```python
 A @ B                  # matrix multiply (recommended)
@@ -522,6 +530,8 @@ $$\boxed{P(A \mid B) = \frac{P(B \mid A)\, P(A)}{P(B)}}$$
 In machine learning terms:
 
 $$\text{posterior} = \frac{\text{likelihood} \times \text{prior}}{\text{evidence}}$$
+
+![Two overlapping ellipses labeled A and B, with the intersection A∩B in the middle.](figures/math-bayes.svg)
 
 **Bayes' theorem (continuous form):**
 
@@ -858,6 +868,8 @@ $$F_1 = \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \
 
 $$F_\beta = (1+\beta^2)\frac{\text{Precision} \cdot \text{Recall}}{\beta^2\,\text{Precision} + \text{Recall}}$$
 
+![A 2×2 confusion matrix: TP, FN, FP, TN in the lecture colours.](figures/math-confusion.svg)
+
 **ROC-AUC:** area under the Receiver Operating Characteristic curve (TPR vs. FPR). AUC = 1 is perfect; AUC = 0.5 is random.
 
 ---
@@ -894,6 +906,8 @@ Properties:
 - $H(X) \geq 0$
 - $H(X)$ is maximized by uniform distribution
 - For a Gaussian $\mathcal{N}(\mu, \sigma^2)$: $H = \frac{1}{2}\ln(2\pi e \sigma^2)$
+
+![Entropy versus P(heads): a purple arch peaking at 1 bit for a fair coin.](figures/math-entropy.svg)
 
 ---
 
@@ -945,6 +959,8 @@ $$f(t\mathbf{x} + (1-t)\mathbf{y}) \leq t f(\mathbf{x}) + (1-t) f(\mathbf{y})$$
 **Equivalently** (for twice-differentiable $f$): $H \succeq 0$ everywhere.
 
 **Strict convexity:** $<$ above → unique global minimum.
+
+![A green bowl with a chord above the graph, beside a red non-convex curve with several basins.](figures/math-convex.svg)
 
 **Convex functions in ML:**
 

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 460" width="920" height="460">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+</defs>
+<rect width="920" height="460" fill="#ffffff"/>
+<g font-family="Segoe UI, system-ui, -apple-system, Helvetica, Arial, sans-serif" fill="#111827" font-size="12">
+<text x="460" y="24" font-size="15" text-anchor="middle" fill="#111827" font-weight="600">U-Net</text>
+<text x="460" y="42" font-size="11.5" text-anchor="middle" fill="#6b7280" font-weight="normal">encoder down, decoder up, skip connections copy high-resolution detail across</text>
+<rect x="80" y="80" width="70" height="70" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.4"/>
+<text x="115" y="68" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="600">H×W×c</text>
+<rect x="100" y="168" width="58" height="58" rx="4" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.4"/>
+<rect x="118" y="248" width="46" height="46" rx="4" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.4"/>
+<rect x="134" y="320" width="36" height="36" rx="4" fill="#86efac" stroke="#15803d" stroke-width="1.4"/>
+<text x="152" y="308" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="600">bottleneck</text>
+<rect x="654" y="320" width="36" height="36" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1.4"/>
+<rect x="638" y="248" width="46" height="46" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1.4"/>
+<rect x="620" y="168" width="58" height="58" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1.4"/>
+<rect x="600" y="80" width="70" height="70" rx="4" fill="#fecaca" stroke="#dc2626" stroke-width="1.4"/>
+<text x="635" y="68" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="600">H×W×C</text>
+<line x1="115" y1="154" x2="129" y2="164" stroke="#2563eb" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="129" y1="230" x2="141" y2="244" stroke="#2563eb" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="141" y1="298" x2="152" y2="316" stroke="#2563eb" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="672" y1="316" x2="661" y2="298" stroke="#22c55e" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="661" y1="244" x2="649" y2="230" stroke="#22c55e" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="649" y1="164" x2="635" y2="154" stroke="#22c55e" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M 154,115 C 375,115 375,115 596,115" fill="none" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#ah)" stroke-dasharray="6 4"/>
+<text x="375" y="103" font-size="11" text-anchor="middle" fill="#6b7280" font-weight="normal">copy + concat</text>
+<path d="M 162,197 C 389,197 389,197 616,197" fill="none" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#ah)" stroke-dasharray="6 4"/>
+<path d="M 168,271 C 401,271 401,271 634,271" fill="none" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#ah)" stroke-dasharray="6 4"/>
+<text x="115" y="430" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">encoder</text>
+<text x="115" y="446" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">nH ↓   nC ↑</text>
+<text x="635" y="430" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">decoder</text>
+<text x="635" y="446" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">nH ↑   nC ↓</text>
+<rect x="250" y="391" width="11" height="11" rx="2" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.1"/>
+<text x="266" y="400" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">input</text>
+<rect x="322.55" y="391" width="11" height="11" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.1"/>
+<text x="338.55" y="400" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">conv + ReLU</text>
+<rect x="434.16" y="391" width="11" height="11" rx="2" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.1"/>
+<text x="450.16" y="400" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">max pool  (down)</text>
+<rect x="578.32" y="391" width="11" height="11" rx="2" fill="#dcfce7" stroke="#22c55e" stroke-width="1.1"/>
+<text x="594.32" y="400" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">transpose conv  (up)</text>
+<rect x="748.52" y="391" width="11" height="11" rx="2" fill="#fecaca" stroke="#dc2626" stroke-width="1.1"/>
+<text x="764.52" y="400" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">1×1  →  n_classes</text>
+<rect x="300" y="300" width="320" height="70" rx="6" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.2"/>
+<text x="460" y="324" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">ResNet skip: add, to ease optimization</text>
+<text x="460" y="344" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">U-Net skip: concatenate, to restore spatial detail</text>
+<text x="460" y="360" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">same name, different operation and purpose</text>
+</g>
+</svg>

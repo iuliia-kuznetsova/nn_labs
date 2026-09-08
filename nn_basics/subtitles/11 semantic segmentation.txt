@@ -1,0 +1,97 @@
+Hi and welcome back. In this course, you've learned
+about object recognition, where the goal is
+to input a picture and figure out what
+is in the picture, such as is this a cat or not. You've learned about
+object detection, where the goal is to further put a bounding box around
+the object is found. In this video, you
+learn about a set of algorithms that's even
+one step more sophisticated, which is semantic segmentation, where the goal is to draw a careful outline around
+the object that is detected so that you
+know exactly which pixels belong to the object
+and which pixels don't. This type of algorithm, semantic segmentation
+is useful for many commercial
+applications as well today. Let's dive in. What is semantic segmentation? Let's say you're building a
+self-driving car and you see an input image like this and you'd like to detect the
+position of the other cars. If you use an object
+detection algorithm, the goal may be to draw bounding boxes like these
+around the other vehicles. This might be good enough
+for self-driving car, but if you want your
+learning algorithm to figure out what is every single
+pixel in this image, then you may use a semantic segmentation algorithm whose goal is to output this. Where, for example,
+rather than detecting the road and trying to draw a bounding box around the roads, which isn't going
+to be that useful, with semantic segmentation
+the algorithm attempts to label every single pixel as is this drivable roads or not, indicated by the
+dark green there. One of the uses of
+semantic segmentation is that it is used by some
+self-driving car teams to figure out exactly
+which pixels are safe to drive over because they represent a drivable surface. Let's look at some
+other applications. These are a couple of images from research papers by Novikov
+et al and by Dong et al. In medical imaging,
+given a chest X-ray, you may want to diagnose if someone has a
+certain condition, but what may be even
+more helpful to doctors, is if you can segment
+out in the image, exactly which pixels correspond to certain parts of
+the patient's anatomy. In the image on the left, the lungs, the heart, and the clavicle, so the collarbones are segmented
+out using different colors. This segmentation can make it easier to spot
+irregularities and diagnose serious diseases and also help surgeons with planning
+out surgeries. In this example, a brain MRI scan is used
+for brain tumor detection. Manually segmenting
+out this tumor is very time-consuming
+and laborious, but if a learning
+algorithm can segment out the tumor automatically; this saves radiologists a lot
+of time and this is a useful input as well
+for surgical planning. The algorithm used to generate this result is an
+algorithm called unit, which you'll learn about in
+the remainder of this video. Let's dig into what semantic
+segmentation actually does. For the sake of simplicity, let's use the example of segmenting out a car
+from some background. Let's say for now that
+the only thing you care about is segmenting out
+the car in this image. In that case, you may decide
+to have two cause labels. One for a car and
+zero for not car. In this case, the job of the segmentation algorithm of the unit algorithm
+will be to output, either one or zero for every
+single pixel in this image, where a pixel should
+be labeled one, if it is part of
+the car and label zero if it's not part of the car. Alternatively, if you want
+to segment this image, looking more finely
+you may decide that you want to
+label the car one. Maybe you also want to know
+where the buildings are. In which case you would
+have a second class, class two the building and then finally the ground or the roads, class three, in which case the
+job the learning algorithm would be to label every
+pixel as follows instead. Taking the per-pixel labels
+and shifting it to the right, this is the output that we would like to train
+a unit table to give. This is a lot of outputs, instead of just giving a single class label or
+maybe a class label and coordinates needed to
+specify bounding box the neural network
+unit in this case, has to generate a whole
+matrix of labels. What's the right neural network
+architecture to do that? Let's start with the
+object recognition neural network
+architecture that you're familiar with and let's
+figure how to modify this in order to make
+this new network output, a whole matrix of class labels. Here's a familiar convolutional neural
+network architecture, where you input an image
+which is fed forward through multiple layers in order to generate a class label y hat. In order to change
+this architecture into a semantic segmentation
+architecture, let's get rid of the
+last few layers and one key step of semantic
+segmentation is that, whereas the dimensions
+of the image have been generally getting smaller as we go from left to right, it now needs to get bigger
+so they can gradually blow it back up to
+a full-size image, which is a size you
+want for the output. Specifically, this is what a unit
+architecture looks like. As we go deeper into the unit, the height and width will go back up while the number of
+channels will decrease so the unit architecture
+looks like this until eventually, you get your
+segmentation map of the cat. One operation we have not yet covered is what does
+this look like? To make the image bigger. To explain how that works, you have to know how to implement a transpose
+convolution. That's semantic
+segmentation, a very useful algorithm for many
+computer vision applications where the key idea is you have to take every single pixel and label every single pixel individually with the
+appropriate class label. As you've seen in this video, a key step to do that is
+to take a small set of activations and to blow it up to a bigger set
+of activations. In order to do that, you have to implement something called the transpose convolution, which is important
+operation that is used multiple times in the
+unit architecture. Let's go on to the next
+video where you learn about the transpose convolution. I'll see you in the next video.

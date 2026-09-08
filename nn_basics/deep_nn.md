@@ -22,6 +22,8 @@ and interview-style pitfalls.
 
 ![Deep NN graph](graphs\deep_nn_graph.png)
 
+![A deep network: gray input, three green hidden layers, red output. Depth is the number of trainable layers.](figures/dnn-arch.svg)
+
 A deep network has three kinds of layers:
 
 | Kind | Layer indices | Role |
@@ -198,6 +200,8 @@ The same hierarchy arises in other domains:
 | Speech | Low-level waveforms | Phonemes | Words, phrases |
 | Text | Characters / tokens | Morphemes | Sentences, meanings |
 
+![Four stages: pixels to edges to parts to a whole object.](figures/dnn-hierarchy.svg)
+
 ### 4.2. Circuit-Theory Argument
 
 Certain functions (e.g., XOR parity of $n$ input bits) can be computed by a **deep** network with $O(\log n)$ layers and $O(n)$ total gates. A **shallow** single-hidden-layer network would need $O(2^n)$ hidden units to compute the same function — exponentially larger. This illustrates that depth enables exponentially more efficient representations for some function classes.
@@ -229,6 +233,8 @@ $$
 \mathbf{Z}^{[\ell]} = \mathbf{W}^{[\ell]}\mathbf{A}^{[\ell-1]} + \mathbf{b}^{[\ell]}, \qquad
 \mathbf{A}^{[\ell]} = g^{[\ell]}\!\bigl(\mathbf{Z}^{[\ell]}\bigr).
 $$
+
+![A layer block: A[ℓ−1] into a green forward box that caches Z, W, b and emits A[ℓ]; a red backward path returns dW, db, dA[ℓ−1].](figures/dnn-block.svg)
 
 ### 5.2. Backward Function (layer $\ell$)
 

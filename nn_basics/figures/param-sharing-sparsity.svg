@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 440" width="920" height="440">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+</defs>
+<rect width="920" height="440" fill="#ffffff"/>
+<g font-family="Segoe UI, system-ui, -apple-system, Helvetica, Arial, sans-serif" fill="#111827" font-size="12">
+<text x="460" y="24" font-size="15" text-anchor="middle" fill="#111827" font-weight="600">Parameter sharing and sparsity of connections</text>
+<text x="460" y="42" font-size="11.5" text-anchor="middle" fill="#6b7280" font-weight="normal">the two mechanisms that make a convolutional layer cheap</text>
+<rect x="30" y="76" width="420" height="240" rx="6" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.2"/>
+<text x="38" y="66" font-size="12.5" text-anchor="start" fill="#111827" font-weight="600">Fully connected</text>
+<rect x="74" y="116" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="100" y="116" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="126" y="116" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="152" y="116" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="74" y="142" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="100" y="142" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="126" y="142" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="152" y="142" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="74" y="168" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="100" y="168" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="126" y="168" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="152" y="168" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="74" y="194" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="100" y="194" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="126" y="194" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="152" y="194" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<text x="126" y="238" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">16 inputs</text>
+<line x1="87" y1="129" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="113" y1="129" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="139" y1="129" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="165" y1="129" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="87" y1="155" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="113" y1="155" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="139" y1="155" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="165" y1="155" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="87" y1="181" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="113" y1="181" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="139" y1="181" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="165" y1="181" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="87" y1="207" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="113" y1="207" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="139" y1="207" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="165" y1="207" x2="315" y2="158" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="87" y1="129" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="113" y1="129" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="139" y1="129" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="165" y1="129" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="87" y1="155" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="113" y1="155" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="139" y1="155" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="165" y1="155" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="87" y1="181" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="113" y1="181" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="139" y1="181" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="165" y1="181" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="87" y1="207" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="113" y1="207" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="139" y1="207" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<line x1="165" y1="207" x2="315" y2="236" stroke="#c7cbd1" stroke-width="0.6"/>
+<circle cx="330" cy="158" r="15" fill="#fed7aa" stroke="#ea580c" stroke-width="1.4"/>
+<text x="330" y="162" font-size="10" text-anchor="middle" fill="#111827" font-weight="normal">o1</text>
+<circle cx="330" cy="236" r="15" fill="#fed7aa" stroke="#ea580c" stroke-width="1.4"/>
+<text x="330" y="240" font-size="10" text-anchor="middle" fill="#111827" font-weight="normal">o2</text>
+<text x="240" y="294" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">every output has its own weight for every input</text>
+<rect x="478" y="76" width="412" height="240" rx="6" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.2"/>
+<text x="486" y="66" font-size="12.5" text-anchor="start" fill="#111827" font-weight="600">Convolution, 3×3 filter</text>
+<rect x="512" y="108" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="538" y="108" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="564" y="108" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="590" y="108" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="616" y="108" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="512" y="134" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="538" y="134" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="564" y="134" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="590" y="134" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="616" y="134" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="512" y="160" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="538" y="160" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="564" y="160" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="590" y="160" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="616" y="160" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="512" y="186" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="538" y="186" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="564" y="186" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="590" y="186" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="616" y="186" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="512" y="212" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="538" y="212" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="564" y="212" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="590" y="212" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="616" y="212" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="782" y="134" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="808" y="134" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="834" y="134" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="782" y="160" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="808" y="160" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="834" y="160" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="782" y="186" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="808" y="186" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="834" y="186" width="26" height="26" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<line x1="525" y1="121" x2="795" y2="147" stroke="#ef9d9d" stroke-width="0.8"/>
+<line x1="551" y1="121" x2="795" y2="147" stroke="#ef9d9d" stroke-width="0.8"/>
+<line x1="577" y1="121" x2="795" y2="147" stroke="#ef9d9d" stroke-width="0.8"/>
+<line x1="525" y1="147" x2="795" y2="147" stroke="#ef9d9d" stroke-width="0.8"/>
+<line x1="551" y1="147" x2="795" y2="147" stroke="#ef9d9d" stroke-width="0.8"/>
+<line x1="577" y1="147" x2="795" y2="147" stroke="#ef9d9d" stroke-width="0.8"/>
+<line x1="525" y1="173" x2="795" y2="147" stroke="#ef9d9d" stroke-width="0.8"/>
+<line x1="551" y1="173" x2="795" y2="147" stroke="#ef9d9d" stroke-width="0.8"/>
+<line x1="577" y1="173" x2="795" y2="147" stroke="#ef9d9d" stroke-width="0.8"/>
+<rect x="512" y="108" width="78" height="78" fill="none" stroke="#dc2626" stroke-width="2.2"/>
+<rect x="782" y="134" width="26" height="26" fill="none" stroke="#dc2626" stroke-width="2.4"/>
+<line x1="577" y1="173" x2="847" y2="199" stroke="#9db9f6" stroke-width="0.8"/>
+<line x1="603" y1="173" x2="847" y2="199" stroke="#9db9f6" stroke-width="0.8"/>
+<line x1="629" y1="173" x2="847" y2="199" stroke="#9db9f6" stroke-width="0.8"/>
+<line x1="577" y1="199" x2="847" y2="199" stroke="#9db9f6" stroke-width="0.8"/>
+<line x1="603" y1="199" x2="847" y2="199" stroke="#9db9f6" stroke-width="0.8"/>
+<line x1="629" y1="199" x2="847" y2="199" stroke="#9db9f6" stroke-width="0.8"/>
+<line x1="577" y1="225" x2="847" y2="199" stroke="#9db9f6" stroke-width="0.8"/>
+<line x1="603" y1="225" x2="847" y2="199" stroke="#9db9f6" stroke-width="0.8"/>
+<line x1="629" y1="225" x2="847" y2="199" stroke="#9db9f6" stroke-width="0.8"/>
+<rect x="564" y="160" width="78" height="78" fill="none" stroke="#2563eb" stroke-width="2.2"/>
+<rect x="834" y="186" width="26" height="26" fill="none" stroke="#2563eb" stroke-width="2.4"/>
+<text x="577" y="256" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">25 inputs</text>
+<text x="821" y="230" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">9 outputs</text>
+<text x="684" y="294" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">each output reads 9 inputs, using the same 9 weights</text>
+<rect x="30" y="352" width="860" height="62" rx="6" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.2"/>
+<text x="52" y="376" font-size="11.5" text-anchor="start" fill="#111827" font-weight="600">32 × 32 × 3  →  28 × 28 × 6</text>
+<text x="52" y="398" font-size="10" text-anchor="start" fill="#6b7280" font-weight="normal">the same layer, computed two ways</text>
+<text x="340" y="376" font-size="12" text-anchor="start" fill="#dc2626" font-weight="normal">fully connected:  3,072 × 4,704  ≈  14,000,000 weights</text>
+<text x="340" y="398" font-size="12" text-anchor="start" fill="#16a34a" font-weight="600">convolutional:  (5 · 5 · 3 + 1) × 6  =  456 parameters</text>
+<text x="240" y="334" font-size="10.5" text-anchor="middle" fill="#dc2626" font-weight="normal">no sharing and no sparsity: 32 independent weights</text>
+<text x="684" y="334" font-size="10.5" text-anchor="middle" fill="#16a34a" font-weight="normal">sparsity — each output reads only its own patch;   sharing — the same 9 weights everywhere</text>
+</g>
+</svg>

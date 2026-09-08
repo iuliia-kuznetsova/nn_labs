@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 392" width="920" height="392">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+</defs>
+<rect width="920" height="392" fill="#ffffff"/>
+<g font-family="Segoe UI, system-ui, -apple-system, Helvetica, Arial, sans-serif" fill="#111827" font-size="12">
+<text x="460" y="24" font-size="15" text-anchor="middle" fill="#111827" font-weight="600">The localization target</text>
+<text x="460" y="42" font-size="11.5" text-anchor="middle" fill="#6b7280" font-weight="normal">four numbers locate the box; pc says whether anything is there at all</text>
+<rect x="70" y="86" width="300" height="220" rx="4" fill="#e8eef5" stroke="#9ca3af" stroke-width="1.3"/>
+<rect x="70" y="222.4" width="300" height="83.6" rx="0" fill="#d6d3d1" stroke="none" stroke-width="0"/>
+<line x1="70" y1="222.4" x2="370" y2="222.4" stroke="#c4c0bc" stroke-width="1"/>
+<rect x="178" y="235" width="84" height="30" rx="4" fill="#93c5fd" stroke="#2563eb" stroke-width="1.6"/>
+<rect x="193.12" y="221.5" width="53.76" height="15.6" rx="3" fill="#93c5fd" stroke="#2563eb" stroke-width="1.4"/>
+<rect x="160" y="207" width="120" height="66" rx="2" fill="none" stroke="#dc2626" stroke-width="2.2"/>
+<circle cx="220" cy="240" r="4.2" fill="#dc2626" stroke="#ffffff" stroke-width="1.4"/>
+<text x="234" y="232" font-size="11" text-anchor="start" fill="#dc2626" font-weight="600">(bx, by)</text>
+<line x1="150" y1="207" x2="150" y2="273" stroke="#dc2626" stroke-width="1.3" marker-end="url(#ah)"/>
+<text x="138" y="244" font-size="11" text-anchor="middle" fill="#dc2626" font-weight="600">bh</text>
+<line x1="160" y1="283" x2="280" y2="283" stroke="#dc2626" stroke-width="1.3" marker-end="url(#ah)"/>
+<text x="220" y="299" font-size="11" text-anchor="middle" fill="#dc2626" font-weight="600">bw</text>
+<text x="78" y="104" font-size="10" text-anchor="start" fill="#6b7280" font-weight="normal">(0, 0)</text>
+<text x="362" y="296" font-size="10" text-anchor="end" fill="#6b7280" font-weight="normal">(1, 1)</text>
+<text x="430" y="102" font-size="12.5" text-anchor="start" fill="#111827" font-weight="600">y  for 3 classes</text>
+<rect x="430" y="110" width="36" height="22" rx="2" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.1"/>
+<text x="448" y="126" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">pc</text>
+<rect x="472" y="110" width="36" height="22" rx="2" fill="#fecaca" stroke="#dc2626" stroke-width="1.1"/>
+<text x="490" y="126" font-size="12" text-anchor="middle" fill="#dc2626" font-weight="600">1</text>
+<text x="518" y="126" font-size="11" text-anchor="start" fill="#111827" font-weight="normal">an object of interest is present</text>
+<rect x="430" y="134" width="36" height="22" rx="2" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.1"/>
+<text x="448" y="150" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">bx</text>
+<rect x="472" y="134" width="36" height="22" rx="2" fill="#ffffff" stroke="#dc2626" stroke-width="1.1"/>
+<text x="490" y="150" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">0.5</text>
+<text x="518" y="150" font-size="11" text-anchor="start" fill="#111827" font-weight="normal">midpoint x, as a fraction of image width</text>
+<rect x="430" y="158" width="36" height="22" rx="2" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.1"/>
+<text x="448" y="174" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">by</text>
+<rect x="472" y="158" width="36" height="22" rx="2" fill="#ffffff" stroke="#dc2626" stroke-width="1.1"/>
+<text x="490" y="174" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">0.7</text>
+<text x="518" y="174" font-size="11" text-anchor="start" fill="#111827" font-weight="normal">midpoint y, as a fraction of image height</text>
+<rect x="430" y="182" width="36" height="22" rx="2" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.1"/>
+<text x="448" y="198" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">bh</text>
+<rect x="472" y="182" width="36" height="22" rx="2" fill="#ffffff" stroke="#dc2626" stroke-width="1.1"/>
+<text x="490" y="198" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">0.3</text>
+<text x="518" y="198" font-size="11" text-anchor="start" fill="#111827" font-weight="normal">box height / image height</text>
+<rect x="430" y="206" width="36" height="22" rx="2" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.1"/>
+<text x="448" y="222" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">bw</text>
+<rect x="472" y="206" width="36" height="22" rx="2" fill="#ffffff" stroke="#dc2626" stroke-width="1.1"/>
+<text x="490" y="222" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">0.4</text>
+<text x="518" y="222" font-size="11" text-anchor="start" fill="#111827" font-weight="normal">box width / image width</text>
+<rect x="430" y="230" width="36" height="22" rx="2" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.1"/>
+<text x="448" y="246" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">c1</text>
+<rect x="472" y="230" width="36" height="22" rx="2" fill="#ffffff" stroke="#6b7280" stroke-width="1.1"/>
+<text x="490" y="246" font-size="12" text-anchor="middle" fill="#6b7280" font-weight="600">0</text>
+<text x="518" y="246" font-size="11" text-anchor="start" fill="#111827" font-weight="normal">pedestrian</text>
+<rect x="430" y="254" width="36" height="22" rx="2" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.1"/>
+<text x="448" y="270" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">c2</text>
+<rect x="472" y="254" width="36" height="22" rx="2" fill="#fecaca" stroke="#dc2626" stroke-width="1.1"/>
+<text x="490" y="270" font-size="12" text-anchor="middle" fill="#16a34a" font-weight="600">1</text>
+<text x="518" y="270" font-size="11" text-anchor="start" fill="#111827" font-weight="normal">car</text>
+<rect x="430" y="278" width="36" height="22" rx="2" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.1"/>
+<text x="448" y="294" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">c3</text>
+<rect x="472" y="278" width="36" height="22" rx="2" fill="#ffffff" stroke="#6b7280" stroke-width="1.1"/>
+<text x="490" y="294" font-size="12" text-anchor="middle" fill="#6b7280" font-weight="600">0</text>
+<text x="518" y="294" font-size="11" text-anchor="start" fill="#111827" font-weight="normal">motorcycle</text>
+<text x="460" y="370" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">When pc = 0 the other seven entries are don't cares: if nothing is there, the box and class do not matter.</text>
+<text x="460" y="386" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">A labeled detection dataset has to include boxes, which is more expensive than class labels alone.</text>
+</g>
+</svg>

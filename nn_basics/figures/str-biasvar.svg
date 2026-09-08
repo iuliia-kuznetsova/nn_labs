@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" width="720" height="300">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+</defs>
+<rect width="720" height="300" fill="#ffffff"/>
+<g font-family="Segoe UI, system-ui, -apple-system, Helvetica, Arial, sans-serif" fill="#111827" font-size="12">
+<text x="360" y="24" font-size="15" text-anchor="middle" fill="#111827" font-weight="600">Avoidable bias versus variance</text>
+<text x="360" y="42" font-size="11.5" text-anchor="middle" fill="#6b7280" font-weight="normal">compare training error to a Bayes / human proxy, then to dev error</text>
+<rect x="220" y="218.333" width="70" height="11.6667" rx="3" fill="#fecaca" stroke="#dc2626" stroke-width="1.4"/>
+<text x="255" y="248" font-size="11" text-anchor="middle" fill="#6b7280" font-weight="normal">Bayes / human</text>
+<text x="255" y="206.333" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">1%</text>
+<rect x="370" y="136.667" width="70" height="93.3333" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.4"/>
+<text x="405" y="248" font-size="11" text-anchor="middle" fill="#6b7280" font-weight="normal">training error</text>
+<text x="405" y="124.667" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">8%</text>
+<rect x="520" y="125" width="70" height="105" rx="3" fill="#fed7aa" stroke="#ea580c" stroke-width="1.4"/>
+<text x="555" y="248" font-size="11" text-anchor="middle" fill="#6b7280" font-weight="normal">dev error</text>
+<text x="555" y="113" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">9%</text>
+<line x1="298" y1="180" x2="362" y2="180" stroke="#dc2626" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="330" y="168" font-size="11" text-anchor="middle" fill="#dc2626" font-weight="600">avoidable bias</text>
+<line x1="448" y1="140" x2="512" y2="140" stroke="#2563eb" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="480" y="128" font-size="11" text-anchor="middle" fill="#2563eb" font-weight="600">variance</text>
+</g>
+</svg>

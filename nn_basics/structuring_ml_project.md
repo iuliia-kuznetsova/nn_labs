@@ -32,6 +32,8 @@ Applied ML is an iterative process:
 
 Without a clear diagnosis, teams can spend months on low-impact work. A good strategy turns vague ideas into targeted actions.
 
+![The applied-ML loop: idea, train, evaluate, diagnose, then choose the next experiment.](figures/str-loop.svg)
+
 ### 1.2 Orthogonalization
 
 Orthogonalization means separating the controls of your ML system so each control fixes one kind of problem.
@@ -46,6 +48,8 @@ For supervised learning, check the system in this order:
 | Real world | Metric matches product value | Change metric or dev/test distribution |
 
 Early stopping is less orthogonal because it affects both training error and dev error: stopping earlier can reduce overfitting, but it also prevents the model from fitting the training set as well as possible.
+
+![Four independent knobs: fit the training set, generalize to dev, transfer to test, then match the product metric.](figures/str-ortho.svg)
 
 ### 1.3 Tricky Interview Questions
 
@@ -89,6 +93,8 @@ $$\boxed{\text{maximize accuracy subject to runtime} \leq 100\text{ ms}}$$
 
 General rule: with $N$ metrics, use 1 optimizing metric and $N-1$ satisficing metrics.
 
+![Accuracy versus runtime: a vertical 100 ms cutoff, and the best model among those that pass it.](figures/str-metrics.svg)
+
 ### 2.3 Train/Dev/Test Distributions
 
 The dev and test sets should:
@@ -120,6 +126,8 @@ Example: with 1,000,000 examples, a 98/1/1 split gives 980,000 training examples
 | Train | Use as much remaining useful data as possible |
 
 If you tune on a set, call it a **dev set**, not a test set.
+
+![Stacked bars: a 60/20/20 split on a small dataset versus 98/1/1 on a million-example dataset.](figures/str-splits.svg)
 
 ### 2.5 When to Change Dev/Test Sets and Metrics?
 
@@ -199,6 +207,8 @@ Interpretation:
 Why:
 - If **training error is much higher than the Bayes error estimate**, the model is not even doing well on data it was trained on. This means the model is underfitting the training set, so the main issue is bias.
 - If **dev error is much higher than training error**, the model learned patterns that work well on the specific training examples but do not hold on new examples. In other words, the model is too sensitive to the particular training sample, which is exactly a high-variance / overfitting problem.
+
+![Three error bars: human-level, training, and dev, with the first gap labeled avoidable bias and the second labeled variance.](figures/str-biasvar.svg)
 
 ### 3.3 Bias vs Variance Intuition
 
@@ -303,6 +313,8 @@ Example: inspect 100 dev-set mistakes for a cat classifier. If 8% (8 out of 100)
 
 If a category accounts for 5% of current errors, fully solving it can only reduce total error by maximum 5% relative. If it accounts for 50%, it may be worth major effort.
 
+![Horizontal bars for error categories: dogs 8%, big cats 43%, blurry 61%.](figures/str-errors.svg)
+
 Categories can overlap. Add new categories while inspecting if you notice repeated patterns.
 
 ### 4.2 Cleaning Up Incorrectly Labeled Data
@@ -388,6 +400,8 @@ Do **not** randomly shuffle all data into train/dev/test if the large off-distri
 
 Example: if your task is to detect a cat on a mobile phone image and you have 10,000 mobile-uploaded cat images and 200,000 clean web images, do not randomly split all 210,000 images. The dev/test sets would mostly contain web images, so they would measure the wrong target. Instead, train on the web images plus some mobile images, and keep dev/test from mobile uploads.
 
+![Web photos may join the training set; mobile photos are the target, so they occupy train plus the whole of dev and test.](figures/str-mismatch.svg)
+
 ### 5.2 Bias and Variance with Mismatched Data Distributions
 
 When training and dev/test distributions differ, a train-dev gap is needed to separate variance from data mismatch.
@@ -414,6 +428,8 @@ $$\boxed{\text{variance} = \text{training-dev error} - \text{training error}}$$
 $$\boxed{\text{data mismatch} = \text{dev error} - \text{training-dev error}}$$
 
 If training-dev error is close to training error but dev error is much worse, the main problem is data mismatch.
+
+![Error ladder from human-level through training, training-dev, dev, and test, showing a small variance gap and a large mismatch gap.](figures/str-ladder.svg)
 
 ### 5.3 Addressing Data Mismatch
 
@@ -483,6 +499,8 @@ Examples:
 - NLP: start from a pretrained language model, then fine-tune it for sentiment classification or question answering.
 - Speech: train on a large general speech dataset, then adapt to a smaller dataset from a specific accent, microphone, or domain.
 
+![Task A with lots of data, then a shared-feature block, then task B with a new head and little data.](figures/str-transfer.svg)
+
 ### 6.2 Multi-task Learning
 
 Multitask learning trains one model to do several tasks at the same time.
@@ -510,6 +528,8 @@ Multitask learning makes sense when:
 It is used less often than transfer learning, but is common in settings like object detection where many related labels are predicted together.
 
 Example: a self-driving perception model can use one shared network to detect pedestrians, cars, stop signs, traffic lights, and lane markings in the same image.
+
+![One shared network feeding independent heads for pedestrian, car, and traffic light.](figures/str-multitask.svg)
 
 ### 6.3 Tricky Interview Questions
 
@@ -554,6 +574,8 @@ End-to-end approach:
 $$\boxed{X \rightarrow Y}$$
 
 Example: in speech recognition, a traditional pipeline might be `audio -> features -> phonemes -> words -> transcript`, while an end-to-end model learns `audio -> transcript` directly.
+
+![A five-stage speech pipeline beside a single audio-to-text arrow.](figures/str-e2e.svg)
 
 Benefits:
 

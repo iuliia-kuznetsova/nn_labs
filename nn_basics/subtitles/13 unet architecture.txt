@@ -1,0 +1,35 @@
+Armed of the transfers convolution, you're now ready to dive into
+the details of the unit architecture. In this video, let's first go
+over the architecture quickly to build intuition about how the unit works. And in the next video,
+we'll go through the details together. Let's dig in. Here's a rough diagram of
+the neural network architecture for semantic segmentation. And so we use normal convolutions for
+the first part of the neural network. And similar to the earlier neural
+networks that you've seen. This part of the neural network
+will sort of compress the image. You've gone from a very large image
+to one where the heightened whiff of this activation is much smaller. So you've lost a lot of spatial
+information because the dimension is much smaller, but it's much deeper. So, for example, this middle layer
+may represent that looks like there's a cat roughly in the lower
+right hand portion of the image. But the detailed spatial
+information is lost because of heightened with is much smaller. Then the second half of this neural
+network uses the transports convolution to blow the representation size up back
+to the size of the original input image. Now it turns out that there's one
+modification to this architecture that would make it work much better. And that's what we turn this into
+the unit architecture, which is that skip connections from the earlier
+layers to the later layers like this. So that this earlier block of activations
+is copied directly to this later block. So why do we want to do this? It turns out that for this, next final
+layer to decide which region is a cat. Two types of information are useful. One is the high level, spatial, high level contextual information which
+it gets from this previous layer. Where hopefully the neural network, we have figured out that in the lower
+right hand corner of the image or maybe in the right part of the image,
+there's some cat like stuff going on. But what is missing is a very detailed,
+fine grained spatial information. Because this set of activations
+here has lower spatial resolution to heighten with is just lower. So what the skip connection does is it
+allows the neural network to take this very high resolution, low level feature
+information where it could capture for every pixel position, how much
+fairy stuff is there in this pixel? And used to skip connection to pause
+that directly to this later layer. And so this way this layer has both
+the lower resolution, but high level, spatial, high level contextual
+information, as well as the low level. But more detailed texture like
+information in order to make a decision as to whether a certain
+pixel is part of a cat or not. In this video, you saw just a brief,
+high level intuition about how unit works. Let's go on to the next video to see
+the details of how you can implement it.

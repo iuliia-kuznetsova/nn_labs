@@ -60,6 +60,8 @@ The three variants differ only in batch size $B$, which controls the tradeoff be
 
 Mini-batch GD dominates in practice because modern GPUs can process a batch of 64–512 examples in nearly the same time as a single example, and frequent updates mean the model learns much faster than waiting for a full pass.
 
+![Three contour panels: noisy SGD, mildly noisy mini-batch, and a smooth batch-GD path to the same minimum.](figures/opt-paths.svg)
+
 ### 1.4 How it helps
 
 Mini-batch GD is useful because it:
@@ -70,6 +72,8 @@ Mini-batch GD is useful because it:
 ### 1.5 Intuition
 
 ![Mini-batch cost curve](graphs\training_mini_batch.png)
+
+![Mini-batch cost oscillating around a downward trend, beside a smooth monotone batch-GD curve.](figures/opt-cost.svg)
 
 With **batch GD**, $J$ must decrease monotonically on every iteration — if it rises, something is wrong (learning rate too large or a bug). With **mini-batch GD**, the cost $J^{\{t\}}$ plotted per mini-batch oscillates slightly but should trend downward overall, because each mini-batch is a different random sample and some are harder than others.
 
@@ -180,6 +184,8 @@ Beyond this lag, each past observation contributes less than 37% of the weight o
 | 0.9 | ~10 steps | Smooth, moderate lag |
 | 0.98 | ~50 steps | Very smooth, slow to adapt |
 
+![A noisy raw signal with a β=0.9 average and a slower β=0.98 average overlaid.](figures/opt-ewa.svg)
+
 ### 2.2 How it works
 
 - High $\beta$ (e.g. 0.98): long memory — old values still have significant weight, the curve is very smooth but slow to react to new observations.
@@ -194,6 +200,8 @@ Because $V_0 = 0$, early estimates are systematically too small. Fix:
 $$\hat{V}_t = \frac{V_t}{1 - \beta^t}$$
 
 As $t \to \infty$, $\beta^t \to 0$ so $\hat{V}_t \approx V_t$ — correction only matters in the first few steps. In practice, momentum often skips bias correction; Adam always includes it.
+
+![Uncorrected EWA starting far below a constant signal of 10, and the bias-corrected curve sitting on 10 from step 1.](figures/opt-biascorr.svg)
 
 ### 2.4 Tricky Interview Questions
 
@@ -259,6 +267,8 @@ Standard gradient descent acts like taking each step from scratch. Momentum acts
 ![Gradient descent with momentum graph](graphs\gradient_descent_momentum.png)
 
 If your loss surface is shaped like a long valley, plain gradient descent may bounce from side to side. Momentum smooths those updates, so instead of zig-zagging, the optimizer moves more directly toward the minimum.
+
+![A long valley: plain GD zig-zags in red; momentum takes a smoother blue path.](figures/opt-momentum.svg)
 
 The gradient provides acceleration; $\beta_1$ acts as friction preventing unlimited speed-up.
 
@@ -336,6 +346,8 @@ Think of gradient descent on a narrow elliptical valley. Plain gradient descent 
 
 ![RMSProp graph](graphs\rmsprop.png)
 
+![An elliptical valley: short red arrows on the steep axis, a long blue arrow on the flat axis.](figures/opt-rmsprop.svg)
+
 ### 4.5 Hyperparameters
 
 | Parameter | Typical value | Notes |
@@ -405,6 +417,8 @@ $$\boxed{W := W - \alpha\,\frac{\hat{V}_{dW}}{\sqrt{\hat{S}_{dW}} + \varepsilon}
 $$\boxed{b := b - \alpha\,\frac{\hat{V}_{db}}{\sqrt{\hat{S}_{db}} + \varepsilon}}$$
 
 $\varepsilon \approx 10^{-8}$ prevents division by zero.
+
+![Four boxes: first moment, second moment, bias correction, then the W update.](figures/opt-adam.svg)
 
 ### 5.2 Why it works
 
@@ -511,6 +525,8 @@ The common fix is **fixed interval scheduling**: apply the decay formula only ev
 
 Either way, the result is a **staircase** schedule — the learning rate holds steady for $k$ steps, then drops, holds again, drops again, and so on. A typical choice is $k = 1000$ iterations, giving the optimizer enough time to make meaningful progress at each rate before it is reduced.
 
+![Three learning-rate curves: red staircase, blue exponential decay, green cosine.](figures/opt-lrdecay.svg)
+
 ### 6.2 Why it helps
 
 At the start of training, a higher learning rate helps the model learn quickly and move toward a good region of the loss surface. Later, a smaller learning rate helps it fine-tune the parameters and avoid overshooting the minimum.
@@ -554,6 +570,8 @@ The initial learning rate $\alpha_0$ is too large relative to the decay schedule
 ### Old intuition (incorrect for deep learning)
 
 Low-dimensional plots suggest many local minima where gradient descent could get stuck.
+
+![Three panels: a rare local min, a typical saddle, and a plateau where the optimizer crawls.](figures/opt-saddle.svg)
 
 ### Modern understanding
 

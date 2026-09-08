@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 456" width="920" height="456">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+</defs>
+<rect width="920" height="456" fill="#ffffff"/>
+<g font-family="Segoe UI, system-ui, -apple-system, Helvetica, Arial, sans-serif" fill="#111827" font-size="12">
+<text x="460" y="24" font-size="15" text-anchor="middle" fill="#111827" font-weight="600">Where the parameters and the activations live</text>
+<text x="460" y="42" font-size="11.5" text-anchor="middle" fill="#6b7280" font-weight="normal">the LeNet-5-inspired network of section 8.2</text>
+<text x="295" y="78" font-size="11.5" text-anchor="middle" fill="#111827" font-weight="600">activation size  (numbers to hold)</text>
+<text x="742" y="78" font-size="11.5" text-anchor="middle" fill="#111827" font-weight="600">parameters  (weights to learn)</text>
+<text x="128" y="115" font-size="11.5" text-anchor="end" fill="#111827" font-weight="600">Input</text>
+<rect x="138" y="100" width="156.735" height="21" rx="2" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.2"/>
+<text x="302.735" y="115" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">3,072</text>
+<text x="602" y="115" font-size="10.5" text-anchor="start" fill="#16a34a" font-weight="normal">0</text>
+<text x="128" y="147" font-size="11.5" text-anchor="end" fill="#111827" font-weight="600">CONV1</text>
+<rect x="138" y="132" width="240" height="21" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.2"/>
+<text x="386" y="147" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">4,704</text>
+<rect x="594" y="132" width="2.14165" height="21" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.2"/>
+<text x="604.142" y="147" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">456</text>
+<text x="128" y="179" font-size="11.5" text-anchor="end" fill="#111827" font-weight="600">POOL1</text>
+<rect x="138" y="164" width="60" height="21" rx="2" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.2"/>
+<text x="206" y="179" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">1,176</text>
+<text x="602" y="179" font-size="10.5" text-anchor="start" fill="#16a34a" font-weight="normal">0</text>
+<text x="128" y="211" font-size="11.5" text-anchor="end" fill="#111827" font-weight="600">CONV2</text>
+<rect x="138" y="196" width="81.6327" height="21" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.2"/>
+<text x="227.633" y="211" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">1,600</text>
+<rect x="594" y="196" width="11.347" height="21" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.2"/>
+<text x="613.347" y="211" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">2,416</text>
+<text x="128" y="243" font-size="11.5" text-anchor="end" fill="#111827" font-weight="600">POOL2</text>
+<rect x="138" y="228" width="20.4082" height="21" rx="2" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.2"/>
+<text x="166.408" y="243" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">400</text>
+<text x="602" y="243" font-size="10.5" text-anchor="start" fill="#16a34a" font-weight="normal">0</text>
+<text x="128" y="275" font-size="11.5" text-anchor="end" fill="#111827" font-weight="600">Flatten</text>
+<rect x="138" y="260" width="20.4082" height="21" rx="2" fill="#fef08a" stroke="#ca8a04" stroke-width="1.2"/>
+<text x="166.408" y="275" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">400</text>
+<text x="602" y="275" font-size="10.5" text-anchor="start" fill="#16a34a" font-weight="normal">0</text>
+<text x="128" y="307" font-size="11.5" text-anchor="end" fill="#111827" font-weight="600">FC3</text>
+<rect x="138" y="292" width="6.12245" height="21" rx="2" fill="#fed7aa" stroke="#ea580c" stroke-width="1.2"/>
+<text x="152.122" y="307" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">120</text>
+<rect x="594" y="292" width="226" height="21" rx="2" fill="#fed7aa" stroke="#ea580c" stroke-width="1.2"/>
+<text x="828" y="307" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="600">48,120</text>
+<text x="128" y="339" font-size="11.5" text-anchor="end" fill="#111827" font-weight="600">FC4</text>
+<rect x="138" y="324" width="4.28571" height="21" rx="2" fill="#fed7aa" stroke="#ea580c" stroke-width="1.2"/>
+<text x="150.286" y="339" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">84</text>
+<rect x="594" y="324" width="47.7362" height="21" rx="2" fill="#fed7aa" stroke="#ea580c" stroke-width="1.2"/>
+<text x="649.736" y="339" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">10,164</text>
+<text x="128" y="371" font-size="11.5" text-anchor="end" fill="#111827" font-weight="600">Softmax</text>
+<rect x="138" y="356" width="2" height="21" rx="2" fill="#fecaca" stroke="#dc2626" stroke-width="1.2"/>
+<text x="146.51" y="371" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">10</text>
+<rect x="594" y="356" width="3.9921" height="21" rx="2" fill="#fecaca" stroke="#dc2626" stroke-width="1.2"/>
+<text x="605.992" y="371" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">850</text>
+<line x1="520" y1="92" x2="520" y2="388" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="460" y="398" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">Pooling layers hold no parameters at all. Convolutional layers hold remarkably few relative to the activations they produce,</text>
+<text x="460" y="414" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">while the fully connected layers hold about 59,000 of the roughly 62,000 total — FC3 alone has more than every convolutional layer combined.</text>
+<text x="460" y="430" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">Activation size falls gradually, 4,704 → 1,600 → 400 → 84; dropping it too abruptly usually costs accuracy.</text>
+</g>
+</svg>
