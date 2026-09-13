@@ -5,6 +5,7 @@ Driven by make_figures.py; can also be run directly.
 
 from __future__ import annotations
 
+import base64
 import pathlib
 import sys
 
@@ -12,8 +13,9 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 
 from svgkit import (  # noqa: E402
     AMBER, ARCH_LEGEND, BLUE, C, GREEN, INK, LINE, MUTED, PURPLE, RED,
-    arrow, caption, circle, legend, lines, panel, path, pipeline as _pipeline,
-    poly, rect, seg, title, txt, write,
+    arrow, caption, circle, diverge, legend, lines, matrix, mat_w, outline,
+    panel, path, pipeline as _pipeline, poly, rect, seg, title, txt, volume3d,
+    write,
 )
 
 OUT = pathlib.Path(__file__).parent
@@ -263,27 +265,53 @@ def fig_sliding_windows():
 # ------------------------------------------------------- 2.3 FC → conv
 
 
+def fig_sliding_fc():
+    _pipeline(
+        OUT,
+        "det-sliding-fc.svg",
+        "Original sliding-window classifier  ·  fully connected layers",
+        [
+            dict(kind="vol", s=14, c=3, shape="14×14×3", name="Input", role="input"),
+            dict(kind="vol", s=10, c=16, shape="10×10×16", name="CONV", role="conv"),
+            dict(kind="vol", s=5, c=16, shape="5×5×16", name="POOL", role="pool"),
+            dict(kind="vec", u=400, shape="400", name="FC", role="fc"),
+            dict(kind="vec", u=400, shape="400", name="FC", role="fc"),
+            dict(kind="vec", u=4, shape="4", name="Output", role="out"),
+        ],
+        [
+            "convolution 5×5×3,\n16 filters",
+            "max pool\nf=2, s=2",
+            "fully\nconnected",
+            "fully\nconnected",
+            "softmax,\n4 classes",
+        ],
+        sub="this is the network you run independently on every cropped window",
+        note="Each window is resized to 14×14×3 and classified from scratch. Overlapping windows recompute the same CONV and POOL features.",
+        leg=ARCH_LEGEND,
+    )
+
+
 def fig_fc_to_conv():
     _pipeline(
         OUT,
         "det-fc-to-conv.svg",
-        "A fully connected layer is a convolution whose filter covers the whole volume",
+        "Convolutional sliding windows  ·  every FC layer is a convolution",
         [
-            dict(kind="vol", s=14, c=3, shape="14×14×3", name="input", role="input"),
-            dict(kind="vol", s=10, c=16, shape="10×10×16", name="CONV 5×5", role="conv"),
-            dict(kind="vol", s=5, c=16, shape="5×5×16", name="POOL 2×2", role="pool"),
-            dict(kind="vol", s=1, c=400, shape="1×1×400", name="CONV 5×5 ×400", role="conv5"),
-            dict(kind="vol", s=1, c=400, shape="1×1×400", name="1×1 ×400", role="conv1"),
-            dict(kind="vol", s=1, c=4, shape="1×1×4", name="softmax", role="out"),
+            dict(kind="vol", s=14, c=3, shape="14×14×3", name="Input", role="input"),
+            dict(kind="vol", s=10, c=16, shape="10×10×16", name="CONV", role="conv"),
+            dict(kind="vol", s=5, c=16, shape="5×5×16", name="POOL", role="pool"),
+            dict(kind="vol", s=1, c=400, shape="1×1×400", name="CONV", role="conv5"),
+            dict(kind="vol", s=1, c=400, shape="1×1×400", name="CONV", role="conv1"),
+            dict(kind="vol", s=1, c=4, shape="1×1×4", name="Output", role="out"),
         ],
         [
-            "16 filters\n5×5",
+            "convolution 5×5×3,\n16 filters",
             "max pool\nf=2, s=2",
-            "was FC 400\nnow 400 filters",
-            "was FC 400\nnow 1×1 ×400",
-            "4 filters\n+ softmax",
+            "convolution 5×5×16,\n400 filters",
+            "convolution 1×1×400,\n400 filters",
+            "convolution 1×1×400,\n4 filters + softmax",
         ],
-        sub="same numbers, different bookkeeping — each of the 400 values is still an arbitrary linear function of the whole 5×5×16 input",
+        sub="same numbers, different bookkeeping — a filter that covers the whole 5×5×16 volume is exactly an FC unit",
         note="A 5×5×16 filter over a 5×5×16 volume produces one number. 400 of them produce 1×1×400, which is exactly what the dense layer computed.",
         leg=ARCH_LEGEND,
     )
@@ -293,49 +321,74 @@ def fig_fc_to_conv():
 
 
 def fig_conv_windows():
-    W, H = 920, 400
+    W, H = 920, 460
     b = [title(W, "Convolutional implementation of sliding windows",
                "one forward pass over the whole image evaluates every window, with the overlapping computation shared")]
 
     # four naive crops
-    b.append(txt(196, 72, "Naive: four independent 14×14 crops", 12.5, weight="600"))
-    for i, (dx, dy, col) in enumerate([(0, 0, RED), (18, 0, AMBER), (0, 18, GREEN), (18, 18, BLUE)]):
-        b.append(rect(56 + dx, 92 + dy, 84, 84, "input", rx=3, sw=1.6,
+    b.append(txt(40, 70, "Naive: four independent 14×14 crops", 12.5, anchor="start", weight="600"))
+    for dx, dy, col in [(0, 0, RED), (18, 0, AMBER), (0, 18, GREEN), (18, 18, BLUE)]:
+        b.append(rect(40 + dx, 86 + dy, 70, 70, "input", rx=3, sw=1.6,
                       fill="#f3f4f6", stroke=col, dash="4 3"))
-    b.append(txt(116, 210, "16×16 image, stride 2", 11, fill=MUTED))
-    b.append(txt(116, 228, "4 ConvNet passes, mostly duplicated", 11, fill=MUTED))
+    b.append(txt(75, 188, "16×16 image, stride 2", 11, fill=MUTED))
+    b.append(txt(75, 204, "4 ConvNet passes, mostly duplicated", 11, fill=MUTED))
 
-    b.append(arrow(214, 150, 268, 150))
-    b.append(lines(241, 124, ["same", "weights"], 10.5, fill=MUTED))
+    b.append(arrow(160, 140, 210, 140))
 
-    # full forward
-    b.append(txt(560, 72, "Convolutional: one pass, 2×2×4 output", 12.5, weight="600"))
-    stages = [
-        (280, 108, 72, 72, "input", "16×16×3"),
-        (372, 116, 60, 56, "conv", "12×12×16"),
-        (452, 124, 48, 40, "pool", "6×6×16"),
-        (520, 128, 40, 32, "conv5", "2×2×400"),
-        (580, 128, 40, 32, "conv1", "2×2×400"),
-        (640, 128, 40, 32, "out", "2×2×4"),
-    ]
-    for x, y, w, h, role, lab in stages:
-        b.append(rect(x, y, w, h, role, rx=3))
-        b.append(txt(x + w / 2, y + h + 16, lab, 10, weight="600"))
-    for a, c in zip(stages, stages[1:]):
-        b.append(arrow(a[0] + a[2] + 2, a[1] + a[3] / 2, c[0] - 2, c[1] + c[3] / 2))
-
-    # 2x2 output mapped back to windows
-    ox, oy, s = 710, 108, 28
+    ox, oy, s = 230, 96, 32
     cols = [RED, AMBER, GREEN, BLUE]
     for i, col in enumerate(cols):
         r, c = divmod(i, 2)
         b.append(rect(ox + c * s, oy + r * s, s, s, "out", rx=2, sw=1.8,
                       fill="#ffffff", stroke=col))
-        b.append(txt(ox + c * s + s / 2, oy + r * s + s / 2 + 4, "4", 11, weight="600", fill=col))
-    b.append(txt(ox + s, oy + 2 * s + 18, "one 1×1×4 per window", 10.5, fill=MUTED))
+        b.append(txt(ox + c * s + s / 2, oy + r * s + s / 2 + 4, "4", 12, weight="600", fill=col))
+    b.append(txt(ox + s, oy + 2 * s + 18, "one 1×1×4 slice per window", 11, fill=MUTED))
+    b.append(txt(520, 140, "Convolutional: the same four results, one pass", 12.5, anchor="start", weight="600"))
+    b.append(txt(520, 162, "Each coloured cell is the softmax the 14×14 net would have", 11, anchor="start", fill=MUTED))
+    b.append(txt(520, 178, "produced on that crop — computed together, not four times.", 11, anchor="start", fill=MUTED))
 
-    b.append(caption(W / 2, H - 48, [
-        "Each 1×1×4 slice is exactly the softmax the original 14×14 network would have produced on that crop.",
+    # full forward as 3D volumes
+    specs = [
+        (16, 3, "input", "Input", "16×16×3"),
+        (12, 16, "conv", "CONV", "12×12×16"),
+        (6, 16, "pool", "POOL", "6×6×16"),
+        (2, 400, "conv5", "CONV", "2×2×400"),
+        (2, 400, "conv1", "CONV", "2×2×400"),
+        (2, 4, "out", "Output", "2×2×4"),
+    ]
+    ops = [
+        "convolution 5×5×3,\n16 filters",
+        "max pool\nf=2, s=2",
+        "convolution 5×5×16,\n400 filters",
+        "convolution 1×1×400,\n400 filters",
+        "convolution 1×1×400,\n4 filters",
+    ]
+    smax, cmax = 16.0, 400.0
+    faces, depths = [], []
+    for s, c, *_ in specs:
+        faces.append(34 + (s / smax) ** 0.7 * 40)
+        depths.append(10 + (c / cmax) ** 0.4 * 24)
+    occ = [f + d * 0.62 for f, d in zip(faces, depths)]
+    gap = (W - 56 - sum(occ)) / 5
+    x, cy = 28.0, 310.0
+    infos = []
+    for (s, c, role, name, shape), face, depth in zip(specs, faces, depths):
+        y0 = cy - face / 2
+        svg, info = volume3d(x, y0, face, face, depth, role, label=name, fs=10)
+        b.append(svg)
+        b.append(txt(info["cx"], info["bottom"] + 16, shape, 10.5, weight="600"))
+        infos.append(info)
+        x += face + depth * 0.62 + gap
+    for i, op in enumerate(ops):
+        x1, x2 = infos[i]["right"], infos[i + 1]["left"]
+        b.append(arrow(x1 + 1, cy, x2 - 3, cy))
+        rows = [r for r in op.split("\n") if r]
+        lh = 11
+        y_last = cy - 8
+        y0 = y_last - (len(rows) - 1) * lh
+        b.append(lines((x1 + x2) / 2, y0, rows, 9.5, fill=MUTED, lh=lh))
+
+    b.append(caption(W / 2, H - 36, [
         "A 28×28 image through the same net gives 8×8×4 — 64 windows in one pass. The effective stride is the network's downsampling (here, 2).",
         "This fixes the cost. It does not fix the boxes: they are still stuck to the discrete window grid and the window's aspect ratio.",
     ]))
@@ -684,21 +737,21 @@ def fig_encoder_decoder():
         "det-encoder-decoder.svg",
         "A segmentation network has to grow the spatial size back",
         [
-            dict(kind="vol", s=128, c=3, shape="H×W×3", name="input", role="input"),
-            dict(kind="vol", s=64, c=64, shape="H/2 × 64", name="encoder", role="conv"),
-            dict(kind="vol", s=32, c=128, shape="H/4 × 128", name="", role="conv"),
-            dict(kind="vol", s=16, c=256, shape="H/8 × 256", name="bottleneck", role="conv5"),
-            dict(kind="vol", s=32, c=128, shape="H/4 × 128", name="decoder", role="conv1"),
-            dict(kind="vol", s=64, c=64, shape="H/2 × 64", name="", role="conv1"),
-            dict(kind="vol", s=128, c=3, shape="H×W×C", name="per-pixel", role="out"),
+            dict(kind="vol", s=128, c=3, shape="H×W×3", name="Input", role="input"),
+            dict(kind="vol", s=64, c=64, shape="H/2×W/2×64", name="CONV", role="conv"),
+            dict(kind="vol", s=32, c=128, shape="H/4×W/4×128", name="CONV", role="conv"),
+            dict(kind="vol", s=16, c=256, shape="H/8×W/8×256", name="CONV", role="conv5"),
+            dict(kind="vol", s=32, c=128, shape="H/4×W/4×128", name="CONV", role="conv1"),
+            dict(kind="vol", s=64, c=64, shape="H/2×W/2×64", name="CONV", role="conv1"),
+            dict(kind="vol", s=128, c=3, shape="H×W×C", name="Output", role="out"),
         ],
         [
-            "conv + pool\nnH ↓  nC ↑",
-            "conv + pool",
-            "conv + pool",
-            "transpose conv\nnH ↑  nC ↓",
-            "transpose conv",
-            "1×1 conv\nC = n_classes",
+            "convolution + pool,\nnH ↓  nC ↑",
+            "convolution\n+ pool",
+            "convolution\n+ pool",
+            "transpose conv,\nnH ↑  nC ↓",
+            "transpose\nconvolution",
+            "convolution 1×1×64,\nC = n_classes",
         ],
         sub="first half: spatial size shrinks and channels grow. second half: spatial size grows back. the grow operation is a transpose convolution.",
         note="Drop the classifier head of a ConvNet and replace it with an upsampling path. That is the essential structural change.",
@@ -707,143 +760,553 @@ def fig_encoder_decoder():
     )
 
 
-# ----------------------------------------------- 9.2 transpose conv
+# ----------------------------------------------- 9. transpose conv
 
 
-def fig_transpose_conv():
-    W, H = 920, 470
-    b = [title(W, "Transpose convolution: place the filter on the output",
-               "each input value scales the whole filter; overlapping pastes are added")]
+TCONV_IN = [[1, 2], [3, 4]]
+TCONV_F = [[1, 1, 1], [0, 0, 0], [-1, -1, -1]]
+TCONV_PAD = [
+    [1, 1, 3, 2, 2, 0],
+    [0, 0, 0, 0, 0, 0],
+    [2, 2, 4, 2, 2, 0],
+    [0, 0, 0, 0, 0, 0],
+    [-3, -3, -7, -4, -4, 0],
+    [0, 0, 0, 0, 0, 0],
+]
+TCONV_OUT = [
+    [0, 0, 0, 0],
+    [2, 4, 2, 2],
+    [0, 0, 0, 0],
+    [-3, -7, -4, -4],
+]
+TCONV_CELLS = [
+    (0, 0, 1, RED, "#fecaca"),
+    (0, 1, 2, AMBER, "#fef08a"),
+    (1, 0, 3, GREEN, "#bbf7d0"),
+    (1, 1, 4, BLUE, "#bfdbfe"),
+]
 
-    # conceptual
-    b.append(txt(160, 72, "Normal conv", 12.5, weight="600"))
-    b.append(rect(70, 90, 84, 84, "input"))
-    b.append(txt(112, 136, "6×6", 12, weight="600"))
-    b.append(arrow(162, 132, 200, 132))
-    b.append(rect(208, 112, 36, 36, "conv"))
-    b.append(txt(226, 134, "3×3", 10))
-    b.append(arrow(252, 132, 290, 132))
-    b.append(rect(298, 108, 48, 48, "out"))
-    b.append(txt(322, 136, "4×4", 12, weight="600"))
-    b.append(txt(226, 168, "filter sits on the input", 10.5, fill=MUTED))
 
-    b.append(txt(620, 72, "Transpose conv", 12.5, weight="600"))
-    b.append(rect(500, 112, 36, 36, "input"))
-    b.append(txt(518, 134, "2×2", 11, weight="600"))
-    b.append(arrow(544, 132, 582, 132))
-    b.append(rect(590, 112, 36, 36, "conv"))
-    b.append(txt(608, 134, "3×3", 10))
-    b.append(arrow(634, 132, 678, 132))
-    b.append(rect(686, 96, 72, 72, "out"))
-    b.append(txt(722, 136, "4×4", 12, weight="600"))
-    b.append(txt(608, 168, "filter sits on the output", 10.5, fill=MUTED))
+def _op(x, y, s, size=20):
+    return txt(x, y, s, size, fill=MUTED, weight="600")
 
-    # worked example: 4 pastes
-    b.append(txt(W / 2, 204, "Worked example   ·   input [[1, 2], [3, 4]]   ·   filter [[1,1,1],[0,0,0],[−1,−1,−1]]   ·   s = 2, p = 1",
-                 12, weight="600"))
 
-    filt = [[1, 1, 1], [0, 0, 0], [-1, -1, -1]]
-    inp = [[1, 2], [3, 4]]
-    colors = [RED, AMBER, GREEN, BLUE]
+def _scale_f(v):
+    return [[v * TCONV_F[r][c] for c in range(3)] for r in range(3)]
+
+
+def _paste(v, i, j, n=6):
+    g = [[0] * n for _ in range(n)]
+    sr, sc = 2 * i, 2 * j
+    for a in range(3):
+        for b in range(3):
+            g[sr + a][sc + b] = v * TCONV_F[a][b]
+    return g
+
+
+def _in_fills(hi=None):
+    fills = [["#ffffff", "#ffffff"], ["#ffffff", "#ffffff"]]
+    lookup = {(r, c): tint for r, c, _v, _col, tint in TCONV_CELLS}
+    if hi is None:
+        for (r, c), tint in lookup.items():
+            fills[r][c] = tint
+    else:
+        fills[hi[0]][hi[1]] = lookup[hi]
+    return fills
+
+
+def fig_tconv_vs():
+    W, H = 920, 318
+    b = [title(W, "Normal convolution versus transpose convolution",
+               "same 3×3 filter, opposite placement — one shrinks the map, the other grows it")]
+    b.append(seg(460, 64, 460, 286, LINE, 1.0, dash="4 4"))
+
     cell = 18
-    for n, ((i, j), val) in enumerate([((0, 0), 1), ((0, 1), 2), ((1, 0), 3), ((1, 1), 4)]):
-        x0 = 40 + n * 220
-        y0 = 228
-        col = colors[n]
-        b.append(txt(x0 + 54, y0, f"input {val}  →  {val} × filter", 10.5, fill=col, weight="600"))
-        ox, oy = x0, y0 + 16
-        # 6x6 padded canvas
-        for r in range(6):
-            for c in range(6):
-                b.append(rect(ox + c * cell, oy + r * cell, cell, cell, "input",
-                              rx=0, sw=0.7, fill="#f9fafb"))
-        sr, sc = 2 * i, 2 * j
-        for a in range(3):
-            for c in range(3):
-                v = val * filt[a][c]
-                fill = "#fecaca" if v > 0 else ("#bfdbfe" if v < 0 else "#ffffff")
-                b.append(rect(ox + (sc + c) * cell, oy + (sr + a) * cell, cell, cell,
-                              "input", rx=0, sw=1.4, fill=fill, stroke=col))
-                b.append(txt(ox + (sc + c) * cell + cell / 2,
-                             oy + (sr + a) * cell + cell / 2 + 4,
-                             str(v), 9, fill=INK))
+    # ---- normal: filter sits on the 6×6 input
+    blank6 = [[""] * 6 for _ in range(6)]
+    blank4 = [[""] * 4 for _ in range(4)]
+    filt_lab = [[" "] * 3 for _ in range(3)]
+    xn, yn = 36, 88
+    b.append(txt(230, 70, "Normal convolution", 13, weight="600"))
+    b.append(matrix(xn, yn, blank6, cell, fills=lambda v, i, j: "#f3f4f6"))
+    b.append(outline(xn, yn, 0, 0, 3, 3, cell, RED))
+    b.append(txt(xn + 54, yn + 118, "6×6×3 input", 11, weight="600"))
+    b.append(arrow(xn + 114, yn + 54, xn + 146, yn + 54))
+    xf = xn + 158
+    b.append(matrix(xf, yn + 27, filt_lab, cell, fills=lambda v, i, j: C["conv"][0],
+                    stroke=C["conv"][1]))
+    b.append(txt(xf + 27, yn + 90, "3×3×3", 10.5, fill=MUTED))
+    b.append(txt(xf + 27, yn + 104, "5 filters", 10.5, fill=MUTED))
+    b.append(arrow(xf + 60, yn + 54, xf + 92, yn + 54))
+    xo = xf + 104
+    b.append(matrix(xo, yn + 18, blank4, cell, fills=lambda v, i, j: C["out"][0],
+                    stroke=C["out"][1]))
+    b.append(outline(xo, yn + 18, 0, 0, 1, 1, cell, RED))
+    b.append(txt(xo + 36, yn + 100, "4×4×5 output", 11, weight="600"))
+    b.append(txt(230, 232, "filter sits on the input", 12, weight="600", fill=RED))
+    b.append(txt(230, 252, "one window collapses to one number  ·  output is smaller", 11, fill=MUTED))
 
-    b.append(caption(W / 2, H - 32, [
-        "Where pastes overlap, add — the 4 at (2,2) is −1 −2 +3 +4. Crop the p = 1 border to get the 4×4 output.",
-        "n_out = s(n_in − 1) + f − 2p + output padding. With f = 3, p = 1, s = 2, output_padding = 1 this exactly doubles the spatial size.",
+    # ---- transpose: filter sits on the output
+    xt, yt = 500, 106
+    blank2 = [[""] * 2 for _ in range(2)]
+    b.append(txt(690, 70, "Transpose convolution", 13, weight="600"))
+    b.append(matrix(xt, yt + 18, blank2, cell, fills=lambda v, i, j: C["input"][0]))
+    b.append(outline(xt, yt + 18, 0, 0, 1, 1, cell, RED))
+    b.append(txt(xt + 18, yt + 64, "2×2 input", 11, weight="600"))
+    b.append(arrow(xt + 42, yt + 36, xt + 74, yt + 36))
+    xf2 = xt + 86
+    b.append(matrix(xf2, yt, filt_lab, cell, fills=lambda v, i, j: C["conv"][0],
+                    stroke=C["conv"][1]))
+    b.append(txt(xf2 + 27, yt + 64, "3×3 filter", 10.5, fill=MUTED))
+    b.append(arrow(xf2 + 60, yt + 36, xf2 + 92, yt + 36))
+    xo2 = xf2 + 104
+    b.append(matrix(xo2, yt - 18, blank4, cell, fills=lambda v, i, j: C["out"][0],
+                    stroke=C["out"][1]))
+    b.append(outline(xo2, yt - 18, 0, 0, 3, 3, cell, RED))
+    b.append(txt(xo2 + 36, yt + 64, "4×4 output", 11, weight="600"))
+    b.append(txt(690, 232, "filter sits on the output", 12, weight="600", fill=RED))
+    b.append(txt(690, 252, "one number expands to a whole window  ·  output is bigger", 11, fill=MUTED))
+
+    b.append(txt(W / 2, H - 14,
+                 "6×6×3 with five 3×3×3 filters becomes 4×4×5. A 2×2 map with a 3×3 filter becomes 4×4.",
+                 10.5, fill=MUTED))
+    write(OUT, "det-tconv-vs.svg", W, H, b)
+
+
+def fig_tconv_mechanics():
+    W, H = 920, 300
+    b = [title(W, "Mechanics of a transpose convolution",
+               "input, filter, and output of the running example  ·  f = 3, p = 1, s = 2")]
+    cell = 32
+    iw, fw, ow = mat_w(TCONV_IN, cell), mat_w(TCONV_F, cell), mat_w(TCONV_OUT, cell)
+    total = iw + 56 + fw + 56 + ow
+    xi = (W - total) / 2
+    xf = xi + iw + 56
+    xo = xf + fw + 56
+    yi, yf, yo = 110, 94, 78
+
+    b.append(matrix(xi, yi, TCONV_IN, cell, fills=_in_fills()))
+    b.append(_op(xi + iw + 28, 142, "×"))
+    b.append(matrix(xf, yf, TCONV_F, cell, fills=lambda v, i, j: diverge(v, 1)))
+    b.append(_op(xf + fw + 28, 142, "→"))
+    b.append(matrix(xo, yo, TCONV_OUT, cell, fills=lambda v, i, j: diverge(v, 7)))
+
+    b.append(txt(xi + iw / 2, 186, "input  2×2", 11.5, weight="600"))
+    b.append(txt(xf + fw / 2, 202, "filter  3×3", 11.5, weight="600"))
+    b.append(txt(xo + ow / 2, 218, "output  4×4", 11.5, weight="600"))
+    b.append(txt(xi + iw / 2, 204, "four numbers", 10.5, fill=MUTED))
+    b.append(txt(xf + fw / 2, 220, "learned weights", 10.5, fill=MUTED))
+    b.append(txt(xo + ow / 2, 236, "after crop", 10.5, fill=MUTED))
+
+    b.append(caption(W / 2, H - 28, [
+        "Each input number scales this whole filter and is stamped onto the output — that is the opposite of a normal convolution.",
+        "The five steps below unpack exactly how [[1, 2], [3, 4]] and this filter produce the 4×4 on the right.",
     ]))
-    write(OUT, "det-transpose-conv.svg", W, H, b)
+    write(OUT, "det-tconv-mechanics.svg", W, H, b)
+
+
+def fig_tconv_step1():
+    W, H = 920, 248
+    b = [title(W, "Step 1  ·  take one value from the input",
+               "the running example starts with the top-left 1; the same steps then run for 2, 3, and 4")]
+    cell = 42
+    xi, yi = 250, 86
+    b.append(matrix(xi, yi, TCONV_IN, cell, fills=_in_fills((0, 0)), sw=1.2))
+    b.append(outline(xi, yi, 0, 0, 1, 1, cell, RED, sw=2.6))
+    b.append(txt(xi + 42, yi + 100, "input", 11.5, weight="600"))
+    b.append(arrow(xi + 96, yi + 21, xi + 170, yi + 21, RED, 1.6))
+    b.append(matrix(xi + 186, yi, [[1]], cell, fills=lambda v, i, j: "#fecaca",
+                    stroke=RED, sw=2.0, fs=16))
+    b.append(txt(xi + 207, yi + 100, "the value we use next", 11.5, fill=RED, weight="600"))
+    b.append(txt(W / 2, H - 16,
+                 "A transpose convolution never looks at a window of the input. It picks one number and expands it.",
+                 10.5, fill=MUTED))
+    write(OUT, "det-tconv-step1.svg", W, H, b)
+
+
+def fig_tconv_step2():
+    W, H = 920, 268
+    b = [title(W, "Step 2  ·  multiply the entire filter by that value",
+               "every weight is scaled; nothing is summed yet")]
+    cell = 30
+    scaled = _scale_f(1)
+    xf, yf = 168, 92
+    b.append(matrix(xf, yf + 15, [[1]], cell, fills=lambda v, i, j: "#fecaca",
+                    stroke=RED, sw=1.8, fs=14))
+    b.append(txt(xf + 15, yf + 117, "input value", 10.5, fill=MUTED))
+    b.append(_op(xf + 52, yf + 48, "×"))
+    xs = xf + 78
+    b.append(matrix(xs, yf, TCONV_F, cell, fills=lambda v, i, j: diverge(v, 1)))
+    b.append(txt(xs + 45, yf + 117, "3×3 filter", 10.5, fill=MUTED))
+    b.append(_op(xs + 108, yf + 48, "="))
+    xo = xs + 134
+    b.append(matrix(xo, yf, scaled, cell, fills=lambda v, i, j: diverge(v, 1),
+                    stroke=RED, sw=1.6))
+    b.append(txt(xo + 45, yf + 117, "1 × filter", 11.5, fill=RED, weight="600"))
+
+    # a second, smaller reminder for input = 2
+    xr = 668
+    b.append(txt(xr + 45, 86, "same step for 2", 11, fill=AMBER, weight="600"))
+    b.append(matrix(xr - 50, 104, [[2]], 26, fills=lambda v, i, j: "#fef08a",
+                    stroke=AMBER, sw=1.6, fs=12))
+    b.append(_op(xr - 8, 138, "×", 16))
+    b.append(matrix(xr + 8, 104, _scale_f(2), 26, fills=lambda v, i, j: diverge(v, 2),
+                    stroke=AMBER, sw=1.4, fs=10))
+    b.append(txt(W / 2, H - 16,
+                 "Input 3 would give [[3, 3, 3], [0, 0, 0], [−3, −3, −3]]; input 4 would give [[4, 4, 4], [0, 0, 0], [−4, −4, −4]].",
+                 10.5, fill=MUTED))
+    write(OUT, "det-tconv-step2.svg", W, H, b)
+
+
+def fig_tconv_step3():
+    W, H = 920, 340
+    b = [title(W, "Step 3  ·  paste the block at a stride-s offset",
+               "input (i, j) writes starting at (s · i,  s · j) on the padded 6×6 canvas  ·  here s = 2")]
+    cell = 18
+    for n, (i, j, val, col, tint) in enumerate(TCONV_CELLS):
+        x0 = 36 + n * 224
+        y0 = 78
+        sr, sc = 2 * i, 2 * j
+        b.append(txt(x0 + 54, y0, f"input ({i}, {j})  =  {val}", 11, fill=col, weight="600"))
+        b.append(txt(x0 + 54, y0 + 16, f"starts at ({sr}, {sc})", 10.5, fill=MUTED))
+        canvas = _paste(val, i, j)
+        ox, oy = x0, y0 + 28
+
+        def fills(v, r, c, sr=sr, sc=sc, tint=tint):
+            if sr <= r < sr + 3 and sc <= c < sc + 3:
+                return tint if v != 0 else "#ffffff"
+            return "#f9fafb"
+
+        b.append(matrix(ox, oy, canvas, cell, fills=fills, fs=9, sw=0.7))
+        b.append(outline(ox, oy, sr, sc, 3, 3, cell, col, sw=2.0))
+    b.append(caption(W / 2, H - 28, [
+        "Because s = 2, neighbouring input cells land two pixels apart, so the 3×3 stamps overlap by one row and one column.",
+        "The pale cells are the p = 1 padding border — they are part of the canvas the filter is pasted onto, not of the final 4×4.",
+    ]))
+    write(OUT, "det-tconv-step3.svg", W, H, b)
+
+
+def fig_tconv_step4():
+    W, H = 920, 332
+    b = [title(W, "Step 4  ·  where pastes overlap, add",
+               "the 4 and −7 on the canvas are sums, not single stamps")]
+    cell = 26
+    xg, yg = 48, 78
+
+    def pad_fills(v, i, j):
+        if (i, j) == (2, 2):
+            return "#fecaca"
+        if (i, j) == (4, 2):
+            return "#bfdbfe"
+        return diverge(v, 7)
+
+    b.append(matrix(xg, yg, TCONV_PAD, cell, fills=pad_fills, fs=11))
+    b.append(outline(xg, yg, 2, 2, 1, 1, cell, RED, sw=2.4))
+    b.append(outline(xg, yg, 4, 2, 1, 1, cell, BLUE, sw=2.4))
+    b.append(txt(xg + 78, yg + 168, "padded 6×6, all four stamps added", 11, weight="600"))
+
+    # four 3×3 outlines in muted colour to show the overlap geometry
+    for i, j, _v, col, _t in TCONV_CELLS:
+        b.append(outline(xg, yg, 2 * i, 2 * j, 3, 3, cell, col, sw=1.3, dash="4 3"))
+
+    xr = 520
+    b.append(txt(xr, 92, "Cell (2, 2) is hit by every stamp", 12, anchor="start", weight="600", fill=RED))
+    rows = [
+        "from 1:  1 × filter[2, 2]  =  −1",
+        "from 2:  2 × filter[2, 0]  =  −2",
+        "from 3:  3 × filter[0, 2]  =  +3",
+        "from 4:  4 × filter[0, 0]  =  +4",
+    ]
+    for k, row in enumerate(rows):
+        b.append(txt(xr, 118 + k * 20, row, 11.5, anchor="start", fill=TCONV_CELLS[k][3]))
+    b.append(seg(xr, 198, xr + 250, 198, INK, 1.0))
+    b.append(txt(xr, 220, "−1  −  2  +  3  +  4   =   4", 13, anchor="start", weight="600", fill=RED))
+
+    b.append(txt(xr, 258, "Cell (4, 2) is hit by only 3 and 4", 12, anchor="start", weight="600", fill=BLUE))
+    b.append(txt(xr, 280, "−3  +  (−4)   =   −7", 13, anchor="start", weight="600", fill=BLUE))
+
+    b.append(txt(W / 2, H - 14,
+                 "Never overwrite. If two (or four) stamps land on the same cell, the values are added.",
+                 10.5, fill=MUTED))
+    write(OUT, "det-tconv-step4.svg", W, H, b)
+
+
+def fig_tconv_step5():
+    W, H = 920, 300
+    b = [title(W, "Step 5  ·  crop the padding border",
+               "p = 1 means drop the outer ring; what remains is the 4×4 output")]
+    cell = 24
+    xg, yg = 80, 78
+
+    def crop_fills(v, i, j):
+        border = i in (0, 5) or j in (0, 5)
+        if border:
+            return C["pad"][0]
+        return diverge(v, 7)
+
+    b.append(matrix(xg, yg, TCONV_PAD, cell, fills=crop_fills, fs=10))
+    b.append(outline(xg, yg, 1, 1, 4, 4, cell, RED, sw=2.4))
+    b.append(txt(xg + 72, yg + 156, "padded 6×6", 11, weight="600"))
+    b.append(txt(xg + 72, yg + 172, "yellow ring = padding, discarded", 10.5, fill=MUTED))
+
+    b.append(arrow(xg + 160, yg + 72, xg + 220, yg + 72, RED, 1.6))
+    b.append(txt(xg + 190, yg + 60, "crop p = 1", 11, fill=RED, weight="600"))
+
+    xo = 560
+    b.append(matrix(xo, yg + 24, TCONV_OUT, 28, fills=lambda v, i, j: diverge(v, 7)))
+    b.append(txt(xo + 56, yg + 148, "4×4 output", 11.5, weight="600"))
+    b.append(txt(xo + 56, yg + 166, "this is what the layer returns", 10.5, fill=MUTED))
+
+    b.append(txt(W / 2, H - 16,
+                 "The padding was applied to the output canvas before pasting, which is why it is cropped at the end rather than added to the input.",
+                 10.5, fill=MUTED))
+    write(OUT, "det-tconv-step5.svg", W, H, b)
+
+
+def _coverage(n, f, origins):
+    g = [[0] * n for _ in range(n)]
+    for i, j in origins:
+        for a in range(f):
+            for b in range(f):
+                r, c = i + a, j + b
+                if 0 <= r < n and 0 <= c < n:
+                    g[r][c] += 1
+    return g
+
+
+def _cover_fill(v, _i, _j):
+    return {0: "#f9fafb", 1: "#fef3c7", 2: "#fdba74", 3: "#f97316", 4: "#dc2626"}.get(v, "#fecaca")
+
+
+def fig_tconv_checkerboard():
+    W, H = 920, 318
+    b = [title(W, "Uneven overlap is a checkerboard",
+               "the number in each cell is how many f×f stamps cover it  ·  s = 2, four stamps")]
+    cell = 26
+    origins = [(0, 0), (0, 2), (2, 0), (2, 2)]
+
+    # f = 3, s = 2 — the running example
+    left = _coverage(6, 3, origins)
+    x1, y1 = 118, 86
+    b.append(txt(x1 + 78, 72, "f = 3, s = 2  ·  not divisible", 12.5, weight="600", fill=RED))
+    b.append(matrix(x1, y1, left, cell, fills=_cover_fill, fs=12,
+                    tfill=lambda v, i, j: "#ffffff" if v >= 3 else INK))
+    b.append(txt(x1 + 78, y1 + 168, "neighbours get 1, then 2, then 4", 11, fill=RED, weight="600"))
+    b.append(txt(x1 + 78, y1 + 186, "that periodic high / low grid is the artifact", 10.5, fill=MUTED))
+
+    b.append(seg(460, 70, 460, 268, LINE, 1.0, dash="4 4"))
+
+    # f = 4, s = 2 — uniform interior
+    right = _coverage(6, 4, origins)
+    x2, y2 = 546, 86
+    b.append(txt(x2 + 78, 72, "f = 4, s = 2  ·  divisible", 12.5, weight="600", fill=GREEN))
+    b.append(matrix(x2, y2, right, cell, fills=_cover_fill, fs=12,
+                    tfill=lambda v, i, j: "#ffffff" if v >= 3 else INK))
+    b.append(txt(x2 + 78, y2 + 168, "interior cells all get 4", 11, fill=GREEN, weight="600"))
+    b.append(txt(x2 + 78, y2 + 186, "overlap is uniform, so no checkerboard bias", 10.5, fill=MUTED))
+
+    b.append(txt(W / 2, H - 16,
+                 "Same four stamp origins. Only the filter size changes. Counts, not values: this is how often each output cell is written.",
+                 10.5, fill=MUTED))
+    write(OUT, "det-tconv-checkerboard.svg", W, H, b)
 
 
 # --------------------------------------------------------------- 10 U-Net
 
 
+def _scene(x, y, w, h):
+    """A tiny street photo: sky, road, one car."""
+    return "\n".join([
+        photo(x, y, w, h),
+        car(x + 0.22 * w, y + 0.62 * h, 0.42 * w, 0.22 * h),
+    ])
+
+
+def _mask(x, y, w, h):
+    """The matching per-pixel map: road / car / background."""
+    road_y = y + 0.62 * h
+    return "\n".join([
+        rect(x, y, w, h, "out", rx=4, sw=1.3, fill="#93c5fd", stroke=LINE),
+        rect(x, road_y, w, y + h - road_y, "conv", rx=0, sw=0,
+             fill="#86efac", stroke="none"),
+        rect(x + 0.22 * w, road_y - 0.12 * h, 0.42 * w, 0.28 * h, "pool",
+             rx=3, sw=0, fill="#2563eb", stroke="none"),
+        rect(x, y, w, h, "out", rx=4, sw=1.3, fill="none", stroke=LINE),
+    ])
+
+
+def fig_unet_idea():
+    W, H = 920, 300
+    b = [title(W, "The idea: go down to understand, come back up to label every pixel",
+               "a classifier keeps shrinking until one answer is left. segmentation has to grow the map back.")]
+
+    # input photo
+    b.append(_scene(28, 88, 88, 88))
+    b.append(txt(72, 192, "image", 11, weight="600"))
+
+    specs = [
+        (64, 14, "input", "H×W"),
+        (48, 22, "conv", ""),
+        (22, 40, "conv5", "code"),
+        (48, 22, "conv1", ""),
+        (64, 14, "out", "H×W×C"),
+    ]
+    xs = [140, 268, 396, 524, 652]
+    cy = 132
+    infos = []
+    for x, (face, depth, role, lab) in zip(xs, specs):
+        y0 = cy - face / 2
+        svg, info = volume3d(x, y0, face, face, depth, role, label=lab, fs=10)
+        b.append(svg)
+        infos.append(info)
+    for a, c in zip(infos, infos[1:]):
+        b.append(arrow(a["right"] + 4, cy, c["left"] - 4, cy))
+
+    b.append(_mask(800, 88, 88, 88))
+    b.append(txt(844, 192, "mask", 11, weight="600"))
+    b.append(arrow(infos[-1]["right"] + 4, cy, 792, cy))
+
+    b.append(txt((infos[0]["cx"] + infos[2]["cx"]) / 2, 214,
+                 "down:  the picture gets smaller, the meaning gets richer", 11.5, fill=MUTED))
+    b.append(txt((infos[2]["cx"] + infos[4]["cx"]) / 2, 214,
+                 "up:  the picture comes back, one class per pixel", 11.5, fill=MUTED))
+    b.append(txt(infos[2]["cx"], 236, "here you know what, but not which pixel",
+                 11, fill=RED, weight="600"))
+
+    b.append(txt(W / 2, H - 16,
+                 "That is the whole idea. The next figure is how U-Net actually arranges the layers.",
+                 10.5, fill=MUTED))
+    write(OUT, "det-unet-idea.svg", W, H, b)
+
+
+def _crop_lecture_photos():
+    """Cut the car and the output map out of graphs/unet_architecture.png."""
+    from PIL import Image
+    src = pathlib.Path(__file__).resolve().parent.parent / "graphs" / "unet_architecture.png"
+    im = Image.open(src).convert("RGB")
+    car = im.crop((34, 161, 222, 357)).resize((180, 180), Image.Resampling.LANCZOS)
+    mask = im.crop((1587, 156, 1781, 354)).resize((180, 180), Image.Resampling.LANCZOS)
+    car_p, mask_p = OUT / "unet_car.png", OUT / "unet_mask.png"
+    car.save(car_p, optimize=True)
+    mask.save(mask_p, optimize=True)
+    return car_p, mask_p
+
+
+def _png(x, y, w, h, path):
+    raw = pathlib.Path(path).read_bytes()
+    uri = "data:image/png;base64," + base64.b64encode(raw).decode("ascii")
+    return (
+        f'<image href="{uri}" x="{x:g}" y="{y:g}" width="{w:g}" height="{h:g}" '
+        f'preserveAspectRatio="xMidYMid slice"/>'
+    )
+
+
+# blues taken from the lecture figure
+_U_NAVY, _U_CYAN = "#1e4a8c", "#3db5e8"
+_U_MAGENTA = "#d946ef"
+
+
+def _ubar(x, y, w, h, kind="navy"):
+    fill = _U_NAVY if kind == "navy" else _U_CYAN
+    return rect(x, y, w, h, "pool", rx=1.2, sw=1.05, fill=fill, stroke=fill)
+
+
+def _uchain(parts, x, cy, h, gap=13):
+    """Horizontal conv+ReLU chain. parts: [(width, kind), ...]."""
+    out, boxes, xi = [], [], x
+    for i, (w, kind) in enumerate(parts):
+        boxes.append((xi, w))
+        out.append(_ubar(xi, cy - h / 2, w, h, kind))
+        if i < len(parts) - 1:
+            out.append(arrow(xi + w + 1.5, cy, xi + w + gap - 2, cy, INK, 1.2))
+            xi += w + gap
+        else:
+            xi += w
+    first_x, first_w = boxes[0]
+    last_x, last_w = boxes[-1]
+    info = dict(
+        L=x, R=xi, T=cy - h / 2, B=cy + h / 2, cx=(x + xi) / 2, cy=cy,
+        first_cx=first_x + first_w / 2, last_cx=last_x + last_w / 2,
+    )
+    return "\n".join(out), info
+
+
 def fig_unet():
-    W, H = 920, 460
-    b = [title(W, "U-Net",
-               "encoder down, decoder up, skip connections copy high-resolution detail across")]
+    """U-Net matching graphs/unet_architecture.png, bar for bar."""
+    car_p, mask_p = _crop_lecture_photos()
+    W, H = 960, 520
+    b = [title(W, "U-Net architecture",
+               "black arrow = conv + ReLU;  red ↓ = max pool;  green ↑ = transpose conv")]
 
-    # encoder volumes (left, going down)
-    enc = [
-        (80, 80, 70, 70, "input", "H×W×c"),
-        (100, 168, 58, 58, "conv", ""),
-        (118, 248, 46, 46, "conv", ""),
-        (134, 320, 36, 36, "conv5", "bottleneck"),
-    ]
-    # decoder volumes (right, going up)
-    dec = [
-        (134 + 520, 320, 36, 36, "conv1", ""),
-        (118 + 520, 248, 46, 46, "conv1", ""),
-        (100 + 520, 168, 58, 58, "conv1", ""),
-        (80 + 520, 80, 70, 70, "out", "H×W×C"),
-    ]
+    # five spatial levels, counted off the lecture PNG
+    hs = [92, 64, 42, 22, 16]
+    cys = [118, 220, 300, 362, 410]
+    tw = [10, 14, 22, 30, 36]         # thicker = more channels
+    # every encoder block, and the bottleneck: 3 navy convs
+    enc_spec = [[(tw[i], "navy")] * 3 for i in range(5)]
+    enc_spec[4] = [(48, "navy")] * 3   # wider bottom row, spans the U
+    # every decoder block: skip copy (navy) + two convs (cyan)
+    dec_spec = [[(tw[i], "navy")] + [(tw[i], "cyan")] * 2 for i in range(4)]
+    enc_x = [124, 154, 194, 242, 338]
+    dec_x = [668, 618, 558, 478]
 
-    for x, y, w, h, role, lab in enc:
-        b.append(rect(x, y, w, h, role, rx=4))
-        if lab:
-            b.append(txt(x + w / 2, y - 12, lab, 10.5, weight="600"))
-    for x, y, w, h, role, lab in dec:
-        b.append(rect(x, y, w, h, role, rx=4))
-        if lab:
-            b.append(txt(x + w / 2, y - 12, lab, 10.5, weight="600"))
+    enc, dec = [], {}
+    for i, (spec, x0) in enumerate(zip(enc_spec, enc_x)):
+        svg, info = _uchain(spec, x0, cys[i], hs[i], gap=14 if i < 3 else 12)
+        b.append(svg)
+        enc.append(info)
+    for i, (spec, x0) in enumerate(zip(dec_spec, dec_x)):
+        svg, info = _uchain(spec, x0, cys[i], hs[i], gap=14 if i < 3 else 12)
+        b.append(svg)
+        dec[i] = info
 
-    # down arrows (pool)
+    # max pool: last (right) bar of the upper block → first (left) bar of the lower
     for a, c in zip(enc, enc[1:]):
-        b.append(arrow(a[0] + a[2] / 2, a[1] + a[3] + 4, c[0] + c[2] / 2, c[1] - 4, C["pool"][1], 1.6))
-    # up arrows (transpose)
-    for a, c in zip(dec, dec[1:]):
-        b.append(arrow(a[0] + a[2] / 2, a[1] - 4, c[0] + c[2] / 2, c[1] + c[3] + 4, C["conv1"][1], 1.6))
+        b.append(arrow(a["last_cx"], a["B"] + 4, c["first_cx"], c["T"] - 4, RED, 1.8))
 
-    # skip connections: matching spatial sizes, encoder i to decoder i
-    for i, e in enumerate(enc[:-1]):
-        d = dec[-(i + 1)]
-        y = e[1] + e[3] / 2
-        x1 = e[0] + e[2] + 4
-        x2 = d[0] - 4
-        b.append(path(f"M {x1:g},{y:g} C {(x1 + x2) / 2:g},{y:g} {(x1 + x2) / 2:g},{y:g} {x2:g},{y:g}",
-                      stroke=LINE, sw=1.6, marker=True, dash="6 4"))
-        if i == 0:
-            b.append(txt((x1 + x2) / 2, y - 12, "copy + concat", 11, fill=MUTED))
+    # transpose conv: last (right) bar of the lower block → first (left) bar of the upper
+    b.append(arrow(enc[4]["last_cx"], enc[4]["T"] - 4,
+                   dec[3]["first_cx"], dec[3]["B"] + 3, GREEN, 1.8))
+    for lo, hi in ((3, 2), (2, 1), (1, 0)):
+        b.append(arrow(dec[lo]["last_cx"], dec[lo]["T"] - 3,
+                       dec[hi]["first_cx"], dec[hi]["B"] + 3, GREEN, 1.8))
 
-    b.append(txt(enc[0][0] + enc[0][2] / 2, 430, "encoder", 12, weight="600"))
-    b.append(txt(enc[0][0] + enc[0][2] / 2, 446, "nH ↓   nC ↑", 10.5, fill=MUTED))
-    b.append(txt(dec[-1][0] + dec[-1][2] / 2, 430, "decoder", 12, weight="600"))
-    b.append(txt(dec[-1][0] + dec[-1][2] / 2, 446, "nH ↑   nC ↓", 10.5, fill=MUTED))
+    # skip connections (solid grey)
+    for lvl in (0, 1, 2, 3):
+        e, d = enc[lvl], dec[lvl]
+        b.append(arrow(e["R"] + 6, e["cy"], d["L"] - 6, d["cy"], LINE, 2.1))
 
-    b.append(legend(250, 400, [
-        ("input", "input"),
-        ("conv", "conv + ReLU"),
-        ("pool", "max pool  (down)"),
-        ("conv1", "transpose conv  (up)"),
-        ("out", "1×1  →  n_classes"),
-    ]))
+    # cropped lecture photos — same height as the top bars
+    ph = hs[0]
+    b.append(_png(18, cys[0] - ph / 2, ph, ph, car_p))
+    b.append(rect(18, cys[0] - ph / 2, ph, ph, "input", rx=2, sw=1.15,
+                  fill="none", stroke=LINE))
 
-    px = 300
-    b.append(panel(px, 300, 320, 70, fill="#f9fafb"))
-    b.append(txt(px + 160, 324, "ResNet skip: add, to ease optimization", 11))
-    b.append(txt(px + 160, 344, "U-Net skip: concatenate, to restore spatial detail", 11, weight="600"))
-    b.append(txt(px + 160, 360, "same name, different operation and purpose", 10.5, fill=MUTED))
+    ox = dec[0]["R"] + 38
+    b.append(arrow(dec[0]["R"] + 4, cys[0], ox - 4, cys[0], _U_MAGENTA, 1.7))
+    b.append(txt((dec[0]["R"] + ox) / 2, cys[0] - hs[0] / 2 - 7, "1×1",
+                 9.5, fill=_U_MAGENTA, weight="600"))
+    b.append(_png(ox, cys[0] - ph / 2, ph, ph, mask_p))
+    b.append(rect(ox, cys[0] - ph / 2, ph, ph, "out", rx=2, sw=1.15,
+                  fill="none", stroke=LINE))
 
+    # lecture-style arrow legend, right of the lower decoder
+    lx, ly = 820, 268
+    b.append(arrow(lx, ly, lx + 20, ly, INK, 1.25))
+    b.append(txt(lx + 26, ly + 4, "conv + ReLU", 11, anchor="start"))
+    b.append(arrow(lx + 10, ly + 26, lx + 10, ly + 44, RED, 1.5))
+    b.append(txt(lx + 26, ly + 38, "max pool", 11, anchor="start"))
+    b.append(arrow(lx + 10, ly + 70, lx + 10, ly + 52, GREEN, 1.5))
+    b.append(txt(lx + 26, ly + 64, "transpose conv", 11, anchor="start"))
+    b.append(arrow(lx, ly + 88, lx + 20, ly + 88, LINE, 1.6))
+    b.append(txt(lx + 26, ly + 92, "skip connection", 11, anchor="start"))
+    b.append(arrow(lx, ly + 112, lx + 20, ly + 112, _U_MAGENTA, 1.45))
+    b.append(txt(lx + 26, ly + 116, "conv 1×1", 11, anchor="start"))
+
+    b.append(txt(enc[2]["cx"], 458, "encoder", 12, weight="600"))
+    b.append(txt(enc[2]["cx"], 474, "nH ↓    nC ↑", 10.5, fill=MUTED))
+    b.append(txt(dec[2]["cx"], 458, "decoder", 12, weight="600"))
+    b.append(txt(dec[2]["cx"], 474, "nH ↑    nC ↓", 10.5, fill=MUTED))
     write(OUT, "det-unet.svg", W, H, b)
 
 
@@ -854,6 +1317,7 @@ FIGURES = [
     fig_bbox_label,
     fig_landmarks,
     fig_sliding_windows,
+    fig_sliding_fc,
     fig_fc_to_conv,
     fig_conv_windows,
     fig_yolo_grid,
@@ -865,7 +1329,15 @@ FIGURES = [
     fig_rcnn_family,
     fig_seg_vs_box,
     fig_encoder_decoder,
-    fig_transpose_conv,
+    fig_tconv_vs,
+    fig_tconv_mechanics,
+    fig_tconv_step1,
+    fig_tconv_step2,
+    fig_tconv_step3,
+    fig_tconv_step4,
+    fig_tconv_step5,
+    fig_tconv_checkerboard,
+    fig_unet_idea,
     fig_unet,
 ]
 

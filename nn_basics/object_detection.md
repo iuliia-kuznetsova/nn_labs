@@ -181,11 +181,13 @@ $$\boxed{\text{an FC layer} \;\equiv\; \text{a convolution whose filter covers t
 
 So instead of viewing those 400 numbers as a flat set of nodes, view them as a $1 \times 1 \times 400$ volume. Nothing about the computation changes; only the bookkeeping does.
 
-![The same classifier with its fully connected layers rewritten as convolutions: 14x14x3 to 1x1x4, gray input, green conv, blue pool, red softmax.](figures/det-fc-to-conv.svg)
+![Original sliding-window classifier with fully connected layers: 14×14×3 input, CONV, POOL, two FC layers, 4-way softmax.](figures/det-sliding-fc.svg)
+
+![The same classifier with each fully connected layer rewritten as a convolution: 14×14×3 through to a 1×1×4 output.](figures/det-fc-to-conv.svg)
 
 ### 2.4 The Convolutional Implementation
 
-Now the payoff (based on the OverFeat paper by Sermanet, Eigen, Zhang, Mathieu, Fergus, and LeCun).
+**The main idea**:  In a normal sliding window setup, the four crops overlap a lot, so the network recomputes the same early-layer activations again and again. In the convolutional version, you feed the whole image once, and the convolution and pooling layers produce a grid of outputs, where each cell corresponds to one window position (based on the OverFeat paper by Sermanet, Eigen, Zhang, Mathieu, Fergus, and LeCun).
 
 Suppose the classifier expects $14 \times 14 \times 3$ and your test image is $16 \times 16 \times 3$. The naive sliding window with stride 2 would run the ConvNet **four times**, on the upper-left, upper-right, lower-left, and lower-right $14\times14$ crops. But most of that computation is duplicated, because the four crops overlap heavily.
 
@@ -208,7 +210,9 @@ A bigger example: a $28 \times 28 \times 3$ image through the same network gives
 
 The **effective stride** of the sliding window is set by the downsampling in the network. Here the $2\times2$ max pool means consecutive output positions correspond to windows 2 pixels apart in the original image.
 
-![Four overlapping 14x14 crops on a 16x16 image versus one convolutional pass that produces a 2x2x4 volume, one 1x1x4 slice per window.](figures/det-conv-windows.svg)
+![Four overlapping 14×14 crops on a 16×16 image versus one convolutional pass through 3D volumes that produces a 2×2×4 output, one 1×1×4 slice per window.](figures/det-conv-windows.svg)
+
+**Why the outputs match** A convolution filter looks at a local patch of the input and applies the same weights everywhere. If you take a crop and run the network, the activations inside that crop are exactly the same as the corresponding sub-activations you would get when running the full image, as long as the receptive field, padding, stride, and weights are unchanged. That is why the upper-left output cell from the full-image pass equals the prediction from the upper-left crop.
 
 ### 2.5 The Remaining Weakness
 
@@ -574,7 +578,7 @@ Because it has no separate proposal stage at all — one convolutional pass prod
 
 ### 8.1 What It Is
 
-Detection draws a box around an object. **Semantic segmentation** draws a careful outline, labeling **every single pixel** with a class, so you know exactly which pixels belong to the object and which do not.
+Object detection draws a box around an object. **Semantic segmentation** draws a careful outline, labeling **every single pixel** with a class, so you know exactly which pixels belong to the object and which do not.
 
 Why bounding boxes are not always enough: for a self-driving car, boxing the other vehicles is reasonable, but a bounding box around *the road* is useless. What you want is a per-pixel answer to "is this drivable surface?" Some self-driving teams use semantic segmentation for exactly that — determining which pixels are safe to drive over.
 
@@ -607,7 +611,7 @@ $$\boxed{\text{first half: } n_H, n_W \downarrow \text{ and } n_C \uparrow \qqua
 
 That is the essential structural difference from every architecture so far: spatial dimensions have always shrunk with depth, and now they must grow back. The operation that makes them grow is the **transpose convolution**.
 
-![An encoder–decoder: spatial size shrinks then grows back, ending in an H×W×C per-pixel map. Gray input, green encoder, light-green decoder, red output.](figures/det-encoder-decoder.svg)
+![An encoder–decoder as 3D volumes: spatial size shrinks then grows back, ending in an H×W×C per-pixel map. Gray input, green encoder/decoder, red output.](figures/det-encoder-decoder.svg)
 
 ### 8.5 Tricky Interview Questions
 
@@ -636,51 +640,65 @@ The operation that turns a small set of activations into a bigger one.
 | Normal convolution | $6 \times 6 \times 3$ | $3\times3\times3$, 5 filters | $4 \times 4 \times 5$ — **smaller** |
 | Transpose convolution | $2 \times 2$ | $3 \times 3$ | $4 \times 4$ — **bigger** |
 
+![Normal convolution places a 3×3 window on a 6×6×3 input and writes one number into a 4×4×5 output; transpose convolution places the 3×3 filter on the output and expands a 2×2 input into a 4×4 map.](figures/det-tconv-vs.svg)
+
 ### 9.2 The Mechanics
 
 The one sentence that captures it:
 
 $$\boxed{\text{in a normal convolution you place the filter on the \textbf{input}; in a transpose convolution you place it on the \textbf{output}}}$$
 
-The procedure, with filter size $f$, padding $p$ applied to the *output*, and stride $s$:
+![The running example: 2×2 input [[1, 2], [3, 4]], 3×3 filter [[1, 1, 1], [0, 0, 0], [−1, −1, −1]], and the 4×4 output they produce.](figures/det-tconv-mechanics.svg)
+
+The procedure, with filter size $f$, padding $p$ applied to the *output*, and stride $s$. The diagrams use the numbers above: $p = 1$, $s = 2$.
 
 1. Take one value from the input.
+
+![Step 1: the top-left 1 is taken from the 2×2 input; 2, 3, and 4 will be handled the same way.](figures/det-tconv-step1.svg)
+
 2. **Multiply the entire filter** by that value.
+
+![Step 2: 1 times the 3×3 filter produces a 3×3 block; the same scaling for 2 is shown on the right.](figures/det-tconv-step2.svg)
+
 3. **Paste** the resulting $f \times f$ block into the output, at an offset determined by the stride: input position $(i, j)$ writes to output position starting at $(s \cdot i, \; s \cdot j)$.
+
+![Step 3: the four scaled 3×3 stamps land on the padded 6×6 canvas at (0,0), (0,2), (2,0), and (2,2).](figures/det-tconv-step3.svg)
+
 4. Where pasted blocks **overlap, add** the values rather than overwriting.
+
+![Step 4: cell (2,2) receives −1 −2 +3 +4 = 4; cell (4,2) receives −3 + (−4) = −7.](figures/det-tconv-step4.svg)
+
 5. **Ignore / crop** the padding region at the end.
 
-### 9.3 A Worked Example
+![Step 5: the p = 1 yellow border is discarded, leaving the 4×4 output.](figures/det-tconv-step5.svg)
 
-Input $2 \times 2$, filter $3 \times 3$, $p = 1$, $s = 2$:
-
-$$\text{input} = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}, \qquad \text{filter} = \begin{bmatrix} 1 & 1 & 1 \\ 0 & 0 & 0 \\ -1 & -1 & -1 \end{bmatrix}$$
-
-Each input value scales the whole filter and is pasted at a stride-2 offset. Accumulating all four contributions gives this $6 \times 6$ grid (the output plus its padding border):
-
-$$\begin{bmatrix} 1 & 1 & 3 & 2 & 2 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \\ 2 & 2 & \mathbf{4} & 2 & 2 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \\ -3 & -3 & \mathbf{-7} & -4 & -4 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \end{bmatrix}$$
-
-The overlaps are where it gets interesting. The bold $4$ at position $(2,2)$ receives four contributions at once — $-1$ from the input value 1, $-2$ from the value 2, $+3$ from the value 3, and $+4$ from the value 4 — summing to $4$. Similarly the bold $-7$ is $-3 + (-4)$.
-
-Cropping the one-pixel padding border leaves the $4 \times 4$ output:
-
-$$\begin{bmatrix} 0 & 0 & 0 & 0 \\ 2 & 4 & 2 & 2 \\ 0 & 0 & 0 & 0 \\ -3 & -7 & -4 & -4 \end{bmatrix}$$
-
-![Transpose convolution: the filter is placed on the output. Each of the four input values pastes a scaled 3x3 filter; overlaps are added.](figures/det-transpose-conv.svg)
-
-### 9.4 Output Size
+### 9.3 Output Size
 
 $$\boxed{n_{out} = s\left(n_{in} - 1\right) + f - 2p \;+\; \text{output padding}}$$
 
-For the example: $2(2-1) + 3 - 2 = 3$, plus one row and column of trailing zeros gives the $4 \times 4$ used here. That extra row and column is what frameworks call **output padding**, and setting it to 1 with $f=3$, $p=1$, $s=2$ is the standard recipe for **exactly doubling** the spatial size — the common case in a decoder. In PyTorch that is `ConvTranspose2d(kernel_size=3, stride=2, padding=1, output_padding=1)`.
+For the example above: $2(2-1) + 3 - 2 = 3$, plus one row and column of trailing zeros gives the $4 \times 4$. That extra row and column is what frameworks call **output padding**, and setting it to 1 with $f=3$, $p=1$, $s=2$ is the standard recipe for **exactly doubling** the spatial size — the common case in a decoder. In PyTorch that is `ConvTranspose2d(kernel_size=3, stride=2, padding=1, output_padding=1)`.
 
-### 9.5 Why This Operation
+### 9.4 Why This Operation
 
 There are multiple possible ways to take a small input and turn it into a bigger output. The transpose convolution happens to be one that works well, and crucially its **filter values are learned**, so the network learns how to upsample rather than following a fixed interpolation rule. In the context of U-Net, that gives good results.
 
-> **A known artifact.** When the filter size is not divisible by the stride, transpose convolutions produce uneven overlap and can leave **checkerboard artifacts** in the output. A common alternative is to upsample by nearest-neighbor or bilinear interpolation and then apply an ordinary convolution, which avoids the artifact at similar cost.
+The catch is already visible in step 4. Each input value pastes an $f \times f$ block every $s$ pixels, so the number of stamps that land on a given output cell is not always the same:
 
-### 9.6 Tricky Interview Questions
+- If $f$ is a **multiple of** $s$ (for example $f = 4$, $s = 2$), every interior output cell is covered the same number of times — $(f/s)^2$ in 2-D. The overlap is uniform.
+- If $f$ is **not** a multiple of $s$ (for example $f = 3$, $s = 2$ — the running example), coverage cycles. Some cells receive one contribution, their neighbours two or four. That periodic high / low grid is a **checkerboard**.
+
+![Overlap counts for the same four stamp origins: f = 3, s = 2 cycles through 1, 2, 4; f = 4, s = 2 covers the interior uniformly with 4.](figures/det-tconv-checkerboard.svg)
+
+The network could in principle learn filter values that cancel the unevenness, but the bias is hard to unlearn: gradients flow more strongly through the heavily overlapped cells, so a faint tiled texture tends to survive into decoder outputs and into older GAN images that upsampled this way.
+
+Two standard ways to avoid it:
+
+1. **Choose $f$ divisible by $s$**, so the overlap is even — a $4 \times 4$ filter with stride 2 is the usual drop-in.
+2. **Do not upsample with a transpose convolution.** Resize the map with nearest-neighbour or bilinear interpolation (every output pixel is treated the same), then apply an ordinary stride-1 convolution. The convolution still has learned filters, so the network can refine the upsampled map, but the uneven overlap is gone. Cost is similar.
+
+The second option is what many modern decoders and super-resolution models use.
+
+### 9.5 Tricky Interview Questions
 
 **Q: With input $\begin{bmatrix} 1 & 2 \\ 3 & 4\end{bmatrix}$, filter $\begin{bmatrix} 1&1&1 \\ 0&0&0 \\ -1&-1&-1\end{bmatrix}$, $p=1$, $s=2$, what are the marked values in the $6\times6$ result?**  
 The center of row 3 is $-1 - 2 + 3 + 4 = 4$, and the center of row 5 is $-3 - 4 = -7$. Both come from **summing** overlapping pasted blocks, which is the step people most often get wrong.
@@ -701,55 +719,92 @@ No. Nearest-neighbor or bilinear upsampling followed by a normal convolution is 
 
 ## 10. The U-Net Architecture
 
-### 10.1 The Shape
+### 10.1 The Main Idea
 
-U-Net is due to Ronneberger, Fischer, and Brox. They wrote it for **biomedical image segmentation**, but the ideas turned out to be useful across computer vision segmentation tasks generally. It is one of the most important and foundational architectures in computer vision today, and the name comes from the fact that the diagram looks like a **U**.
+A classifier answers one question: *what is in this image?*  
+A detector answers *what and where*, as a box.  
+**Semantic segmentation** answers *what is this pixel?* — for every pixel.
+
+That is a different kind of output. A box around a road or a tumour tells you almost nothing; you need the outline. So the network cannot finish the way a classifier does. If you keep shrinking the image until one vector is left, you may know there is a cat and still have no idea **which pixels** are the cat.
+
+The idea in one sentence:
+
+$$\boxed{\text{go down to understand the scene, then come back up to write a label on every pixel}}$$
+
+![The picture shrinks to a small rich code — you know what is there, but not which pixel — then grows back into a full-size mask.](figures/det-unet-idea.svg)
+
+The down path builds context. The up path restores resolution. The output is a picture the same size as the input, coloured by class. How the layers are arranged — and why copies across the U are needed — is the next subsection.
+
+### 10.2 U-Net Architecture
+
+U-Net is due to Ronneberger, Fischer, and Brox (2015). They designed it for **biomedical image segmentation**; the same shape is now standard for semantic segmentation in general. It is named for the diagram: encoder down the left, decoder up the right, skips across the middle — a **U**.
+
+The input is an image, $h \times w \times 3$ for RGB. In the figure the volumes are drawn **edge-on**: bar height is spatial size, bar thickness is the number of channels.
 
 The three parts:
 
-| Half | Operations | Effect |
+| Part | Operations | Effect |
 |---|---|---|
-| **Encoder** (down the left) | Normal conv + ReLU, with occasional max pooling | $n_H, n_W$ shrink; $n_C$ grows |
-| **Decoder** (up the right) | Transpose convolutions, plus more conv + ReLU | $n_H, n_W$ grow; $n_C$ shrinks |
-| **Skip connections** (across) | Copy encoder activations to the matching decoder layer | Reinjects fine spatial detail |
+| **Encoder** (down the left) | Repeated **conv + ReLU**, then **max pool** | $n_H, n_W$ shrink; $n_C$ grows |
+| **Decoder** (up the right) | **Transpose convolution**, then **conv + ReLU** | $n_H, n_W$ grow; $n_C$ shrinks |
+| **Skip connections** (across) | **Copy** the matching encoder activations and **concatenate** them onto the decoder | Puts fine spatial detail back into the upsampling path |
 
-The lecture's arrow legend:
+How one step of the U is built:
+
+| Stage | What happens |
+|---|---|
+| Encoder block | Three conv + ReLU layers, same spatial size, typically more channels. Then max pool, which roughly **halves** $n_H$ and $n_W$. The activations *before* the pool are what the skip will copy. |
+| Bottleneck | The bottom of the U: smallest spatial size, deepest channels. Three more conv + ReLU, then a transpose convolution starts the way back up. |
+| Decoder block | A transpose convolution grows the map. The skip from the encoder level with the **same spatial size** is concatenated on the channel axis (navy bar in the figure). Then two conv + ReLU mix the two sources. |
+| Output head | Once $n_H$ and $n_W$ match the input, a **$1 \times 1$ convolution** (magenta) maps each pixel to $n_{\text{classes}}$ channels. |
 
 | Arrow | Meaning |
 |---|---|
-| Black | Convolution + ReLU |
-| Green | Transpose convolution |
-| Grey | Skip connection (copy across) |
-| Magenta | Final $1\times1$ convolution |
+| Black | Conv + ReLU (between bars at the same level) |
+| Red (down) | Max pooling |
+| Green (up) | Transpose convolution |
+| Grey | Skip connection (copy across, then concatenate) |
+| Magenta | Final $1 \times 1$ convolution |
 
-The colour key in the figure below is the same as the rest of these notes: **gray** input, **green** convolution, **blue** pooling (down), light green transpose convolution (up), **red** $1\times1$ output. Skip connections are dashed copies.
+![U-Net: encoder down the left, decoder up the right, grey skips copy and concatenate, magenta 1×1 convolution to the segmentation map.](figures/det-unet.svg)
 
-![U-Net: encoder down the left, decoder up the right, dashed skip connections copy and concatenate high-resolution activations across.](figures/det-unet.svg)
+Reading the U from the figure:
 
-### 10.2 Why the Skip Connections Matter
+- Going **down**, each red arrow is a pool, so the bars get shorter and thicker: less space, more channels.
+- Going **up**, each green arrow is a transpose convolution, so the bars get taller and thinner again.
+- Each grey arrow lands on a decoder stack whose first (navy) bar is the **copy from the left**. That is concatenation, not addition. The two cyan bars after it are conv + ReLU.
+- The magenta arrow is the last step: one $1 \times 1$ filter per class, applied at every pixel.
 
-This is the heart of the architecture. To decide whether a given pixel is part of a cat, the final layer needs **two different kinds of information**:
+$$\boxed{\text{encoder: } n_H, n_W \downarrow \text{ and } n_C \uparrow \qquad \text{decoder: } n_H, n_W \uparrow \text{ and } n_C \downarrow \qquad \text{skips: copy + concat}}$$
 
-- **High-level contextual information**, which comes up through the deep path: the network has figured out that there is cat-like stuff in the lower-right portion of the image. But this path has been compressed heavily, so its spatial resolution is low and precise pixel locations have been lost.
-- **Low-level, high-resolution detail**, which the deep path cannot supply: for this exact pixel, how much furry texture is there? That information exists in the *early* layers, which still have full spatial resolution.
+The original paper used *valid* convolutions, so the output map was a little smaller than the input. The version taught here uses **same** convolutions and restores $h \times w$.
 
-The skip connection passes those early, high-resolution, low-level activations directly to the later layer. So the decoder layer has both the coarse "what and roughly where" and the fine "exactly which pixel", which is what it needs to classify individual pixels.
+### 10.3 Why the Skip Connections Matter
 
-In each decoder block, part of the volume comes from the transpose convolution and the rest is **copied over** from the corresponding encoder layer — the two are concatenated along the channel axis.
+The decoder has to label **this pixel**. The deep path and the early path each have only half of what it needs.
 
-> **Contrast with ResNet.** ResNet skip connections **add** ($z^{[l+2]} + a^{[l]}$) and exist to make optimization easier. U-Net skip connections **concatenate** and exist to restore spatial information the encoder discarded. Same name, different mechanism and different purpose.
+| Path | What it knows | What it has lost |
+|---|---|---|
+| **Deep path** (up from the bottleneck) | High-level context: there is cat-like stuff in the lower-right | Precise location — pooling discarded *where* |
+| **Early encoder** (the skip) | High-resolution, low-level detail: edges, texture, “how furry is this pixel?” | Object identity — it has not seen the whole image yet |
 
-### 10.3 The Output Layer
+The skip copies the early activations straight across, so the decoder layer sees **both** at once: the coarse “what and roughly where” and the fine “exactly which pixel”. Without the skip, the decoder is upsampling a blurry code and the mask boundaries come out soft.
 
-After the decoder brings the activations back to the original height and width, and a couple more normal convolutions, a final **$1 \times 1$ convolution** maps to the segmentation map:
+In each decoder block the two tensors are **concatenated along the channel axis**, then the following convolutions learn how to use them together. Nothing is added.
+
+> **Contrast with ResNet.** ResNet skips **add** ($z^{[l+2]} + a^{[l]}$) so a deep net is easier to optimize. U-Net skips **concatenate** so spatial detail the encoder discarded can be used again. Same name, different operation, different purpose.
+
+### 10.4 The Output Layer
+
+After the last transpose convolution the activations are back to the input height and width. A couple of ordinary conv + ReLU layers refine that volume. Then the magenta **$1 \times 1$ convolution** is a per-pixel classifier: the same small dense layer, applied independently at every spatial position, mapping the feature vector at that pixel to one score per class.
 
 $$\boxed{\text{output shape} = h \times w \times n_{\text{classes}}}$$
 
-The spatial dimensions match the original input. The channel dimension is the number of classes — 3 if you have three classes to recognize, 10 if you have ten.
+$n_{\text{classes}}$ is the number of labels you want — 2 for foreground / background, 3 for road / car / other, 10 if you have ten classes. It has nothing to do with the input’s channel count $c$.
 
-For each of the $h \times w$ pixels you get a vector of $n_{\text{classes}}$ numbers saying how likely that pixel is to belong to each class. Take the **argmax** over the class dimension and you have a single class label per pixel, which is the segmentation map you can visualize.
+For each of the $h \times w$ pixels you get a vector of $n_{\text{classes}}$ numbers. Take the **argmax** over that vector and the pixel is assigned one class. Colour those labels and you have the segmentation map on the right of the figure.
 
-### 10.4 Tricky Interview Questions
+### 10.5 Tricky Interview Questions
 
 **Q: For a U-Net with input $h \times w \times c$, does the output have shape $h \times w$?**  
 The spatial dimensions are restored to $h \times w$, so in that sense yes — but the full output shape is $h \times w \times n_{\text{classes}}$, and note $n_{\text{classes}}$ has nothing to do with the input's channel count $c$. (Strictly, the original U-Net paper used valid convolutions and produced a *smaller* map than its input; the same-convolution version taught here preserves the size.)

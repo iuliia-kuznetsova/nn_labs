@@ -6,6 +6,8 @@ visually consistent.
 
 from __future__ import annotations
 
+import re
+
 FONT = "Segoe UI, system-ui, -apple-system, Helvetica, Arial, sans-serif"
 
 INK = "#111827"
@@ -57,16 +59,36 @@ def esc(s: str) -> str:
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
+def _marker_id(color: str) -> str:
+    return "ah-" + "".join(c for c in color.lower() if c.isalnum())
+
+
+def _marker_def(color: str, mid: str) -> str:
+    return (
+        f'  <marker id="{mid}" viewBox="0 0 10 10" refX="9" refY="5" '
+        f'markerWidth="7" markerHeight="7" orient="auto-start-reverse">\n'
+        f'    <path d="M0,0 L10,5 L0,10 z" fill="{color}"/>\n'
+        f'  </marker>\n'
+    )
+
+
 def svg(w: float, h: float, body: str) -> str:
+    colors = {LINE, INK, RED, GREEN, BLUE, AMBER, PURPLE, PINK, MUTED}
+    for m in re.findall(r'stroke="(#[0-9A-Fa-f]{3,8})"', body):
+        colors.add(m)
+    markers = [_marker_def(LINE, "ah")]  # default grey head, used by older figures
+    seen = {"ah"}
+    for c in colors:
+        mid = _marker_id(c)
+        if mid not in seen:
+            markers.append(_marker_def(c, mid))
+            seen.add(mid)
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w:g} {h:g}" '
         f'width="{w:g}" height="{h:g}">\n'
         '<defs>\n'
-        '  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" '
-        'markerHeight="6" orient="auto-start-reverse">\n'
-        f'    <path d="M0,0 L10,5 L0,10 z" fill="{LINE}"/>\n'
-        '  </marker>\n'
-        '</defs>\n'
+        + "".join(markers)
+        + '</defs>\n'
         f'<rect width="{w:g}" height="{h:g}" fill="#ffffff"/>\n'
         f'<g font-family="{FONT}" fill="{INK}" font-size="12">\n'
         f"{body}\n"
@@ -109,7 +131,7 @@ def arrow(x1, y1, x2, y2, color=LINE, sw=1.4, dash=None):
     d = f' stroke-dasharray="{dash}"' if dash else ""
     return (
         f'<line x1="{x1:g}" y1="{y1:g}" x2="{x2:g}" y2="{y2:g}" stroke="{color}" '
-        f'stroke-width="{sw:g}" marker-end="url(#ah)"{d}/>'
+        f'stroke-width="{sw:g}" marker-end="url(#{_marker_id(color)})"{d}/>'
     )
 
 
@@ -123,7 +145,7 @@ def seg(x1, y1, x2, y2, color=LINE, sw=1.0, dash=None):
 
 
 def path(d, stroke=LINE, sw=1.4, fill="none", marker=True, dash=None):
-    m = ' marker-end="url(#ah)"' if marker else ""
+    m = f' marker-end="url(#{_marker_id(stroke)})"' if marker else ""
     da = f' stroke-dasharray="{dash}"' if dash else ""
     return (
         f'<path d="{d}" fill="{fill}" stroke="{stroke}" stroke-width="{sw:g}"{m}{da}/>'
@@ -281,17 +303,66 @@ def caption(x, y, rows, size=10.5, anchor="middle", fill=MUTED, lh=16):
     return lines(x, y, rows, size, anchor, fill, lh=lh)
 
 
+# ------------------------------------------------------- isometric volumes
+
+
+ISO_X, ISO_Y = 0.62, 0.38  # depth → right/up offset
+
+
+def volume3d(x, y, fw, fh, d, role="conv", label=None, fs=11):
+    """Isometric prism. (x, y) is the top-left of the front face.
+
+    fw, fh — front-face width and height (spatial size).
+    d      — isometric depth (channel count).
+    label  — short layer name drawn on the front face (Input, CONV, …).
+    Returns (svg, info) where info has right/top/bottom/cx/cy for layout.
+    """
+    fill, stroke = C.get(role, C["conv"])
+    ox, oy = max(d, 6) * ISO_X, max(d, 6) * ISO_Y
+    top_f = _mix(fill, "#ffffff", 0.28)
+    side_f = _mix(fill, "#111827", 0.16)
+    out = [
+        poly(
+            [(x, y), (x + ox, y - oy), (x + fw + ox, y - oy), (x + fw, y)],
+            fill=top_f, stroke=stroke, sw=1.15,
+        ),
+        poly(
+            [(x + fw, y), (x + fw + ox, y - oy),
+             (x + fw + ox, y + fh - oy), (x + fw, y + fh)],
+            fill=side_f, stroke=stroke, sw=1.15,
+        ),
+        poly(
+            [(x, y), (x + fw, y), (x + fw, y + fh), (x, y + fh)],
+            fill=fill, stroke=stroke, sw=1.3,
+        ),
+    ]
+    if label:
+        size = fs if fw >= 48 else max(8.5, fs - 2)
+        out.append(txt(x + fw / 2, y + fh / 2 + size * 0.36, label, size, weight="600"))
+    info = dict(
+        x=x, y=y, fw=fw, fh=fh, ox=ox, oy=oy,
+        left=x, right=x + fw + ox, top=y - oy, bottom=y + fh,
+        cx=x + fw / 2, cy=y + fh / 2,
+        mid_right=x + fw + ox * 0.35,
+        mid_left=x,
+    )
+    return "\n".join(out), info
+
+
 # ------------------------------------------------------- volume pipeline plot
 
 
 def pipeline(out, fname, head, stages, ops, width=920, sub=None, note=None, leg=None):
-    """Horizontal 'shrinking volumes' diagram.
+    """Horizontal shrinking-volume diagram, drawn as isometric cubes.
 
     stages: dicts with either kind='vol' (s, c) or kind='vec' (u), plus
-            name, shape, role.
-    ops:    len(stages)-1 strings, '\\n' splits lines.
+            name (inside the cube), shape (under the cube), role.
+    ops:    len(stages)-1 strings drawn just above each arrow; '\\n' splits lines.
     """
-    HMIN, HMAX, WMIN, WMAX = 17.0, 72.0, 11.0, 46.0
+    FACE_MIN, FACE_MAX = 36.0, 86.0
+    DEPTH_MIN, DEPTH_MAX = 10.0, 40.0
+    VEC_W = 46.0
+
     smax = max((st["s"] for st in stages if st["kind"] == "vol"), default=1)
     cmax = max((st["c"] for st in stages if st["kind"] == "vol"), default=1)
     umax = max((st["u"] for st in stages if st["kind"] == "vec"), default=1)
@@ -299,43 +370,60 @@ def pipeline(out, fname, head, stages, ops, width=920, sub=None, note=None, leg=
     dims = []
     for st in stages:
         if st["kind"] == "vol":
-            h = HMIN + (st["s"] / smax) ** 0.85 * (HMAX - HMIN)
-            w = WMIN + (st["c"] / cmax) ** 0.6 * (WMAX - WMIN)
+            face = FACE_MIN + (st["s"] / smax) ** 0.7 * (FACE_MAX - FACE_MIN)
+            depth = DEPTH_MIN + (st["c"] / cmax) ** 0.45 * (DEPTH_MAX - DEPTH_MIN)
+            dims.append((face, face, depth))
         else:
-            h = HMIN + (st["u"] / umax) ** 0.5 * (HMAX - HMIN - 6)
-            w = 13.0
-        dims.append((w, h))
+            h = FACE_MIN + (st["u"] / umax) ** 0.45 * (FACE_MAX - FACE_MIN - 8)
+            dims.append((VEC_W, h, 12.0))
 
-    margin = 30.0
-    gap = (width - 2 * margin - sum(w for w, _ in dims)) / (len(stages) - 1)
-    cy = 128.0
+    occ = [fw + d * ISO_X for fw, _, d in dims]
+    margin = 28.0
+    min_gap = 26.0
+    n = len(stages)
+    need = 2 * margin + sum(occ) + min_gap * max(n - 1, 0)
+    if need > width:
+        scale = (width - 2 * margin - min_gap * max(n - 1, 0)) / max(sum(occ), 1)
+        dims = [(fw * scale, fh * scale, d * scale) for fw, fh, d in dims]
+        occ = [fw + d * ISO_X for fw, _, d in dims]
+    gap = (width - 2 * margin - sum(occ)) / max(n - 1, 1)
+    gap = max(gap, min_gap)
+    cy = 158.0
 
     body = [title(width, head, sub)]
-    xs, x = [], margin
-    for w, _ in dims:
-        xs.append(x)
-        x += w + gap
-
-    for i, (st, (w, h)) in enumerate(zip(stages, dims)):
-        x0 = xs[i]
-        body.append(rect(x0, cy - h / 2, w, h, st.get("role", "conv")))
-        body.append(txt(x0 + w / 2, cy + HMAX / 2 + 22, st["shape"], 11, weight="600"))
-        body.append(txt(x0 + w / 2, cy + HMAX / 2 + 36, st["name"], 10, fill=MUTED))
+    drawn = []
+    x = margin
+    for st, (fw, fh, d) in zip(stages, dims):
+        y0 = cy - fh / 2
+        svg, info = volume3d(
+            x, y0, fw, fh, d, st.get("role", "conv"), label=st.get("name", ""),
+        )
+        body.append(svg)
+        drawn.append(info)
+        body.append(txt(
+            info["cx"], info["bottom"] + 16, st["shape"],
+            10 if len(st["shape"]) > 12 else 11, weight="600",
+        ))
+        x += (fw + d * ISO_X) + gap
 
     for i, op in enumerate(ops):
-        x1, x2 = xs[i] + dims[i][0], xs[i + 1]
-        body.append(arrow(x1 + 4, cy, x2 - 4, cy))
-        rows = op.split("\n")
-        body.append(
-            lines((x1 + x2) / 2, 62 - (len(rows) - 1) * 6, rows, 10, fill=MUTED, lh=12)
-        )
+        x1 = drawn[i]["right"]
+        x2 = drawn[i + 1]["left"]
+        midy = cy
+        body.append(arrow(x1 + 2, midy, x2 - 4, midy))
+        rows = [r for r in op.split("\n") if r]
+        lh = 11
+        # sit in the gap, a few pixels above the arrow (not above the cubes)
+        y_last = midy - 8
+        y0 = y_last - (len(rows) - 1) * lh
+        body.append(lines((x1 + x2) / 2, y0, rows, 9.5, fill=MUTED, lh=lh))
 
-    y = cy + HMAX / 2 + 36  # baseline of the stage-name row
+    y = cy + FACE_MAX / 2 + 28
     if leg:
-        y += 28
+        y += 22
         body.append(legend(margin, y, leg))
     if note:
-        y += 26
+        y += 24
         body.append(txt(width / 2, y, note, 10.5, fill=MUTED))
 
     write(out, fname, width, y + 16, body)

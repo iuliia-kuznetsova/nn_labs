@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 318" width="920" height="318">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+</defs>
+<rect width="920" height="318" fill="#ffffff"/>
+<g font-family="Segoe UI, system-ui, -apple-system, Helvetica, Arial, sans-serif" fill="#111827" font-size="12">
+<text x="460" y="24" font-size="15" text-anchor="middle" fill="#111827" font-weight="600">Normal convolution versus transpose convolution</text>
+<text x="460" y="42" font-size="11.5" text-anchor="middle" fill="#6b7280" font-weight="normal">same 3×3 filter, opposite placement — one shrinks the map, the other grows it</text>
+<line x1="460" y1="64" x2="460" y2="286" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="230" y="70" font-size="13" text-anchor="middle" fill="#111827" font-weight="600">Normal convolution</text>
+<rect x="36" y="88" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="54" y="88" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="72" y="88" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="90" y="88" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="108" y="88" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="126" y="88" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="36" y="106" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="54" y="106" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="72" y="106" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="90" y="106" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="108" y="106" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="126" y="106" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="36" y="124" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="54" y="124" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="72" y="124" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="90" y="124" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="108" y="124" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="126" y="124" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="36" y="142" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="54" y="142" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="72" y="142" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="90" y="142" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="108" y="142" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="126" y="142" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="36" y="160" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="54" y="160" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="72" y="160" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="90" y="160" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="108" y="160" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="126" y="160" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="36" y="178" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="54" y="178" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="72" y="178" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="90" y="178" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="108" y="178" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="126" y="178" width="18" height="18" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1"/>
+<rect x="36" y="88" width="54" height="54" fill="none" stroke="#dc2626" stroke-width="2.4"/>
+<text x="90" y="206" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">6×6×3 input</text>
+<line x1="150" y1="142" x2="182" y2="142" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<rect x="194" y="115" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="203" y="127.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="212" y="115" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="221" y="127.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="230" y="115" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="239" y="127.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="194" y="133" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="203" y="145.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="212" y="133" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="221" y="145.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="230" y="133" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="239" y="145.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="194" y="151" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="203" y="163.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="212" y="151" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="221" y="163.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="230" y="151" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="239" y="163.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<text x="221" y="178" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">3×3×3</text>
+<text x="221" y="192" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">5 filters</text>
+<line x1="254" y1="142" x2="286" y2="142" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<rect x="298" y="106" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="316" y="106" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="334" y="106" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="352" y="106" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="298" y="124" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="316" y="124" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="334" y="124" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="352" y="124" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="298" y="142" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="316" y="142" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="334" y="142" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="352" y="142" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="298" y="160" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="316" y="160" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="334" y="160" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="352" y="160" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="298" y="106" width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2.4"/>
+<text x="334" y="188" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">4×4×5 output</text>
+<text x="230" y="232" font-size="12" text-anchor="middle" fill="#dc2626" font-weight="600">filter sits on the input</text>
+<text x="230" y="252" font-size="11" text-anchor="middle" fill="#6b7280" font-weight="normal">one window collapses to one number  ·  output is smaller</text>
+<text x="690" y="70" font-size="13" text-anchor="middle" fill="#111827" font-weight="600">Transpose convolution</text>
+<rect x="500" y="124" width="18" height="18" fill="#e5e7eb" stroke="#9ca3af" stroke-width="1"/>
+<rect x="518" y="124" width="18" height="18" fill="#e5e7eb" stroke="#9ca3af" stroke-width="1"/>
+<rect x="500" y="142" width="18" height="18" fill="#e5e7eb" stroke="#9ca3af" stroke-width="1"/>
+<rect x="518" y="142" width="18" height="18" fill="#e5e7eb" stroke="#9ca3af" stroke-width="1"/>
+<rect x="500" y="124" width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2.4"/>
+<text x="518" y="170" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">2×2 input</text>
+<line x1="542" y1="142" x2="574" y2="142" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<rect x="586" y="106" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="595" y="118.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="604" y="106" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="613" y="118.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="622" y="106" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="631" y="118.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="586" y="124" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="595" y="136.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="604" y="124" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="613" y="136.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="622" y="124" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="631" y="136.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="586" y="142" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="595" y="154.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="604" y="142" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="613" y="154.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<rect x="622" y="142" width="18" height="18" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+<text x="631" y="154.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal"> </text>
+<text x="613" y="170" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">3×3 filter</text>
+<line x1="646" y1="142" x2="678" y2="142" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<rect x="690" y="88" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="708" y="88" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="726" y="88" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="744" y="88" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="690" y="106" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="708" y="106" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="726" y="106" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="744" y="106" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="690" y="124" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="708" y="124" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="726" y="124" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="744" y="124" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="690" y="142" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="708" y="142" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="726" y="142" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="744" y="142" width="18" height="18" fill="#fecaca" stroke="#dc2626" stroke-width="1"/>
+<rect x="690" y="88" width="54" height="54" fill="none" stroke="#dc2626" stroke-width="2.4"/>
+<text x="726" y="170" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">4×4 output</text>
+<text x="690" y="232" font-size="12" text-anchor="middle" fill="#dc2626" font-weight="600">filter sits on the output</text>
+<text x="690" y="252" font-size="11" text-anchor="middle" fill="#6b7280" font-weight="normal">one number expands to a whole window  ·  output is bigger</text>
+<text x="460" y="304" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">6×6×3 with five 3×3×3 filters becomes 4×4×5. A 2×2 map with a 3×3 filter becomes 4×4.</text>
+</g>
+</svg>

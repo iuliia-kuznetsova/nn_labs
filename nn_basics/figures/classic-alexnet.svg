@@ -1,88 +1,110 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 270" width="920" height="270">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 291" width="920" height="291">
 <defs>
   <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
     <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
   </marker>
 </defs>
-<rect width="920" height="270" fill="#ffffff"/>
+<rect width="920" height="291" fill="#ffffff"/>
 <g font-family="Segoe UI, system-ui, -apple-system, Helvetica, Arial, sans-serif" fill="#111827" font-size="12">
 <text x="460" y="24" font-size="15" text-anchor="middle" fill="#111827" font-weight="600">AlexNet  ·  ImageNet 1000 classes  ·  ~60 M parameters</text>
 <text x="460" y="42" font-size="11.5" text-anchor="middle" fill="#6b7280" font-weight="normal">(227−11)/4+1 = 55 → 27 → 13 → 6;  same building blocks as LeNet-5, ~1000× more parameters</text>
-<rect x="30" y="92" width="12.9043" height="72" rx="3" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.4"/>
-<text x="36.4522" y="186" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">227×227×3</text>
-<text x="36.4522" y="200" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">input</text>
-<rect x="98.4902" y="111.258" width="26.2346" height="33.4835" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.4"/>
-<text x="111.608" y="186" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">55×55×96</text>
-<text x="111.608" y="200" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">CONV 11×11 s=4</text>
-<rect x="180.311" y="114.998" width="26.2346" height="26.0033" rx="3" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.4"/>
-<text x="193.428" y="186" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">27×27×96</text>
-<text x="193.428" y="200" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">POOL</text>
-<rect x="262.131" y="114.998" width="38.4418" height="26.0033" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.4"/>
-<text x="281.352" y="186" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">27×27×256</text>
-<text x="281.352" y="200" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">CONV 5×5 same</text>
-<rect x="356.159" y="117.081" width="38.4418" height="21.8372" rx="3" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.4"/>
-<text x="375.38" y="186" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">13×13×256</text>
-<text x="375.38" y="200" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">POOL</text>
-<rect x="450.187" y="117.081" width="46" height="21.8372" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.4"/>
-<text x="473.187" y="186" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">13×13×384</text>
-<text x="473.187" y="200" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">CONV 3×3 ×2</text>
-<rect x="551.773" y="117.081" width="38.4418" height="21.8372" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.4"/>
-<text x="570.994" y="186" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">13×13×256</text>
-<text x="570.994" y="200" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">CONV 3×3</text>
-<rect x="645.8" y="118.246" width="38.4418" height="19.5071" rx="3" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.4"/>
-<text x="665.021" y="186" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">6×6×256</text>
-<text x="665.021" y="200" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">POOL</text>
-<rect x="739.828" y="95" width="13" height="66" rx="3" fill="#fef08a" stroke="#ca8a04" stroke-width="1.4"/>
-<text x="746.328" y="186" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">9216</text>
-<text x="746.328" y="200" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">flatten</text>
-<rect x="808.414" y="103.167" width="13" height="49.6667" rx="3" fill="#fed7aa" stroke="#ea580c" stroke-width="1.4"/>
-<text x="814.914" y="186" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">4096</text>
-<text x="814.914" y="200" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">FC ×2</text>
-<rect x="877" y="111.43" width="13" height="33.1408" rx="3" fill="#fecaca" stroke="#dc2626" stroke-width="1.4"/>
-<text x="883.5" y="186" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">1000</text>
-<text x="883.5" y="200" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">softmax</text>
-<line x1="46.9043" y1="128" x2="94.4902" y2="128" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<text x="70.6973" y="56" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">96 filters</text>
-<text x="70.6973" y="68" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">11×11, s=4</text>
-<line x1="128.725" y1="128" x2="176.311" y2="128" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<text x="152.518" y="56" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">max pool</text>
-<text x="152.518" y="68" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">f=3, s=2</text>
-<line x1="210.545" y1="128" x2="258.131" y2="128" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<text x="234.338" y="56" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">256 filters</text>
-<text x="234.338" y="68" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">5×5, same</text>
-<line x1="304.573" y1="128" x2="352.159" y2="128" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<text x="328.366" y="56" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">max pool</text>
-<text x="328.366" y="68" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">f=3, s=2</text>
-<line x1="398.601" y1="128" x2="446.187" y2="128" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<text x="422.394" y="56" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">384 filters</text>
-<text x="422.394" y="68" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">3×3, same</text>
-<line x1="500.187" y1="128" x2="547.773" y2="128" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<text x="523.98" y="56" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">256 filters</text>
-<text x="523.98" y="68" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">3×3, same</text>
-<line x1="594.215" y1="128" x2="641.8" y2="128" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<text x="618.007" y="56" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">max pool</text>
-<text x="618.007" y="68" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">f=3, s=2</text>
-<line x1="688.242" y1="128" x2="735.828" y2="128" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<text x="712.035" y="56" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">flatten</text>
-<text x="712.035" y="68" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">6·6·256</text>
-<line x1="756.828" y1="128" x2="804.414" y2="128" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<text x="780.621" y="56" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">FC 4096</text>
-<text x="780.621" y="68" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">×2</text>
-<line x1="825.414" y1="128" x2="873" y2="128" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<text x="849.207" y="56" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">softmax</text>
-<text x="849.207" y="68" font-size="10" text-anchor="middle" fill="#6b7280" font-weight="normal">1000</text>
-<rect x="30" y="219" width="11" height="11" rx="2" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.1"/>
-<text x="46" y="228" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">input</text>
-<rect x="102.55" y="219" width="11" height="11" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.1"/>
-<text x="118.55" y="228" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">CONV</text>
-<rect x="168.59" y="219" width="11" height="11" rx="2" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.1"/>
-<text x="184.59" y="228" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">POOL</text>
-<rect x="234.63" y="219" width="11" height="11" rx="2" fill="#fef08a" stroke="#ca8a04" stroke-width="1.1"/>
-<text x="250.63" y="228" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">flatten</text>
-<rect x="320.2" y="219" width="11" height="11" rx="2" fill="#fed7aa" stroke="#ea580c" stroke-width="1.1"/>
-<text x="336.2" y="228" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">FC</text>
-<rect x="373.22" y="219" width="11" height="11" rx="2" fill="#fecaca" stroke="#dc2626" stroke-width="1.1"/>
-<text x="389.22" y="228" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">softmax / ReLU</text>
-<text x="460" y="254" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">ReLU instead of sigmoid/tanh was a key change. Local Response Normalization is omitted — it is no longer used.</text>
+<polygon points="28,121.716 34.9998,117.426 107.568,117.426 100.568,121.716" fill="#eceef1" stroke="#6b7280" stroke-width="1.15"/>
+<polygon points="100.568,121.716 107.568,117.426 107.568,189.994 100.568,194.284" fill="#c3c6cc" stroke="#6b7280" stroke-width="1.15"/>
+<polygon points="28,121.716 100.568,121.716 100.568,194.284 28,194.284" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.3"/>
+<text x="64.2841" y="161.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">Input</text>
+<text x="64.2841" y="210.284" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">227×227×3</text>
+<polygon points="133.568,134.991 147.21,126.63 193.228,126.63 179.586,134.991" fill="#cef9dd" stroke="#16a34a" stroke-width="1.15"/>
+<polygon points="179.586,134.991 193.228,126.63 193.228,172.648 179.586,181.009" fill="#a0d3b5" stroke="#16a34a" stroke-width="1.15"/>
+<polygon points="133.568,134.991 179.586,134.991 179.586,181.009 133.568,181.009" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.3"/>
+<text x="156.577" y="161.24" font-size="9" text-anchor="middle" fill="#111827" font-weight="600">CONV</text>
+<text x="156.577" y="197.009" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">55×55×96</text>
+<polygon points="219.228,138.059 232.871,129.697 272.753,129.697 259.111,138.059" fill="#d1e5fe" stroke="#2563eb" stroke-width="1.15"/>
+<polygon points="259.111,138.059 272.753,129.697 272.753,169.58 259.111,177.941" fill="#a3bcdc" stroke="#2563eb" stroke-width="1.15"/>
+<polygon points="219.228,138.059 259.111,138.059 259.111,177.941 219.228,177.941" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.3"/>
+<text x="239.169" y="161.24" font-size="9" text-anchor="middle" fill="#111827" font-weight="600">POOL</text>
+<text x="239.169" y="193.941" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">27×27×96</text>
+<polygon points="298.753,138.059 317.062,126.837 356.944,126.837 338.635,138.059" fill="#cef9dd" stroke="#16a34a" stroke-width="1.15"/>
+<polygon points="338.635,138.059 356.944,126.837 356.944,166.72 338.635,177.941" fill="#a0d3b5" stroke="#16a34a" stroke-width="1.15"/>
+<polygon points="298.753,138.059 338.635,138.059 338.635,177.941 298.753,177.941" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.3"/>
+<text x="318.694" y="161.24" font-size="9" text-anchor="middle" fill="#111827" font-weight="600">CONV</text>
+<text x="318.694" y="193.941" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">27×27×256</text>
+<polygon points="382.944,139.962 401.253,128.74 437.329,128.74 419.02,139.962" fill="#d1e5fe" stroke="#2563eb" stroke-width="1.15"/>
+<polygon points="419.02,139.962 437.329,128.74 437.329,164.816 419.02,176.038" fill="#a3bcdc" stroke="#2563eb" stroke-width="1.15"/>
+<polygon points="382.944,139.962 419.02,139.962 419.02,176.038 382.944,176.038" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.3"/>
+<text x="400.982" y="161.24" font-size="9" text-anchor="middle" fill="#111827" font-weight="600">POOL</text>
+<text x="400.982" y="192.038" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">13×13×256</text>
+<polygon points="463.329,139.962 484.256,127.136 520.332,127.136 499.405,139.962" fill="#cef9dd" stroke="#16a34a" stroke-width="1.15"/>
+<polygon points="499.405,139.962 520.332,127.136 520.332,163.212 499.405,176.038" fill="#a0d3b5" stroke="#16a34a" stroke-width="1.15"/>
+<polygon points="463.329,139.962 499.405,139.962 499.405,176.038 463.329,176.038" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.3"/>
+<text x="481.367" y="161.24" font-size="9" text-anchor="middle" fill="#111827" font-weight="600">CONV</text>
+<text x="481.367" y="192.038" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">13×13×384</text>
+<polygon points="546.332,139.962 564.641,128.74 600.716,128.74 582.408,139.962" fill="#cef9dd" stroke="#16a34a" stroke-width="1.15"/>
+<polygon points="582.408,139.962 600.716,128.74 600.716,164.816 582.408,176.038" fill="#a0d3b5" stroke="#16a34a" stroke-width="1.15"/>
+<polygon points="546.332,139.962 582.408,139.962 582.408,176.038 546.332,176.038" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.3"/>
+<text x="564.37" y="161.24" font-size="9" text-anchor="middle" fill="#111827" font-weight="600">CONV</text>
+<text x="564.37" y="192.038" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">13×13×256</text>
+<polygon points="626.716,141.153 645.025,129.931 678.72,129.931 660.411,141.153" fill="#d1e5fe" stroke="#2563eb" stroke-width="1.15"/>
+<polygon points="660.411,141.153 678.72,129.931 678.72,163.625 660.411,174.847" fill="#a3bcdc" stroke="#2563eb" stroke-width="1.15"/>
+<polygon points="626.716,141.153 660.411,141.153 660.411,174.847 626.716,174.847" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.3"/>
+<text x="643.564" y="161.24" font-size="9" text-anchor="middle" fill="#111827" font-weight="600">POOL</text>
+<text x="643.564" y="190.847" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">6×6×256</text>
+<polygon points="704.72,125.091 710.998,121.243 749.813,121.243 743.535,125.091" fill="#fef4ab" stroke="#ca8a04" stroke-width="1.15"/>
+<polygon points="743.535,125.091 749.813,121.243 749.813,187.061 743.535,190.909" fill="#d8cd7a" stroke="#ca8a04" stroke-width="1.15"/>
+<polygon points="704.72,125.091 743.535,125.091 743.535,190.909 704.72,190.909" fill="#fef08a" stroke="#ca8a04" stroke-width="1.3"/>
+<text x="724.127" y="161.24" font-size="9" text-anchor="middle" fill="#111827" font-weight="600">Flatten</text>
+<text x="724.127" y="206.909" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">9216</text>
+<polygon points="775.813,130.509 782.091,126.661 820.907,126.661 814.629,130.509" fill="#fee2c2" stroke="#ea580c" stroke-width="1.15"/>
+<polygon points="814.629,130.509 820.907,126.661 820.907,181.643 814.629,185.491" fill="#d8b895" stroke="#ea580c" stroke-width="1.15"/>
+<polygon points="775.813,130.509 814.629,130.509 814.629,185.491 775.813,185.491" fill="#fed7aa" stroke="#ea580c" stroke-width="1.3"/>
+<text x="795.221" y="161.24" font-size="9" text-anchor="middle" fill="#111827" font-weight="600">FC</text>
+<text x="795.221" y="201.491" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">4096</text>
+<polygon points="846.907,136.289 853.184,132.441 892,132.441 885.722,136.289" fill="#fed9d9" stroke="#dc2626" stroke-width="1.15"/>
+<polygon points="885.722,136.289 892,132.441 892,175.864 885.722,179.711" fill="#d8aeb0" stroke="#dc2626" stroke-width="1.15"/>
+<polygon points="846.907,136.289 885.722,136.289 885.722,179.711 846.907,179.711" fill="#fecaca" stroke="#dc2626" stroke-width="1.3"/>
+<text x="866.314" y="161.24" font-size="9" text-anchor="middle" fill="#111827" font-weight="600">Output</text>
+<text x="866.314" y="195.711" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">1000</text>
+<line x1="109.568" y1="158" x2="129.568" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="120.568" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">convolution 11×11×3,</text>
+<text x="120.568" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">96 filters, s=4</text>
+<line x1="195.228" y1="158" x2="215.228" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="206.228" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">max pool</text>
+<text x="206.228" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">f=3, s=2</text>
+<line x1="274.753" y1="158" x2="294.753" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="285.753" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">convolution 5×5×96,</text>
+<text x="285.753" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">256 filters, same</text>
+<line x1="358.944" y1="158" x2="378.944" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="369.944" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">max pool</text>
+<text x="369.944" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">f=3, s=2</text>
+<line x1="439.329" y1="158" x2="459.329" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="450.329" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">2 × conv 3×3×256,</text>
+<text x="450.329" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">384 filters</text>
+<line x1="522.332" y1="158" x2="542.332" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="533.332" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">convolution 3×3×384,</text>
+<text x="533.332" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">256 filters</text>
+<line x1="602.716" y1="158" x2="622.716" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="613.716" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">max pool</text>
+<text x="613.716" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">f=3, s=2</text>
+<line x1="680.72" y1="158" x2="700.72" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="691.72" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">flatten</text>
+<text x="691.72" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">6·6·256</text>
+<line x1="751.813" y1="158" x2="771.813" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="762.813" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">FC 4096</text>
+<text x="762.813" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">×2</text>
+<line x1="822.907" y1="158" x2="842.907" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<text x="833.907" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">softmax,</text>
+<text x="833.907" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">1000 classes</text>
+<rect x="28" y="242" width="11" height="11" rx="2" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.1"/>
+<text x="44" y="251" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">input</text>
+<rect x="100.55" y="242" width="11" height="11" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.1"/>
+<text x="116.55" y="251" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">CONV</text>
+<rect x="166.59" y="242" width="11" height="11" rx="2" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.1"/>
+<text x="182.59" y="251" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">POOL</text>
+<rect x="232.63" y="242" width="11" height="11" rx="2" fill="#fef08a" stroke="#ca8a04" stroke-width="1.1"/>
+<text x="248.63" y="251" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">flatten</text>
+<rect x="318.2" y="242" width="11" height="11" rx="2" fill="#fed7aa" stroke="#ea580c" stroke-width="1.1"/>
+<text x="334.2" y="251" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">FC</text>
+<rect x="371.22" y="242" width="11" height="11" rx="2" fill="#fecaca" stroke="#dc2626" stroke-width="1.1"/>
+<text x="387.22" y="251" font-size="10.5" text-anchor="start" fill="#6b7280" font-weight="normal">softmax / ReLU</text>
+<text x="460" y="275" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">ReLU instead of sigmoid/tanh was a key change. Local Response Normalization is omitted — it is no longer used.</text>
 </g>
 </svg>

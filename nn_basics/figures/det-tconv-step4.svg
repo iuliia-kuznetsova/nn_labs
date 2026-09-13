@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 332" width="920" height="332">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+</defs>
+<rect width="920" height="332" fill="#ffffff"/>
+<g font-family="Segoe UI, system-ui, -apple-system, Helvetica, Arial, sans-serif" fill="#111827" font-size="12">
+<text x="460" y="24" font-size="15" text-anchor="middle" fill="#111827" font-weight="600">Step 4  ·  where pastes overlap, add</text>
+<text x="460" y="42" font-size="11.5" text-anchor="middle" fill="#6b7280" font-weight="normal">the 4 and −7 on the canvas are sums, not single stamps</text>
+<rect x="48" y="78" width="26" height="26" fill="#fbe5e5" stroke="#9ca3af" stroke-width="1"/>
+<text x="61" y="94.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">1</text>
+<rect x="74" y="78" width="26" height="26" fill="#fbe5e5" stroke="#9ca3af" stroke-width="1"/>
+<text x="87" y="94.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">1</text>
+<rect x="100" y="78" width="26" height="26" fill="#f2b0b0" stroke="#9ca3af" stroke-width="1"/>
+<text x="113" y="94.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">3</text>
+<rect x="126" y="78" width="26" height="26" fill="#f6caca" stroke="#9ca3af" stroke-width="1"/>
+<text x="139" y="94.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">2</text>
+<rect x="152" y="78" width="26" height="26" fill="#f6caca" stroke="#9ca3af" stroke-width="1"/>
+<text x="165" y="94.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">2</text>
+<rect x="178" y="78" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="191" y="94.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="48" y="104" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="61" y="120.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="74" y="104" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="87" y="120.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="100" y="104" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="113" y="120.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="126" y="104" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="139" y="120.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="152" y="104" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="165" y="120.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="178" y="104" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="191" y="120.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="48" y="130" width="26" height="26" fill="#f6caca" stroke="#9ca3af" stroke-width="1"/>
+<text x="61" y="146.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">2</text>
+<rect x="74" y="130" width="26" height="26" fill="#f6caca" stroke="#9ca3af" stroke-width="1"/>
+<text x="87" y="146.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">2</text>
+<rect x="100" y="130" width="26" height="26" fill="#fecaca" stroke="#9ca3af" stroke-width="1"/>
+<text x="113" y="146.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">4</text>
+<rect x="126" y="130" width="26" height="26" fill="#f6caca" stroke="#9ca3af" stroke-width="1"/>
+<text x="139" y="146.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">2</text>
+<rect x="152" y="130" width="26" height="26" fill="#f6caca" stroke="#9ca3af" stroke-width="1"/>
+<text x="165" y="146.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">2</text>
+<rect x="178" y="130" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="191" y="146.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="48" y="156" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="61" y="172.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="74" y="156" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="87" y="172.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="100" y="156" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="113" y="172.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="126" y="156" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="139" y="172.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="152" y="156" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="165" y="172.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="178" y="156" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="191" y="172.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="48" y="182" width="26" height="26" fill="#b0c6f8" stroke="#9ca3af" stroke-width="1"/>
+<text x="61" y="198.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">-3</text>
+<rect x="74" y="182" width="26" height="26" fill="#b0c6f8" stroke="#9ca3af" stroke-width="1"/>
+<text x="87" y="198.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">-3</text>
+<rect x="100" y="182" width="26" height="26" fill="#bfdbfe" stroke="#9ca3af" stroke-width="1"/>
+<text x="113" y="198.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">-7</text>
+<rect x="126" y="182" width="26" height="26" fill="#95b3f5" stroke="#9ca3af" stroke-width="1"/>
+<text x="139" y="198.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">-4</text>
+<rect x="152" y="182" width="26" height="26" fill="#95b3f5" stroke="#9ca3af" stroke-width="1"/>
+<text x="165" y="198.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">-4</text>
+<rect x="178" y="182" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="191" y="198.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="48" y="208" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="61" y="224.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="74" y="208" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="87" y="224.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="100" y="208" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="113" y="224.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="126" y="208" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="139" y="224.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="152" y="208" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="165" y="224.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="178" y="208" width="26" height="26" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+<text x="191" y="224.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="normal">0</text>
+<rect x="100" y="130" width="26" height="26" fill="none" stroke="#dc2626" stroke-width="2.4"/>
+<rect x="100" y="182" width="26" height="26" fill="none" stroke="#2563eb" stroke-width="2.4"/>
+<text x="126" y="246" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">padded 6×6, all four stamps added</text>
+<rect x="48" y="78" width="78" height="78" fill="none" stroke="#dc2626" stroke-width="1.3" stroke-dasharray="4 3"/>
+<rect x="100" y="78" width="78" height="78" fill="none" stroke="#ca8a04" stroke-width="1.3" stroke-dasharray="4 3"/>
+<rect x="48" y="130" width="78" height="78" fill="none" stroke="#16a34a" stroke-width="1.3" stroke-dasharray="4 3"/>
+<rect x="100" y="130" width="78" height="78" fill="none" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="4 3"/>
+<text x="520" y="92" font-size="12" text-anchor="start" fill="#dc2626" font-weight="600">Cell (2, 2) is hit by every stamp</text>
+<text x="520" y="118" font-size="11.5" text-anchor="start" fill="#dc2626" font-weight="normal">from 1:  1 × filter[2, 2]  =  −1</text>
+<text x="520" y="138" font-size="11.5" text-anchor="start" fill="#ca8a04" font-weight="normal">from 2:  2 × filter[2, 0]  =  −2</text>
+<text x="520" y="158" font-size="11.5" text-anchor="start" fill="#16a34a" font-weight="normal">from 3:  3 × filter[0, 2]  =  +3</text>
+<text x="520" y="178" font-size="11.5" text-anchor="start" fill="#2563eb" font-weight="normal">from 4:  4 × filter[0, 0]  =  +4</text>
+<line x1="520" y1="198" x2="770" y2="198" stroke="#111827" stroke-width="1"/>
+<text x="520" y="220" font-size="13" text-anchor="start" fill="#dc2626" font-weight="600">−1  −  2  +  3  +  4   =   4</text>
+<text x="520" y="258" font-size="12" text-anchor="start" fill="#2563eb" font-weight="600">Cell (4, 2) is hit by only 3 and 4</text>
+<text x="520" y="280" font-size="13" text-anchor="start" fill="#2563eb" font-weight="600">−3  +  (−4)   =   −7</text>
+<text x="460" y="318" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">Never overwrite. If two (or four) stamps land on the same cell, the values are added.</text>
+</g>
+</svg>
