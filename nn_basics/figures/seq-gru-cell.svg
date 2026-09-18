@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 490" width="920" height="490">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+  <marker id="ah-2563eb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+  </marker>
+  <marker id="ah-7c3aed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/>
+  </marker>
+  <marker id="ah-dc2626" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+  </marker>
+  <marker id="ah-ca8a04" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ca8a04"/>
+  </marker>
+  <marker id="ah-16a34a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+  </marker>
+  <marker id="ah-111827" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#111827"/>
+  </marker>
+  <marker id="ah-9ca3af" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+  <marker id="ah-db2777" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#db2777"/>
+  </marker>
+  <marker id="ah-6b7280" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
+  </marker>
+</defs>
+<rect width="920" height="490" fill="#ffffff"/>
+<g font-family="Segoe UI, system-ui, -apple-system, Helvetica, Arial, sans-serif" fill="#111827" font-size="12">
+<text x="460" y="24" font-size="15" text-anchor="middle" fill="#111827" font-weight="600">The gated recurrent unit</text>
+<text x="460" y="42" font-size="11.5" text-anchor="middle" fill="#6b7280" font-weight="normal">a memory cell c&lt;t&gt;, an update gate that decides when to overwrite it, and a relevance gate</text>
+<rect x="40" y="188" width="144" height="30" rx="5" fill="#fef08a" stroke="#ca8a04" stroke-width="1.4"/>
+<text x="112" y="206.78" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="600">c&lt;t-1&gt; = a&lt;t-1&gt;</text>
+<rect x="40" y="248" width="144" height="30" rx="5" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.4"/>
+<text x="112" y="266.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">x&lt;t&gt;</text>
+<circle cx="300" cy="218" r="4" fill="#9ca3af" stroke="#9ca3af" stroke-width="1"/>
+<line x1="184" y1="203" x2="300" y2="218" stroke="#9ca3af" stroke-width="1.2"/>
+<line x1="184" y1="263" x2="300" y2="218" stroke="#9ca3af" stroke-width="1.2"/>
+<rect x="344" y="100" width="96" height="40" rx="5" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.4"/>
+<text x="392" y="119" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">Γ_u</text>
+<text x="392" y="132" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">sigmoid</text>
+<rect x="344" y="170" width="96" height="40" rx="5" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.4"/>
+<text x="392" y="189" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">Γ_r</text>
+<text x="392" y="202" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">sigmoid</text>
+<rect x="344" y="244" width="96" height="40" rx="5" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.4"/>
+<text x="392" y="263" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="600">c-tilde&lt;t&gt;</text>
+<text x="392" y="276" font-size="8.5" text-anchor="middle" fill="#6b7280" font-weight="normal">tanh</text>
+<line x1="304" y1="218" x2="342" y2="120" stroke="#9ca3af" stroke-width="1.2" marker-end="url(#ah-9ca3af)"/>
+<line x1="304" y1="218" x2="342" y2="190" stroke="#9ca3af" stroke-width="1.2" marker-end="url(#ah-9ca3af)"/>
+<line x1="304" y1="218" x2="342" y2="264" stroke="#9ca3af" stroke-width="1.2" marker-end="url(#ah-9ca3af)"/>
+<line x1="392" y1="212" x2="392" y2="240" stroke="#7c3aed" stroke-width="1.6" marker-end="url(#ah-7c3aed)"/>
+<text x="402" y="228" font-size="8.5" text-anchor="start" fill="#7c3aed" font-weight="normal">relevance</text>
+<rect x="536" y="136" width="158" height="148" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.4"/>
+<text x="615" y="178" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="normal">Γ_u ⊙ c-tilde&lt;t&gt;</text>
+<text x="615" y="206" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="normal">+</text>
+<text x="615" y="234" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="normal">(1 − Γ_u) ⊙ c&lt;t-1&gt;</text>
+<line x1="442" y1="142" x2="530" y2="156" stroke="#9ca3af" stroke-width="1.2" marker-end="url(#ah-9ca3af)"/>
+<line x1="442" y1="242" x2="530" y2="226" stroke="#9ca3af" stroke-width="1.2" marker-end="url(#ah-9ca3af)"/>
+<path d="M 300 222 C 300 316, 470 320, 560 288" fill="none" stroke="#9ca3af" stroke-width="1.2" marker-end="url(#ah-9ca3af)"/>
+<rect x="748" y="192" width="128" height="36" rx="5" fill="#fef08a" stroke="#ca8a04" stroke-width="1.4"/>
+<text x="812" y="213.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">c&lt;t&gt; = a&lt;t&gt;</text>
+<line x1="696" y1="210" x2="744" y2="210" stroke="#9ca3af" stroke-width="1.3" marker-end="url(#ah-9ca3af)"/>
+<rect x="748" y="114" width="128" height="32" rx="5" fill="#fecaca" stroke="#dc2626" stroke-width="1.4"/>
+<text x="812" y="133.96" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">y-hat&lt;t&gt;</text>
+<line x1="812" y1="190" x2="812" y2="150" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
+<line x1="40" y1="318" x2="880" y2="318" stroke="#9ca3af" stroke-width="1"/>
+<rect x="48" y="338" width="400" height="96" rx="8" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.4"/>
+<text x="248" y="362" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="normal">Γ_u = σ(W_u [c&lt;t-1&gt;, x&lt;t&gt;] + b_u)</text>
+<text x="248" y="386" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="normal">Γ_r = σ(W_r [c&lt;t-1&gt;, x&lt;t&gt;] + b_r)</text>
+<text x="248" y="410" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="normal">a&lt;t&gt; = c&lt;t&gt;</text>
+<rect x="472" y="338" width="400" height="96" rx="8" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.4"/>
+<text x="672" y="362" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="normal">c-tilde&lt;t&gt; = tanh(W_c [Γ_r ⊙ c&lt;t-1&gt;, x&lt;t&gt;] + b_c)</text>
+<text x="672" y="386" font-size="10.5" text-anchor="middle" fill="#111827" font-weight="normal">c&lt;t&gt; = Γ_u ⊙ c-tilde&lt;t&gt; + (1 − Γ_u) ⊙ c&lt;t-1&gt;</text>
+<text x="460" y="458" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">⊙ is element-wise, so Γ_u is a vector of near-0 / near-1 bits: one bit can hold “singular subject” while another tracks “we are talking about food”.</text>
+<text x="460" y="474" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">When Γ_u ≈ 0 the update reduces to c&lt;t&gt; = c&lt;t-1&gt;, which is why the value survives many steps and the gradient does not vanish.</text>
+</g>
+</svg>

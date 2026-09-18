@@ -1,0 +1,99 @@
+You've learned
+about how RNNs work and how they can be applied to problems like name
+entity recognition as well as to language modeling. You saw how back propagation
+can be used to train an RNN. It turns out that one
+of the problems of the basic RNN algorithm
+is that it runs into vanishing
+gradient problems. Let's discuss that and in the
+next few videos we'll talk about some solutions that will help to address
+this problem. You've seen pictures of
+RNNs that look like this. Let's take a language
+modeling example. Let's say you see this sentence. The cat, which already ate and maybe already ate a bunch of food
+that was delicious, dot dot, dot, dot, dot was full. To be consistent is because
+the cat is singular, it should be the cat was
+where there was the cats, which already ate a bunch of food was delicious
+and the apples and pears and so on were full. To be consistent, it should
+be cat was or cats were. This is one example of
+when language can have very long-term
+dependencies where it worded as much earlier can affect what needs to come
+much later in the sentence. But it turns out
+that the basic RNN we've seen so far is not very good at capturing very
+long-term dependencies. To explain why, you might remember from our earlier
+discussions of training very deep neural networks that we talked about the
+vanishing gradients problem. This is a very, very
+deep neural network, say 100 years or
+even much deeper. Then you would carry out forward prop from left to right
+and then backprop. We said that if this is a
+very deep neural network, then the gradient
+from this output y would have a very
+hard time propagating back to affect the weights
+of these earlier layers, to affect the computations
+of the earlier layers. For an RNN with a
+similar problem, you have forward prop going
+from left to right and then backprop going
+from right to left. It can be quite
+difficult because of the same vanishing gradients
+problem for the outputs of the errors associated with
+the later timesteps to affect the computations
+that are earlier. In practice, what this means is it might be difficult to get a neural network to realize
+that it needs to memorize. Did you see a singular noun or a plural noun so that later on in the sequence it can
+generate either was or were, depending on whether it
+was singular or plural. Notice that in
+English this stuff in the middle could be
+arbitrarily long. You might need to memorize
+the singular plural for a very long time before you get to use that bit of information. Because of this problem, the basic RNN model has
+many local influences, meaning that the output y hat three is mainly influenced by values close to y hat three and a value here is
+mainly influenced by inputs that are
+somewhat close. It's difficult for the
+output here to be strongly influenced by an input that was very early in the sequence. This is because
+whatever the output is, whether this got it
+right, this got it wrong, it's just very difficult
+for the error to backpropagate all the way to the beginning
+of the sequence, and therefore to modify how the neural network is doing computations earlier
+in the sequence. This is a weakness of
+the basic RNN algorithm, one which will to address
+in the next few videos. But if we don't address it, then RNNs tend not to be very good at capturing
+long-range dependencies. Even though this
+discussion has focused on vanishing gradients,
+you remember, when we're talking about very
+deep neural networks that we also talked about
+exploding gradients. Where doing backprop, the ingredients should not just decrease
+exponentially they may also increase exponentially with the number of layers
+you go through. It turns out that
+vanishing gradients tends to be the biggest
+problem with training RNNs. Although when
+exploding gradients happens it can be
+catastrophic because the exponentially
+large gradients can cause your
+parameters to become so large that your neural
+network parameters get really messed up. It turns out that exploding
+gradients are easier to spot because the
+parameter has just blow up. You might often see
+NaNs, not a numbers, meaning results of a
+numerical overflow in your neural
+network computation. If you do see
+exploding gradients, one solution to that is
+apply gradients clipping. All that means is, look at your gradient vectors, and if it is bigger
+than some threshold, re-scale some of your
+gradient vectors so that it's not too big, so that is clipped according
+to some maximum value. If you see exploding gradients, if your derivatives do
+explore the resilience, just apply gradient clipping. That's a relatively
+robust solution that will take care of
+exploding gradients. But vanishing gradients
+is much harder to solve and it will be the
+subject of the next few videos. To summarize, in
+an earlier course, you saw how we're training
+a very deep neural network. You can run into vanishing
+gradient or exploding gradient problems where the derivative either
+decreases exponentially, or grows exponentially as a function of the
+number of layers. An RNN, say an RNN processing data over
+1,000 times sets, or over 10,000 times sets, that's basically
+a 1,000 layer or like a 10,000 layer
+neural network. It too runs into these
+types of problems. Exploding gradients
+you could solve address by just using
+gradient clipping, but vanishing gradients will
+take way more to address. What we'll do in the next
+video is talk about GRUs, a greater recurrent units, which is a very effective
+solution for addressing the vanishing gradient
+problem and will allow your neural network to capture much longer range dependencies. Let's go on to the next video.

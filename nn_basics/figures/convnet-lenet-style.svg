@@ -1,7 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 291" width="920" height="291">
 <defs>
-  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
     <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+  <marker id="ah-2563eb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+  </marker>
+  <marker id="ah-7c3aed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/>
+  </marker>
+  <marker id="ah-dc2626" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+  </marker>
+  <marker id="ah-ca8a04" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ca8a04"/>
+  </marker>
+  <marker id="ah-16a34a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+  </marker>
+  <marker id="ah-111827" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#111827"/>
+  </marker>
+  <marker id="ah-9ca3af" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+  <marker id="ah-ea580c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ea580c"/>
+  </marker>
+  <marker id="ah-db2777" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#db2777"/>
+  </marker>
+  <marker id="ah-6b7280" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
   </marker>
 </defs>
 <rect width="920" height="291" fill="#ffffff"/>
@@ -53,28 +83,28 @@
 <polygon points="838.56,136.007 884.56,136.007 884.56,179.993 838.56,179.993" fill="#fecaca" stroke="#dc2626" stroke-width="1.3"/>
 <text x="861.56" y="161.24" font-size="9" text-anchor="middle" fill="#111827" font-weight="600">Output</text>
 <text x="861.56" y="195.993" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">10</text>
-<line x1="130.957" y1="158" x2="151.208" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<line x1="130.957" y1="158" x2="151.208" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
 <text x="142.082" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">convolution 5×5×3,</text>
 <text x="142.082" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">6 filters</text>
-<line x1="256.908" y1="158" x2="277.159" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<line x1="256.908" y1="158" x2="277.159" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
 <text x="268.034" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">max pool</text>
 <text x="268.034" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">f=2, s=2</text>
-<line x1="365.353" y1="158" x2="385.604" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<line x1="365.353" y1="158" x2="385.604" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
 <text x="376.479" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">convolution 5×5×6,</text>
 <text x="376.479" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">16 filters</text>
-<line x1="474.553" y1="158" x2="494.804" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<line x1="474.553" y1="158" x2="494.804" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
 <text x="485.679" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">max pool</text>
 <text x="485.679" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">f=2, s=2</text>
-<line x1="575.238" y1="158" x2="595.489" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<line x1="575.238" y1="158" x2="595.489" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
 <text x="586.364" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">flatten</text>
 <text x="586.364" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">5·5·16</text>
-<line x1="654.929" y1="158" x2="675.179" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<line x1="654.929" y1="158" x2="675.179" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
 <text x="666.054" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">fully</text>
 <text x="666.054" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">connected</text>
-<line x1="734.619" y1="158" x2="754.87" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<line x1="734.619" y1="158" x2="754.87" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
 <text x="745.744" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">fully</text>
 <text x="745.744" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">connected</text>
-<line x1="814.31" y1="158" x2="834.56" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<line x1="814.31" y1="158" x2="834.56" y2="158" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
 <text x="825.435" y="139" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">softmax,</text>
 <text x="825.435" y="150" font-size="9.5" text-anchor="middle" fill="#6b7280" font-weight="normal">10 classes</text>
 <rect x="28" y="242" width="11" height="11" rx="2" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.1"/>

@@ -1,7 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" width="720" height="240">
 <defs>
-  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
     <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+  <marker id="ah-2563eb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+  </marker>
+  <marker id="ah-7c3aed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/>
+  </marker>
+  <marker id="ah-dc2626" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+  </marker>
+  <marker id="ah-ca8a04" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ca8a04"/>
+  </marker>
+  <marker id="ah-16a34a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+  </marker>
+  <marker id="ah-111827" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#111827"/>
+  </marker>
+  <marker id="ah-9ca3af" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+  <marker id="ah-ea580c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ea580c"/>
+  </marker>
+  <marker id="ah-db2777" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#db2777"/>
+  </marker>
+  <marker id="ah-6b7280" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
   </marker>
 </defs>
 <rect width="720" height="240" fill="#ffffff"/>
@@ -19,8 +49,8 @@
 <text x="485" y="152.5" font-size="12" text-anchor="middle" fill="#111827" font-weight="normal">÷ (1 − βᵗ)</text>
 <rect x="590" y="110" width="100" height="64" rx="3" fill="#fecaca" stroke="#dc2626" stroke-width="1.4"/>
 <text x="640" y="146" font-size="12" text-anchor="middle" fill="#111827" font-weight="normal">update W</text>
-<line x1="198" y1="142" x2="222" y2="142" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<line x1="388" y1="142" x2="412" y2="142" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
-<line x1="558" y1="142" x2="582" y2="142" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah)"/>
+<line x1="198" y1="142" x2="222" y2="142" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
+<line x1="388" y1="142" x2="412" y2="142" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
+<line x1="558" y1="142" x2="582" y2="142" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ah-9ca3af)"/>
 </g>
 </svg>

@@ -767,20 +767,30 @@ if __name__ == "__main__":
     import foundations_figures
     import detection_figures
     import basics_figures
+    import face_figures
+    import nst_figures
+    import sequence_figures
 
     for fig in CASE_STUDY_FIGURES:
         fig()
     foundations_figures.build()
     detection_figures.build()
     basics_figures.build()
+    face_figures.build()
+    nst_figures.build()
+    sequence_figures.build()
 
     n_case = len(CASE_STUDY_FIGURES)
     n_found = len(foundations_figures.FIGURES)
     n_det = len(detection_figures.FIGURES)
     n_bas = len(basics_figures.FIGURES)
+    n_face = len(face_figures.FIGURES)
+    n_nst = len(nst_figures.FIGURES)
+    n_seq = len(sequence_figures.FIGURES)
     for p in sorted(OUT.glob("*.svg")):
         print(f"{p.name:34s} {p.stat().st_size / 1024:6.1f} KB")
     print(
         f"\n{n_case} case-study, {n_found} foundations, {n_det} detection, "
-        f"{n_bas} basics figures"
+        f"{n_bas} basics, {n_face} face, {n_nst} style-transfer, "
+        f"{n_seq} sequence figures"
     )

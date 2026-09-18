@@ -1,0 +1,229 @@
+You've seen how a
+basic RNN works. In this video, you learn about
+the gated recurrent unit, which has a modification
+to the RNN hidden layer that makes it much better at capturing long-range
+connections and helps a lot with the vanishing
+gradient problems. Let's take a look. You've
+already seen the formula for computing the activations
+at time t of an RNN. It's the activation function
+applied to the parameter W_a times the activations for a previous time
+sediment the current input and then plus the bias. I'm going to draw
+this as a picture. The RNN units I'm going
+to draw as a picture, drawn as a box which
+inputs a of t minus 1, deactivation for the last
+timestep and also inputs x^t, and these two go together, and after some weights and after this type of
+linear calculation, if g is a tanh
+activation function, then after the tanh, it computes the output
+of activation, a. The output activation a^t
+might also be parsed to say a softmax unit or
+something that could then be used to outputs y hat ^t. This is maybe a visualization
+of the RNN unit of the hidden layer of the
+RNN in terms of a picture. I want to show you this picture because we're going to
+use a similar picture to explain the GRU or the
+gated recurrent unit. A lot of ideas of GRUs were due to these two papers respectively by Junyoung Chung,
+Caglar, Gulcehre, KyungHyun Cho, and
+Yoshua Bengio. Sometime is going to
+refer to this sentence, which we'd seen in
+the last video, to motivate that given
+a sentence like this, you might need to
+remember the cat was singular to make
+sure you understand why that was rather than were as of the cat was
+for the cats were full. As we read in this sentence
+from left to right, the GRU unit is going to have
+a new variable called C, which stands for cell,
+for memory cell. What the memory cell do is it will provide a bit of memory. Remember, for example, whether cat was
+singular or plural, so that when it gets much
+further into the sentence, it can still work on the consideration
+whether the subject of the sentence was
+singular or plural. At time t, the memory cell
+will have some value c of t. What we'll see is
+that the GRU unit will actually output an activation
+value a of t that's equal to c of t.
+For now I wanted to use different symbols c and a to denote the
+memory cell value and the output activation value even though they're
+the same and I'm using this notation because
+when we talked about LSTMs a little bit later, these will be two
+different values. But for now, for the GRU c of t is equal to the output
+activation a of t. These are the equations that govern the computations
+of a GRU unit. At every time step, we're going to consider
+an overwriting the memory cell with a
+value c tilde of t. This going to be a candidate
+for replacing c of t. We're going to compute this using an
+activation function, tanh of w_c, and so that's the
+parameter matrix w_c and we'll pass it as
+parameter matrix. The previous value of the memory cell, the
+activation value, as well as the current input value x^t and then plus a bias. C tilde of t is going to be a candidate for replacing c^t. Then the key, really the
+important idea of the GRU, it will be that
+we'll have a gate. The gate I'm going
+to call Gamma_u. This is the capital
+Greek alphabet, Gamma_u, and u stands for update gate. This would be a value
+between 0 and 1. To develop your intuition
+about how GRUs work, think of Gamma_u this gate
+value as being always 0 or 1. Although in practice,
+your computer with a sigmoid function
+applied to this. Remember that the sigmoid
+function looks like this, as value is always
+between 0 and 1. For most of the possible
+ranges of the input, the sigmoid function
+is either very, very close to 0 or very, very close to 1. For intuition, think of Gamma as being either 0 or 1
+most of the time. I chose the alphabet
+Gamma for this because if you look
+at a gated fence, it looks a bit like
+this, I guess. Then there are a lot of
+Gammas in this fence. That's why your
+Gamma_u we're going to use to denote the gate. Also Greek alphabet G, like G for gate, so G for
+Gamma and G for gate. Then next the key part of
+the GRU is this equation, which is that we have come up with a candidate where
+we're thinking of updating C using c tilde and then the gate will decide whether or not we
+actually update it. The way to think about it
+is maybe this memory cell C is going to be set to
+either zero or one depending on whether the
+word you're conserving, really the subject of the
+sentence is singular or plural. Because it's singular,
+let's say that we set this to one and
+if it was plural, maybe we'll set this as a zero
+and then the GRU unit will memorize the value of the
+C^t all the way until here, where this is still
+equal to one and so that tells it was singular
+so use the choice was. The job of the gate, of gamma u, is to decide when do
+you update this value. In particular, when you
+see the phrase the cat, you know that you're talking
+about a new concept, the subject of the sentence cat. That would be a good time
+to update this bit and then maybe when you're done
+using it the cat was full, then you know I don't
+need to memorize anymore I can just forget that. The specific equation we'll use for the GRU is the following; which is that the actual
+value of C^t would be equal to this gate times the candidate value
+plus one minus the gate times the old
+value C^t minus one. Notice that if the gate, if this update value
+of z equal to one, then is saying set
+the new value of C^t equal to this candidate value
+so that's like over here, set the gate equal to one so go ahead and update that bit. Then for all of these
+values in the middle, you should have the gate equal zero so do the same,
+don't update it, just hang on to the
+old value because if gamma u is equal to zero, then this would be zero and this will be one and
+so it's just setting C^t equal to the old value even as you scan the
+sentence from left to right. When the gate is equal to zero as saying, don't update it, just hang on to the value
+and don't forget what it's value was and so that way, even when you get all
+the way down here, hopefully you've
+just been setting C^t equal C^t minus one all along and still memorizes
+the cat was singular. Let me also draw a picture
+to denote the GRU unit. By the way, when you look in online blog posts and
+textbooks and tutorials, these types of pictures are
+quite popular for explaining GRUs as well as we'll
+see later LSTM units. I personally find the equations
+easier to understand in the pictures so if the picture doesn't make sense
+don't worry about it, but I'll just draw it in
+case it helps some of you. The GRU unit inputs C^t minus one for the
+previous time step and this happens to be equal to 80 minus one so it
+takes us as input. Then it also takes
+this input X^t. Then these two
+things get combined together and with some appropriate waiting
+and some tonnage. This gives you c tilde t, which is a candidate for
+replacing C^t and then we have a different set
+of parameters and through a sigmoid
+activation function, this gives you gamma u, which is the update
+gate and then finally, all of these things combined together through
+another operation. I won't write out
+the formula but this box here which
+are shaded in purple, represents this equation
+which we had down there. That's what this purple
+operation represents and it takes as input
+the gate value, the candidate new value, that's the gate value again, and the old value for C^t
+it takes as input this, this and this, and together they generate the new value
+for the memory cell. That's C^t equals a. If you wish, you could also
+use this impulses through a soft-max or something to make some prediction for Y^t
+so that is the GRU units. These are slightly
+simplified version of it. What is remarkably good
+at is through the gate deciding that when you're scanning the sentence
+from left to right, say that that's a
+good time to update one to the memory
+cell and enter, not change it, until you get to the point
+where you really needed to use this memory cell that you had set even much
+earlier in the sentence. Now, because the gate is quite easy to set to zero so long as this quantity is a
+large negative value, then up to numerical round-off, the update gate will
+be essentially zero, very close to zero. When that's the case, then this update
+equation and sub setting C^t equals
+C^t minus one and so this is very good at maintaining
+the value for the cell and because gamma can
+be so close to zero, can be 0.000001 or even
+smaller than that. it doesn't suffer from much of a vanishing gradient
+problem because in say gamma so close to zero that this becomes essentially
+C^t equals C^t minus one and the value of C^t
+is maintained pretty much exactly even across
+many times that. This can help significantly with the vanishing
+gradient problem and therefore allowing
+your network to learn even very
+long-range dependencies, such as the cat and
+was are related even if they are separated by a lot of words in the middle. Now, I just want to talk over some more details of
+how you implement this. In the equations have written, C^t can be a vector. If you have 100-dimensional
+hidden activation value, then C^t can be
+100-dimensional Zai, and so C^t would also be
+the same dimension and Gamma would also be the same dimension as the other things I'm
+drawing in boxes. In that case, these asterisks are actually element-wise
+multiplication. Here, if the gates is 100-dimensional
+vector, what it is, is really 100-dimensional
+vector of bits, the value is mostly 0 and 1, that tells you of this
+100-dimensional memory cell, which are the bits
+you want to update. Of course in practice, Gamma won't be exactly`0 and 1, sometimes I'll say values
+in the middle as well. There is convenient
+for intuition to think of it as mostly taking on values that are
+pretty much exactly 0, or pretty much exactly 1. What these element-wise
+multiplications do is it just tells you GRU which are the dimensions of your memory cell vector to
+update at every time step. You can choose to keep some bits constant while
+updating other bits. For example, maybe
+you'll use one-bit to remember the singular
+or plural cat, and maybe you'll
+use some other bits to realize that you're
+talking about food. Because we talked about
+eating and talk about foods, then you'd expect to talk about whether the
+cat is full later. You can use different
+bits and change only a subset of the bits
+at every point in time. You now understand the most
+important ideas that a GRU. What I presented on
+this slide is actually a slightly simplified GRU unit. Let me describe
+the full GRU unit. To do that, let me copy
+the three main equations. This one, this one, and this one to the next slide. Here they are. For
+the full GRU units, I'm sure they'll make
+one change to this, which is for the first
+equation which was calculating the candidate new value
+for the memory cell, I'm going to add just one term. They pushed that a
+little bit to the right, and I'm going to
+add one more gate. This is another gate Gamma r. You can think of r
+as standing for relevance. This gate Gamma r tells
+you how relevant is C^t minus 1 to computing the
+next candidate for C^t. This gate Gamma r
+is computed pretty much as you expect with a
+new parameter matrix w _r, and then the same things
+as input x_t plus b_r. As you can imagine, there are multiple ways to design these
+types of neural networks, and why do we have Gamma r? Why not use a simpler version
+from the previous slides? It turns out that
+over many years, researchers have
+experimented with many different possible
+versions of how to design these units to try to have longer
+range connections. To try to have model long-range effects and also address vanishing
+gradient problems. The GRU is one of the most commonly used
+versions that researchers have converged to
+and then found as robust and useful for
+many different problems. If you wish, you
+could try to invent a new versions of these
+units if you want, but the GRU is a standard one, is just commonly used. Although you can imagine that researchers have
+tried other versions that are similar
+but not exactly the same as what I'm writing
+down here as well. The other common version
+is called an LSTM, which stands for Long,
+Short-term Memory, which we'll talk about
+in the next video. But GRUs and LSTMs are two specific instantiations of this set of ideas that
+are most commonly used. Just one note on notation. I tried to define a consistent notation to make these ideas
+easier to understand. If you look at the
+academic literature, sometimes you'll see people
+use an alternative notation, there would be H tilde there, U, R and H to refer to these
+quantities as well. They try to use a more
+consistent notation between GRUs and LSTMs as well as using
+a more consistent notation, Gamma to refer to the gains to hopefully make these
+ideas easier to understand. That's it for the GRU, for the Gated Recurrent Unit. This is one of the ideas in RNNs that has enabled
+them to become much better at capturing very
+long-range dependencies as made RNNs much
+more effective. Next, as I briefly mentioned, the other most commonly used deviation of this
+class of ideas is something called the LSTM unit or the Long,
+Short-term Memory unit. Let's take a look at
+that in the next video.

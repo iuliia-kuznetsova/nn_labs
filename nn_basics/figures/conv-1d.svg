@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 340" width="920" height="340">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+  <marker id="ah-2563eb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+  </marker>
+  <marker id="ah-7c3aed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/>
+  </marker>
+  <marker id="ah-dc2626" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+  </marker>
+  <marker id="ah-ca8a04" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ca8a04"/>
+  </marker>
+  <marker id="ah-16a34a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+  </marker>
+  <marker id="ah-111827" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#111827"/>
+  </marker>
+  <marker id="ah-9ca3af" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+  </marker>
+  <marker id="ah-db2777" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#db2777"/>
+  </marker>
+  <marker id="ah-6b7280" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
+  </marker>
+</defs>
+<rect width="920" height="340" fill="#ffffff"/>
+<g font-family="Segoe UI, system-ui, -apple-system, Helvetica, Arial, sans-serif" fill="#111827" font-size="12">
+<text x="460" y="24" font-size="15" text-anchor="middle" fill="#111827" font-weight="600">1-D convolution on a time series</text>
+<text x="460" y="42" font-size="11.5" text-anchor="middle" fill="#6b7280" font-weight="normal">the same 5-tap filter slides along an EKG; 14 ∗ 5 = 10, just as 14×14 ∗ 5×5 = 10×10</text>
+<text x="40" y="78" font-size="12.5" text-anchor="start" fill="#111827" font-weight="600">2-D (images)</text>
+<rect x="40" y="96" width="70" height="70" rx="3" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.4"/>
+<text x="75" y="134" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">14×14</text>
+<text x="130" y="134" font-size="18" text-anchor="middle" fill="#6b7280" font-weight="normal">∗</text>
+<rect x="150" y="110" width="42" height="42" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.4"/>
+<text x="171" y="134" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">5×5</text>
+<text x="210" y="134" font-size="18" text-anchor="middle" fill="#6b7280" font-weight="normal">=</text>
+<rect x="230" y="104" width="54" height="54" rx="3" fill="#fecaca" stroke="#dc2626" stroke-width="1.4"/>
+<text x="257" y="134" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">10×10</text>
+<text x="400" y="134" font-size="12" text-anchor="start" fill="#111827" font-weight="600">16 filters  →  10×10×16</text>
+<line x1="40" y1="186" x2="880" y2="186" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="40" y="214" font-size="12.5" text-anchor="start" fill="#111827" font-weight="600">1-D (EKG, audio, other sequences)</text>
+<rect x="40" y="232" width="224" height="36" rx="3" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.4"/>
+<line x1="56" y1="232" x2="56" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="72" y1="232" x2="72" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="88" y1="232" x2="88" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="104" y1="232" x2="104" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="120" y1="232" x2="120" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="136" y1="232" x2="136" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="152" y1="232" x2="152" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="168" y1="232" x2="168" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="184" y1="232" x2="184" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="200" y1="232" x2="200" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="216" y1="232" x2="216" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="232" y1="232" x2="232" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="248" y1="232" x2="248" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<text x="152" y="254" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">14</text>
+<text x="152" y="284" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">length 14</text>
+<text x="152" y="300" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">one lead</text>
+<text x="280" y="254" font-size="18" text-anchor="middle" fill="#6b7280" font-weight="normal">∗</text>
+<rect x="304" y="232" width="80" height="36" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.4"/>
+<line x1="320" y1="232" x2="320" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="336" y1="232" x2="336" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="352" y1="232" x2="352" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="368" y1="232" x2="368" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<text x="344" y="254" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">5</text>
+<text x="344" y="284" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">length 5</text>
+<text x="404" y="254" font-size="18" text-anchor="middle" fill="#6b7280" font-weight="normal">=</text>
+<rect x="428" y="232" width="160" height="36" rx="3" fill="#fecaca" stroke="#dc2626" stroke-width="1.4"/>
+<line x1="444" y1="232" x2="444" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="460" y1="232" x2="460" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="476" y1="232" x2="476" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="492" y1="232" x2="492" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="508" y1="232" x2="508" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="524" y1="232" x2="524" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="540" y1="232" x2="540" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="556" y1="232" x2="556" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<line x1="572" y1="232" x2="572" y2="268" stroke="#9ca3af" stroke-width="0.7"/>
+<text x="508" y="254" font-size="12" text-anchor="middle" fill="#111827" font-weight="600">10</text>
+<text x="508" y="284" font-size="11" text-anchor="middle" fill="#111827" font-weight="600">length 10</text>
+<text x="605" y="248" font-size="12" text-anchor="start" fill="#111827" font-weight="600">16 filters → 10×16</text>
+<text x="605" y="268" font-size="11" text-anchor="start" fill="#6b7280" font-weight="normal">then ∗ 5, 32 filters → 6×32</text>
+<text x="460" y="322" font-size="10.5" text-anchor="middle" fill="#6b7280" font-weight="normal">Same idea as 2-D: one feature detector, reused at every position. RNNs are the usual tool for sequences; 1-D ConvNets are a competitive alternative.</text>
+</g>
+</svg>

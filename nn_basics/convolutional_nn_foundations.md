@@ -10,7 +10,8 @@ A compact reference for the building blocks of convolutional networks:
 - Pooling layers;
 - Fully connected layers and a complete ConvNet;
 - Parameter sharing and sparsity of connections;
-- Training a ConvNet end to end.
+- Training a ConvNet end to end;
+- 1-D and 3-D convolutions (EKG, CT, video).
 
 Main idea: a convolutional layer replaces a huge dense weight matrix with a small filter that slides over the whole input, so the same feature detector is reused at every position and the parameter count stops depending on image size.
 
@@ -390,6 +391,9 @@ Each filter is $7 \times 7 \times 3$, so $147 + 1 = 148$ parameters, and $148 \t
 **Q: Can a filter look at only one input channel?**  
 In principle yes, by zeroing the weights on the other channels, and grouped or depthwise convolutions do this deliberately. The standard convention is that the filter spans all input channels.
 
+**Q: Is a $3 \times 3 \times 3$ RGB filter a 3-D convolution?**  
+No. The last 3 is **channels**, not a third spatial axis. A true 3-D convolution (CT, video) has three spatial axes plus an optional channel axis — section 10.
+
 ---
 
 ## 6. One Layer of a Convolutional Network
@@ -761,11 +765,97 @@ Nothing in the training procedure. You still define a cost function and minimize
 
 ---
 
-## 10. Beyond the Basics
+## 10. 1-D and 3-D Convolutions
+
+Almost everything in these notes is 2-D because images are everywhere. The same sliding-filter idea applies to 1-D sequences and to 3-D volumes. The output-size formula is reused once per spatial axis.
+
+### 10.1 From 2-D to 1-D
+
+A 2-D reminder, with valid convolution and stride 1:
+
+$$\boxed{14 \times 14 \;*\; 5 \times 5 \;=\; 10 \times 10}$$
+
+With channels and several filters: $14 \times 14 \times 3$ convolved with 16 filters of $5 \times 5 \times 3$ gives $10 \times 10 \times 16$.
+
+Now drop one spatial axis. An **EKG** (electrocardiogram) is a time series of voltages from one electrode on the chest: each peak is a heartbeat. The input is a length-14 vector rather than a $14 \times 14$ image, and the filter is a length-5 tap rather than a $5 \times 5$ patch. Slide that tap along the signal:
+
+$$\boxed{14 \;*\; 5 \;=\; 10}$$
+
+The same 5-tap detector is reused at every time offset, so a heartbeat pattern can fire wherever it occurs. With 16 filters the output is $10 \times 16$. The next layer takes that $10 \times 16$ volume, convolves with a length-5 filter that spans the 16 channels, and if you use 32 filters you get $6 \times 32$ — the 1-D analogue of $10 \times 10 \times 16 \;*\; 5 \times 5 \times 16$ with 32 filters giving $6 \times 6 \times 32$.
+
+![A 14-sample EKG convolved with a length-5 filter yields 10 samples; 16 filters make the output 10×16. The 2-D analogue 14×14 ∗ 5×5 = 10×10 sits above it.](figures/conv-1d.svg)
+
+One electrode is one channel. Multiple leads would be multiple channels, matching the filter's last axis exactly as RGB does in 2-D.
+
+RNNs (and later LSTMs) are the models built specifically for sequences. 1-D ConvNets are a competitive alternative: local patterns with shared taps, no recurrence. The next course on sequence models compares the two.
+
+### 10.2 From 2-D to 3-D
+
+A **CT scan** is a stack of X-ray slices through the body: height, width, **and** depth are all spatial. A movie is the same idea with time as the third axis (detecting motion or actions). Neither is a cube in general — height, width, and depth can all differ — but $14 \times 14 \times 14$ is enough to see the arithmetic.
+
+A 3-D filter is then $5 \times 5 \times 5$. Slide it through the volume:
+
+$$\boxed{14 \times 14 \times 14 \;*\; 5 \times 5 \times 5 \;=\; 10 \times 10 \times 10}$$
+
+If the volume has one channel (one CT intensity), each filter is $5 \times 5 \times 5 \times 1$. Sixteen such filters give $10 \times 10 \times 10 \times 16$. The next layer matches those 16 channels with filters of $5 \times 5 \times 5 \times 16$; 32 of them give $6 \times 6 \times 6 \times 32$.
+
+![A 14³ CT volume convolved with a 5³ filter yields 10³; 16 filters make 10×10×10×16. RGB 14×14×3 is not the same construction: its 3 is channels, not spatial depth.](figures/conv-3d.svg)
+
+**Do not confuse this with section 5.** An RGB image $14 \times 14 \times 3$ is a 2-D convolution over a volume whose last axis is **channels**. A CT volume $14 \times 14 \times 14 \times 1$ is a 3-D convolution whose third 14 is a **spatial** axis. The filter must still match the channel count; that is a fourth axis, not the third.
+
+### 10.3 The Same Formula, Once Per Axis
+
+Valid convolution, stride $s$, padding $p$:
+
+$$\boxed{n' \;=\; \left\lfloor \frac{n + 2p - f}{s} \right\rfloor + 1 \qquad \text{applied independently to every spatial axis}}$$
+
+Channels never go through that formula. They collapse inside each filter and are replaced by the filter count.
+
+| Data | Spatial axes | Example input | Example filter | 16 filters, $p=0$, $s=1$ |
+|---|---|---|---|---|
+| Image (2-D) | $H, W$ | $14 \times 14 \times 3$ | $5 \times 5 \times 3$ | $10 \times 10 \times 16$ |
+| EKG (1-D) | $T$ | $14 \times 1$ | $5 \times 1$ | $10 \times 16$ |
+| CT / video (3-D) | $H, W, D$ | $14 \times 14 \times 14 \times 1$ | $5 \times 5 \times 5 \times 1$ | $10 \times 10 \times 10 \times 16$ |
+
+Worked 3-D example with stride: input $64 \times 64 \times 64 \times 3$, 16 filters of $4 \times 4 \times 4$ (so $4 \times 4 \times 4 \times 3$), $p = 0$, $s = 2$:
+
+$$\left\lfloor \frac{64 - 4 + 0}{2} \right\rfloor + 1 \;=\; 31 \qquad \Rightarrow \qquad 31 \times 31 \times 31 \times 16$$
+
+Traps: $61 \times 61 \times 61$ is $n - f + 1$ with the stride forgotten; $31 \times 31 \times 31 \times 3$ keeps the input channel count instead of the filter count.
+
+### 10.4 Tricky Interview Questions
+
+**Q: A length-14 EKG is convolved with a length-5 filter, 16 filters, valid, stride 1. Output shape?**  
+$10 \times 16$. Same arithmetic as $14 \times 14 \;*\; 5 \times 5$ giving $10 \times 10$, with the extra axis being the filter count.
+
+**Q: The next 1-D layer takes $10 \times 16$ and uses 32 filters of length 5. Shape?**  
+$6 \times 32$. The 5 must span 16 input channels, just as a 2-D $5 \times 5$ filter spans the previous layer's channels.
+
+**Q: Why use a 1-D ConvNet on an EKG instead of a fully connected net?**  
+The same heartbeat detector should fire at every time offset. Parameter sharing and sparsity of connections still apply; only the spatial dimension is time.
+
+**Q: Are 1-D ConvNets the usual model for sequences?**  
+RNNs and LSTMs are the models designed for sequences. 1-D convolutions are a reasonable alternative when the patterns are local. The comparison is the next course.
+
+**Q: Input $14 \times 14 \times 14$, one $5 \times 5 \times 5$ filter, valid, stride 1. Output?**  
+$10 \times 10 \times 10$. With 16 filters: $10 \times 10 \times 10 \times 16$.
+
+**Q: Is $14 \times 14 \times 3$ (RGB) a 3-D convolution?**  
+No. Height and width are spatial; 3 is channels. A 3-D convolution has three spatial axes (CT depth, or time in a video) *plus* channels.
+
+**Q: $64 \times 64 \times 64 \times 3$ input, 16 filters of $4 \times 4 \times 4$, $p = 0$, $s = 2$. Output volume?**  
+$31 \times 31 \times 31 \times 16$. Each spatial axis: $\lfloor (64-4)/2 \rfloor + 1 = 31$. Channels become 16, not 3, and not $64-4+1 = 61$.
+
+**Q: Must a 3-D volume be a cube?**  
+No. Height, width, and depth can all differ, just as a 2-D image need not be square.
+
+---
+
+## 11. Beyond the Basics
 
 Extra context that makes the building blocks easier to use in practice.
 
-### 10.1 Receptive Field
+### 11.1 Receptive Field
 
 The **receptive field** of a unit is the region of the original input that can influence it. Stacking small filters grows it quickly:
 
@@ -780,11 +870,11 @@ The **receptive field** of a unit is the region of the original input that can i
 
 Two stacked $3 \times 3$ convolutions see the same $5 \times 5$ region as one $5 \times 5$ convolution, with fewer parameters and an extra non-linearity in between. This is why $3 \times 3$ filters dominate modern architectures. Striding and pooling enlarge the receptive field much faster.
 
-### 10.2 $1 \times 1$ Convolutions
+### 11.2 $1 \times 1$ Convolutions
 
 A $1 \times 1$ filter looks at a single spatial position but spans all input channels, so it computes a learned linear combination across channels followed by a non-linearity. It leaves the spatial size unchanged and is used to reduce or expand the channel count cheaply, which is why it is sometimes called a network-in-network or a channel-wise bottleneck.
 
-### 10.3 Computational Cost
+### 11.3 Computational Cost
 
 The multiply-accumulate count for a convolutional layer is:
 
@@ -792,11 +882,11 @@ $$\boxed{\text{MACs} = n_H^{[l]} \times n_W^{[l]} \times n_c^{[l]} \times \left(
 
 Note that although convolutional layers hold few parameters, they can dominate the compute, while fully connected layers hold most parameters but are cheap to evaluate. Parameter count and FLOP count are different budgets.
 
-### 10.4 Implementation Note
+### 11.4 Implementation Note
 
 Convolution is usually not implemented as literal nested loops. The common trick is **im2col**: extract every filter-sized patch into a column of a large matrix, then compute the whole layer as one dense matrix multiply, which maps efficiently onto GPU kernels. FFT-based and Winograd algorithms are also used for particular filter sizes.
 
-### 10.5 Common Variants
+### 11.5 Common Variants
 
 | Variant | What changes | Why |
 |---|---|---|
@@ -809,15 +899,19 @@ Convolution is usually not implemented as literal nested loops. The common trick
 
 ---
 
-## 11. Quick Reference
+## 12. Quick Reference
 
 Output shape of a convolutional layer:
 
 $$\boxed{n^{[l]} = \left\lfloor \frac{n^{[l-1]} + 2p^{[l]} - f^{[l]}}{s^{[l]}} + 1 \right\rfloor \quad \text{per spatial dimension}, \qquad n_c^{[l]} = \text{number of filters}}$$
 
+The same $n^{[l]}$ formula is used once for a 1-D signal, twice for an image, three times for a CT / video volume. Channels are never an $n^{[l]}$ axis.
+
 Parameter count of a convolutional layer:
 
 $$\boxed{\left(f^{[l]} \times f^{[l]} \times n_c^{[l-1]} + 1\right) \times n_c^{[l]}}$$
+
+In 1-D drop one $f$; in 3-D add a third $f$. The $n_c^{[l-1]}$ factor is still the channel match.
 
 Padding for a size-preserving (same) convolution with stride 1:
 
@@ -837,6 +931,8 @@ $$\boxed{p = \frac{f - 1}{2}}$$
 | Parameter count much larger than expected | Forgot the $n_c^{[l-1]}$ factor in each filter | Use $(f \cdot f \cdot n_c^{[l-1]} + 1) \cdot n_c^{[l]}$ |
 | Most parameters in one layer | A large fully connected layer after flattening | Pool more before flattening, or use global average pooling |
 | Too many parameters for the dataset | Dense layers where convolution would do | Use convolutional layers to share weights across positions |
+| Called a $14 \times 14 \times 3$ RGB conv “3-D” | Channels mistaken for a spatial axis | 2-D conv over a volume; true 3-D has $H, W, D$ plus channels |
+| 3-D output channels equal the input’s 3 | Forgot that channels become the filter count | $n_c^{[l]} =$ number of filters |
 
 Core principle: convolution turns a huge dense weight matrix into a small filter reused at every position, so the parameter count depends on what a feature looks like, not on how big the image is.
 

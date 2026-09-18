@@ -14,7 +14,7 @@ from svgkit import (  # noqa: E402
     AMBER, ARCH_LEGEND, BLUE, C, GREEN, INK, LINE, MUTED, PURPLE, RED,
     arrow, caption, circle, contrast, diverge, gray, legend, lines, mat_h, mat_w,
     matrix, outline, panel, path, pipeline as _pipeline, poly, rect, seg, title,
-    txt, write, _mix,
+    txt, volume3d, write, _mix,
 )
 
 OUT = pathlib.Path(__file__).parent
@@ -988,6 +988,88 @@ def fig_dilated():
     write(OUT, "dilated-conv.svg", W, H, b)
 
 
+# ---------------------------------------------------------- 1D and 3D conv
+
+
+def fig_1d_conv():
+    W, H = 920, 340
+    b = [title(W, "1-D convolution on a time series",
+               "the same 5-tap filter slides along an EKG; 14 ∗ 5 = 10, just as 14×14 ∗ 5×5 = 10×10")]
+
+    def bar(x, y, n, w, h, role, label, sub=None):
+        o = [rect(x, y, n * w, h, role, rx=3)]
+        for i in range(1, n):
+            o.append(seg(x + i * w, y, x + i * w, y + h, LINE, 0.7))
+        o.append(txt(x + n * w / 2, y + h / 2 + 4, f"{n}", 12, weight="600"))
+        o.append(txt(x + n * w / 2, y + h + 16, label, 11, weight="600"))
+        if sub:
+            o.append(txt(x + n * w / 2, y + h + 32, sub, 10.5, fill=MUTED))
+        return "\n".join(o)
+
+    b.append(txt(40, 78, "2-D (images)", 12.5, anchor="start", weight="600"))
+    b.append(rect(40, 96, 70, 70, "input", rx=3))
+    b.append(txt(75, 134, "14×14", 11, weight="600"))
+    b.append(txt(130, 134, "∗", 18, fill=MUTED))
+    b.append(rect(150, 110, 42, 42, "conv", rx=3))
+    b.append(txt(171, 134, "5×5", 11, weight="600"))
+    b.append(txt(210, 134, "=", 18, fill=MUTED))
+    b.append(rect(230, 104, 54, 54, "out", rx=3))
+    b.append(txt(257, 134, "10×10", 11, weight="600"))
+    b.append(txt(400, 134, "16 filters  →  10×10×16", 12, anchor="start", weight="600"))
+
+    b.append(seg(40, 186, 880, 186, LINE, 1.0, dash="4 4"))
+
+    b.append(txt(40, 214, "1-D (EKG, audio, other sequences)", 12.5, anchor="start", weight="600"))
+    b.append(bar(40, 232, 14, 16, 36, "input", "length 14", "one lead"))
+    b.append(txt(280, 254, "∗", 18, fill=MUTED))
+    b.append(bar(304, 232, 5, 16, 36, "conv", "length 5"))
+    b.append(txt(404, 254, "=", 18, fill=MUTED))
+    b.append(bar(428, 232, 10, 16, 36, "out", "length 10"))
+    b.append(txt(605, 248, "16 filters → 10×16", 12, anchor="start", weight="600"))
+    b.append(txt(605, 268, "then ∗ 5, 32 filters → 6×32", 11, anchor="start", fill=MUTED))
+
+    b.append(caption(W / 2, H - 18, [
+        "Same idea as 2-D: one feature detector, reused at every position. RNNs are the usual tool for sequences; 1-D ConvNets are a competitive alternative.",
+    ]))
+    write(OUT, "conv-1d.svg", W, H, b)
+
+
+def fig_3d_conv():
+    W, H = 920, 360
+    b = [title(W, "3-D convolution on a volume",
+               "height, width, and depth are all spatial; channels are a fourth axis, just as in 2-D")]
+
+    svg, info = volume3d(48, 130, 86, 86, 28, "input", label="14³")
+    b.append(svg)
+    b.append(txt(info["cx"], info["bottom"] + 18, "CT / video", 10.5, fill=MUTED))
+
+    b.append(txt(168, 168, "∗", 20, fill=MUTED))
+    svg, info = volume3d(188, 148, 44, 44, 18, "conv", label="5³")
+    b.append(svg)
+    b.append(txt(info["cx"], info["bottom"] + 18, "3-D filter", 10.5, fill=MUTED))
+
+    b.append(txt(286, 168, "=", 20, fill=MUTED))
+    svg, info = volume3d(308, 140, 62, 62, 22, "out", label="10³")
+    b.append(svg)
+    b.append(txt(info["cx"], info["bottom"] + 18, "one filter", 10.5, fill=MUTED))
+
+    b.append(arrow(408, 168, 448, 168, LINE, 1.5))
+    b.append(txt(560, 100, "16 filters of 5×5×5×1", 12.5, weight="600"))
+    b.append(txt(560, 122, "→  10×10×10×16", 14, weight="600"))
+    b.append(txt(560, 154, "next layer: 5×5×5×16, 32 filters", 12, fill=MUTED))
+    b.append(txt(560, 176, "→  6×6×6×32", 14, weight="600"))
+
+    b.append(rect(448, 210, 424, 88, "input", rx=8, fill="#f9fafb", stroke=LINE))
+    b.append(txt(660, 236, "Not the same as a 2-D RGB convolution.", 12, weight="600"))
+    b.append(txt(660, 258, "An image is 14×14×3: the 3 is channels, not depth.", 11.5, fill=MUTED))
+    b.append(txt(660, 278, "A CT scan is 14×14×14×1: the third 14 is a spatial axis.", 11.5, fill=MUTED))
+
+    b.append(caption(W / 2, H - 18, [
+        "Movies are 3-D too: two spatial axes plus time. The same output-size formula applies once per spatial axis, including depth.",
+    ]))
+    write(OUT, "conv-3d.svg", W, H, b)
+
+
 # ---------------------------------------------------------------------- main
 
 FIGURES = [
@@ -1009,6 +1091,8 @@ FIGURES = [
     fig_sharing_sparsity,
     fig_receptive_field,
     fig_dilated,
+    fig_1d_conv,
+    fig_3d_conv,
 ]
 
 

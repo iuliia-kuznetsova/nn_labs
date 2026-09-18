@@ -1,0 +1,108 @@
+In the last video, you learn about
+the GRU, the Gated Recurring Unit and how that can allow you to learn very
+long range connections in a sequence. The other type of unit that allows you
+to do this very well is the LSTM or the long short term memory units. And this is even more powerful
+than the GRU, let's take a look. Here the equations from the previous
+video for the GRU and for the GRU we had a t = c t and two gates
+the update gate and the relevance gate. c(tilde) t, which is a candidate for
+replacing the memory cell. And then we use the gate, the update
+gate gamma Wu to decide whether or not to update c t  using c(tilde) t. The LSTM is an even slightly more powerful
+and more general version of the GRU and it's due to set hook writer and
+Jurgen Schmidt Huber. And this was a really seminal paper,
+there's a huge impact on sequence modeling, although I think this paper is
+one of the more difficult ones to read. It goes quite a lot into
+the theory of vanishing gradients. And so I think more people have learned
+about the details of LSTM through maybe other places than from this particular
+paper, even though I think this paper has had a wonderful impact on
+the deep learning community. But these are the equations
+that govern the LSTM, so the will continue to the memory cell c and
+the candidate value for updating it c(tilde) t  will be this. And so notice that for the LSTM, we will no longer have the case
+that a t is equal to c t. So this is what we use and so this is
+like the equation on the left except that with now more use a t there or
+a t-1, c t-1 and we are not using this gamma r this relevance.
+Although you can have a deviation of
+the LSTM and we put that back in but with a more common version of
+the LSTM doesn't bother with that. And then we will have
+an update gate same as before. So w update and
+I'm going to use a t-1 here, ct +bu and one new property of the LSTM is instead of having one update gate
+control both of these terms, we're going to have two separate terms. So instead of gamma u and
+1- gamma u were going to have gamma u here and for
+gate k we should call gamma f. So this gate gamma f is going to be
+sigmoid of, pretty much what you'd expect. c t  plus bf, and then we're going to have a new output gate which is sigmoid of Wo and then again, pretty much what you'd expect plus bo. And then the update value to
+the memory cell will be c t equals gamma u then this asterisk in
+those element wise multiplication. There's a vector vector,
+element wise multiplication plus and instead of one minus gamma u were
+going to have a separate for gate gamma f times c t-1. So this gives the memory cell the option
+of keeping the old value c t-1 and then just adding to it this
+new value c(tilde) t. So use a separate update and
+forget gates right? So this stands on update. Forget and output gates and then finally instead of 80 equals c t. Is a t equal to the output gate
+element wise multiply with c t. So these are the equations
+that govern the LSTM. And you can tell it has
+three gates instead of two. So it's a bit more complicated and places
+against in slightly different places. So here again are the equations
+governing the behavior of the LSTM. Once again it's traditional to explain
+these things using pictures, so let me draw one here. And if these pictures are too
+complicated don't worry about it, I probably find the equations easier
+to understand than the picture but just show the picture here for
+the intuitions it conveys. The particular picture here was very
+much inspired by a blog post due to Chris Kohler titled
+Understanding LSTM networks. And the diagram drawn here is quite
+similar to one that he drew in his blog post. But the key things to take
+away from this picture or maybe that you use a t-1 and
+x t to compute all the gate values. So in this picture you have a t-1 and
+x t coming together to compute a forget gate to compute the update
+gates and the computer the output gate. And they also go through a tarnish
+to compute a c(tilde) t. And then these values are combined
+in these complicated ways with element wise multiplies and so on to
+get a c t from the previous c t -1. Now one element of this is interesting
+is if you hook up a bunch of these in parallel so that's one of them and you
+connect them, connect these temporarily. So there's the input x 1,
+then x 2, x 3. So you can take these units and just hook
+them up as follows where the output a for a period of time,
+70 input at the next time set. And similarly for C and I've simplified
+the diagrams a little bit at the bottom. And one cool thing about this, you
+notice is that this is a line at the top that shows how so long as you said
+the forget and the update gates, appropriately, it is relatively easy for
+the LSTM to have some value C0 and have that be passed all the way to
+the right to have, maybe C3 equals C0. And this is why the LSTM as
+well as the GRU is very good at memorizing certain values. Even for a long time for
+certain real values stored in the memory cells even for
+many, many times steps. So that's it for the LSTM, as you can imagine, there are also a few variations
+on this that people use. Perhaps the most common one,
+is that instead of just having the gate values be dependent only on a t-1, xt. Sometimes people also sneak in
+there the value c t -1 as well. This is called a peephole connection. Not a great name maybe, but
+if you see peephole connection, what that means is that the gate values
+may depend not just on a t-1 but and on x t but
+also on the previous memory cell value. And the peephole connection can go into
+all three of these gates computations. So that's one common variation
+you see of LSTMs one technical detail is that these are say
+100 dimensional vectors. If you have 100 dimensional
+hidden memory cell union. So is this and so
+say fifth element of c t-1 affects only the fifth element of
+the correspondent gates. So that relationship is 1 to 1
+where not every element of the 100 dimensional c t-1 can affect
+all elements of the gates, but instead the first element of c t-1
+affects the first element of the gates. Second element affects second elements and
+so on. But if you ever read the paper and see someone talk about the peephole
+connection, that's what they mean, that c t -1 is used to affect
+the gate value as well. So that's it for the LSTM, when should you
+use a GRU and when should you use an LSTM. There is a widespread consensus in this. And even though I presented GRUs first
+in the history of deep learning, LSTMs actually came much earlier and then GRUs
+were relatively recent invention that were maybe derived as partly a simplification
+of the more complicated LSTM model. Researchers have tried both of these
+models on many different problems and on different problems the different
+algorithms will win out. So there isn't a universally
+superior algorithm, which is why I want to
+show you both of them. But I feel like when I am using these, the advantage of the GRU is
+that it's a simpler model. And so it's actually easier to build a
+much bigger network only has two gates, so computation runs a bit faster so it scales
+the building, somewhat bigger models. But the LSTM is more powerful and more flexible since there's
+three gates instead of two. If you want to pick one to use, I think LSTM has been
+the historically more proven choice. So if you had to pick one,
+I think most people today will still use the LSTM as the default
+first thing to try. Although I think the last few years GRUs
+have been gaining a lot of momentum and I feel like more and more teams are also using GRUs because
+they're a bit simpler but often were, just as well and it might be easier to
+scale them to even bigger problems. So that's it for LSTMs with either GRUs or
+LSTMS, you'll be able to build new networks that can capture
+much longer range dependencies.

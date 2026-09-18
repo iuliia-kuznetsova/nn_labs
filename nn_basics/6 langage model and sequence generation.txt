@@ -1,0 +1,171 @@
+Language modeling is one of the most basic and
+important task in natural language processing. It is also one that
+RNNs do very well. In this video, you'll
+learn about how to build a language
+model using an RNN, and this will lead up toward a fun programming exercise
+at the end of this week, where you build a language
+model and use it to generate Shakespeare like texts
+and other types of texts. Let's get started. What is a language model? Let's say you're building a
+speech recognition system and you hear the sentence, the apple and pear
+salad was delicious. What did you just hear me say? Did I say the apple
+and pair salad? Or did I say the
+apple and pear salad? You probably think
+the second sentence is much more likely. In fact, that's
+what a good speech recognition system would output, even though these two sentences
+sound exactly the same. The way a speech
+recognition system picks the second
+sentence is by using a language model which
+tells it what is the probability of either
+of these two sentences. For example, a language model might say that the chance of the first sentences is 3.2
+by 10 to the negative 13, and the chance of the
+second sentence is say 5.7 by 10 to the negative 10, and so with these probabilities, the second sentence is
+much more likely by over a factor of 10^3 compared
+to the first sentence, and that's why a speech
+recognition system will pick the second choice. What a language model does is, given any sentence, its job is to tell you what is the probability of that
+particular sentence, and by probability
+of sentence, I mean, if you were to pick up
+a random newspaper, open a random email, or pick a random webpage, or listen to the next
+thing someone says, the friend of you says, what is the chance
+that the next sentence you read somewhere out there in the world will be a particular sentence like
+the apple and pear salad? This is a fundamental
+component for both speech recognition
+systems as you've just seen, as well as for machine
+translation systems, where translation
+systems want to output only sentences that are likely. So the basic job of a
+language model is to input the sentence which I'm going
+to write as a sequence y^1, y^2 up to y^ty, and for language model, it'll be useful to
+represent the sentences as outputs y rather
+than as inputs x. But what a language
+model does is it estimates the probability of that particular
+sequence of words. How do you build
+a language model? To build such a
+model using a RNN, you will first need a training set comprising a large corpus of English text or text from whatever language you want to
+build a language model of. The word corpus is an NLP
+terminology that just means a large body or a very large
+tens of English sentences. Let's say you get a sentence in your
+training set as follows, cats average 15 hours
+of sleep a day. The first thing you would do
+is tokenize the sentence, and that means you would form a vocabulary as we saw
+in an earlier video, and then map each of
+these words to say one-hot vectors or to
+indices in your vocabulary. One thing you might
+also want to do is model when sentences end. So another common
+thing to do is to add an extra token called EOS that stands for
+end of sentence, that can help you figure
+out when a sentence ends. We'll talk more
+about this later. But the EOS token can be appended to the end
+of every sentence in your training set if
+you want your model to explicitly capture
+when sentences end. We won't use the
+end-of-sentence token for the problem exercise
+at the end of this week. But for some applications, you might want to use this, and we'll see later where
+this comes in handy. In this example, we have y^1, y^2, y^3, 4, 5, 6, 7, 8, 9. Nine inputs in this
+example if you append the end of sentence
+token to the end. Doing the tokenization step, you can decide whether or not the period should
+be a token as well. In this example, I'm just
+ignoring punctuation, so I'm just using day as another token and
+omitting the period. If you want to treat the period or other punctuation
+as the explicit token, then you could add the period
+to your vocabulary as well. Now, one other detail would be, what if some of the words in your training set are
+not in your vocabulary? If your vocabulary
+uses 10,000 words, maybe the 10,000 most
+common words in English, then the term Mau as a decision, Mau's breed of cat,
+that might not be in one of your top
+10,000 tokens. In that case, you could take
+the word Mau and replace it with a unique
+token called UNK, which stands for unknown words, and we just model the chance of the unknown word instead
+of the specific word, Mau. Having carried out the
+tokenization step, which basically means taking the input sentence
+and map here to the individual tokens or the individual words
+in your vocabulary, next, let's build an RNN to model the chance of these
+different sequences. One of the things we'll see on the next slide is that
+you end up setting the inputs x^t to be
+equal to y of t minus 1. But you'll see that
+in a little bit. Let's go on to build
+the RNN model, and I'm going to continue to use this sentence as the
+running example. This will be the
+RNN architecture. At time zero, you're going to end up computing some activation a_1 as a
+function of some input x_1, and x_1 would just be
+set to zero vector. The previous a_0 by convention, also set that to vector zeros. But what a_1 does
+is it will make a Softmax prediction to try to figure out what is the
+probability of the first word y, so that's going to be y_1. What this step does is
+really it has a Softmax, so it's trying to
+predict what is the probability of any
+word in a dictionary, what's the chance that
+the first word is a, what's the chance that
+the first word is Aaron, and then what's the chance
+that the first word is cats, all the way up to
+what's the chance the first word is Zulu, or what's the chance that the first word is
+an unknown word, or what's the chance that the first words is in a sentence though or
+shouldn't happen really. Y hat 1 is output
+according to a Softmax, it just predicts
+what's the chance that the first word being
+whatever it ends up being. In our example, one of
+the bigger the word cats. This would be a 10,000
+way Softmax output. If you have 10,000 word
+vocabulary or 10,002, I guess you can't
+unknown word and the sentence has two
+additional tokens. Then the RNN steps forward to the next step and has some activation a_2
+in the next step. At this step, it's
+job is to try to figure out what is
+the second word. But now we will also give
+it the correct first word. We'll tell it that G in reality, the first word was
+actually cats, so that's y_1, so tell it cats. This is why y_1 is equal to x_2. At the second step, the output is again
+predicted by Softmax, the RNN's job is
+to predict what's the chance of it being
+whatever word it is, is it A or Aaron, or cats or Zulu, or unknown word or
+EOS or whatever, given what had come previously. In this case, I guess
+the right answer was average since the sentence
+starts with cats average. Then you go on to
+the next step of the RNN where you
+now compute a_3. But to predict what is the
+third word which is 15, we can now give it
+the first two words. We're going to tell cats
+average of the first two words. This next input here, x_3 will be equal to y_2, so the word average is
+input and its job is to figure out what is the
+next word in the sequence. Another was trying to figure
+out what is the probability of any words in the
+dictionary given that what just came before
+was cats average? In this case, the right
+answer is 15 and so on. Until at the end, you end up at I guess
+time step nine, you end up feeding it x_9 which is equal to
+y_8 which is the word day. Then this has a_9 and its
+job is to open y hat nine, and this happens to
+be the EOS tokens. What's the chance
+of whatever it is given everything
+that's come before? Hopefully you'll predict
+that there's a high chance of EOS in the sentence token. But so, each step in
+the RNN will look at some set of preceding
+words such as, given the first three words, what is the distribution
+over the next word? This RNN learns to predict one word at a time going
+from left to right. Next, to train this
+through a network, we're going to define
+the cost function. At a certain time t, if the true word was yt and your network Softmax
+predicted some y hat t, then this is the
+Softmax loss function that you'll already
+be familiar with, and then the overall loss
+is just the sum over all time steps of the losses associated with the
+individual predictions. If you train this RNN on
+a large training set, what it will be able to do is, given any initial
+set of words such as cats average 15 or cats
+average 15 hours of, it can predict what is the
+chance of the next word. Given a new sentence, say y_1, y_2, y_3, with just three words
+for simplicity, the way you can figure
+out what is the chance of this entire sentence
+would be, well, the first Softmax tells you
+what's the chance of y_1, that would be this first output. Then the second one
+can tell you what's the chance of p
+of y_2 given y_1. Then the third one tells you
+what's the chance of y_3 given y_1 and y_2, and so it's by multiplying out
+these three probabilities. You see much more of the details of this in
+[inaudible] exercise, it's by multiplying out these
+three that you end up with the probability of this
+three words sentence. That's the basic
+structure of how you can train a language
+model using an RNN. If some of these
+ideas still seem a little bit abstract,
+don't worry about it. You get to practice all of these ideas in the
+coming exercise. But next it turns out, one of the most fun
+things you can do with a language model is to sample
+sequences from the model. Let's take a look at
+that in the next video.
